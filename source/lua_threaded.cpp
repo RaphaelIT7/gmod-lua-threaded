@@ -67,7 +67,7 @@ void Push(GarrysMod::Lua::ILuaBase* LUA, ILuaInterface* Interface, int ID)
 	LUA->SetMetaTable(-2);
 
 	LUA->CreateTable();
-	lua_setfenv(LUA->GetState(), -2);
+	LUA->SetFEnv(-2);
 
 	LUA->PushUserdata(Interface);
 	LUA->Push(-2);
