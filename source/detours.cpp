@@ -16,7 +16,7 @@ template<class T>
 void CheckFunction(T func, const char* name)
 {
 	if (func == nullptr) {
-		Msg("Could not locate %s symbol!", name);
+		Msg("Could not locate %s symbol!\n", name);
 	}
 }
 

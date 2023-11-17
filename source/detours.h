@@ -15,7 +15,7 @@ const Symbol CloseLuaInterfaceSym = Symbol::FromName("_Z17CloseLuaInterfaceP13IL
 extern CloseLuaInterface func_CloseLuaInterface;
 
 typedef lua_State* (*luaL_newstate)();
-const Symbol luaL_newstateSym = Symbol::FromName("_luaL_newstate");
+const Symbol luaL_newstateSym = Symbol::FromName("luaL_newstate");
 extern luaL_newstate func_luaL_newstate;
 
 typedef void (*TLuaPanic)(lua_State*);
@@ -23,7 +23,7 @@ const Symbol LuaPanicSym = Symbol::FromName("_ZL8LuaPanicP9lua_State");
 extern TLuaPanic func_LuaPanic;
 
 typedef void (*Tlua_atpanic)(lua_State*, CFunc);
-const Symbol lua_atpanicSym = Symbol::FromName("_lua_atpanic");
+const Symbol lua_atpanicSym = Symbol::FromName("lua_atpanic");
 extern Tlua_atpanic func_lua_atpanic;
 
 typedef void (*TAdvancedLuaErrorReporter)(lua_State*);
