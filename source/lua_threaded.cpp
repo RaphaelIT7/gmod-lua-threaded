@@ -143,7 +143,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 {
 	ILuaInterface* IFace = Get(LUA, 1);
 
-	func_luaL_loadstring(IFace->GetState(), LUA->CheckString(2)); // ToDo: Change this. The Interface will be on another Thread so fix this!
+	func_luaL_dostring(IFace->GetState(), LUA->CheckString(2)); // ToDo: Change this. The Interface will be on another Thread so fix this!
 
 	return 0;
 }
