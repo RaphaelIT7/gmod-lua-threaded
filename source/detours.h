@@ -22,7 +22,7 @@ typedef void (*TLuaPanic)(lua_State*);
 const Symbol LuaPanicSym = Symbol::FromName("_ZL8LuaPanicP9lua_State");
 extern TLuaPanic func_LuaPanic;
 
-typedef void (*Tlua_atpanic)(lua_State*, CFunc*);
+typedef void (*Tlua_atpanic)(lua_State*, CFunc);
 const Symbol lua_atpanicSym = Symbol::FromName("_lua_atpanic");
 extern Tlua_atpanic func_lua_atpanic;
 
