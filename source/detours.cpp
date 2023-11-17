@@ -8,6 +8,7 @@ luaL_newstate func_luaL_newstate;
 TLuaPanic func_LuaPanic;
 TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 Tlua_atpanic func_lua_atpanic;
+luaL_loadstring func_luaL_loadstring;
 
 InitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
@@ -43,8 +44,10 @@ void Symbols_Init()
 	func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)symfinder.Resolve(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym.name.c_str(), AdvancedLuaErrorReporterSym.length);
 	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");
 
-	SourceSDK::ModuleLoader server_loader("server");
+	func_luaL_loadstring = (luaL_loadstring)symfinder.Resolve(lua_shared_loader.GetModule(), luaL_loadstringSym.name.c_str(), luaL_loadstringSym.length);
+	CheckFunction(func_luaL_loadstring, "luaL_loadstring");
 
+	SourceSDK::ModuleLoader server_loader("server");
 	func_InitLuaLibraries = (InitLuaLibraries)symfinder.Resolve(server_loader.GetModule(), InitLuaLibrariesSym.name.c_str(), InitLuaLibrariesSym.length);
 	CheckFunction(func_InitLuaLibraries, "InitLuaLibraries");
 

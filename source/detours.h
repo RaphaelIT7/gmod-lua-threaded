@@ -30,6 +30,13 @@ typedef void (*TAdvancedLuaErrorReporter)(lua_State*);
 const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");
 extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 
+typedef void (*luaL_loadstring)(lua_State*, const char*);
+const Symbol luaL_loadstringSym = Symbol::FromName("luaL_loadstring");
+extern luaL_loadstring func_luaL_loadstring;
+
+/*
+	server_srv stuff
+*/
 typedef void (*InitLuaLibraries)(ILuaInterface*);
 const Symbol InitLuaLibrariesSym = Symbol::FromName("_Z16InitLuaLibrariesP13ILuaInterface");
 extern InitLuaLibraries func_InitLuaLibraries;
