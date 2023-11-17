@@ -45,7 +45,7 @@ void Symbols_Init()
 	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");
 
 	func_luaL_dostring = (luaL_dostring)symfinder.Resolve(lua_shared_loader.GetModule(), luaL_dostringSym.name.c_str(), luaL_dostringSym.length);
-	CheckFunction(func_luaL_dostringg, "luaL_dostring");
+	CheckFunction(func_luaL_dostring, "luaL_dostring");
 
 	SourceSDK::ModuleLoader server_loader("server");
 	func_InitLuaLibraries = (InitLuaLibraries)symfinder.Resolve(server_loader.GetModule(), InitLuaLibrariesSym.name.c_str(), InitLuaLibrariesSym.length);
