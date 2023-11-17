@@ -121,7 +121,7 @@ LUA_FUNCTION_STATIC(index)
 	if(!LUA->IsType(-1, GarrysMod::Lua::Type::NIL))
 		return 1;
 
-	lua_getfenv(LUA->GetState(), 1);
+	LUA->GetFEnv(1);
 	LUA->Push(2);
 	LUA->RawGet(-2);
 	return 1;
@@ -129,7 +129,7 @@ LUA_FUNCTION_STATIC(index)
 
 LUA_FUNCTION_STATIC(newindex)
 {
-	lua_getfenv(LUA->GetState(), 1);
+	LUA->GetFEnv(1);
 	LUA->Push(2);
 	LUA->Push(3);
 	LUA->RawSet(-3);
