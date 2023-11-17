@@ -8,7 +8,7 @@ luaL_newstate func_luaL_newstate;
 TLuaPanic func_LuaPanic;
 TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 Tlua_atpanic func_lua_atpanic;
-luaL_dostring func_luaL_dostringg;
+luaL_dostring func_luaL_dostring;
 
 InitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
