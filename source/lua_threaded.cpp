@@ -148,12 +148,51 @@ LUA_FUNCTION(ILuaInterface_RunString)
 	return 0;
 }
 
+LUA_FUNCTION(ILuaInterface_InitClasses)
+{
+	ILuaInterface* IFace = Get(LUA, 1);
+
+	func_InitLuaClasses(IFace);
+
+	return 0;
+}
+
+LUA_FUNCTION(ILuaInterface_InitLibraries)
+{
+	ILuaInterface* IFace = Get(LUA, 1);
+
+	func_InitLuaLibraries(IFace);
+
+	return 0;
+}
+
 /*
 	Module Table
 */
 LUA_FUNCTION(LuaThread_GetInterface)
 {
+	int id = LUA->CheckNumber(1);
 
+	if (id < 0 || id > interfaces_count) { return 0; }
+
+	ILuaInterface* IFace = interfaces[id];
+	if (!IFace) { return 0; }
+
+	Push(LUA, IFace, id);
+
+	return 1;
+}
+
+LUA_FUNCTION(LuaPanic)
+{
+	func_LuaPanic(LUA->GetState());
+
+	return 0;
+}
+
+LUA_FUNCTION(AdvancedLuaErrorReporter)
+{
+	func_AdvancedLuaErrorReporter(LUA->GetState());
 
 	return 0;
 }
@@ -170,6 +209,15 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 	if (IFace->GetState() == nullptr) {
 		Msg("ILuaInterface got no State!\n");
 	}
+
+	//IFace->Init(); We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+
+	lua_State* state = func_luaL_newstate();
+	lua_atpanic(state, LuaPanic);
+	
+	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
+
+	IFace->SetState(state); // Set the State
 
 	return 1;
 }
@@ -205,7 +253,7 @@ GMOD_MODULE_OPEN()
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, LuaThread_GetInterface, "GetInterface");
-			Add_Func(LUA, LuaThread_CreateInterface, "Createinterface");
+			Add_Func(LUA, LuaThread_CreateInterface, "CreateInterface");
 			Add_Func(LUA, LuaThread_CloseInterface, "CloseInterface");
 
 			LUA->SetField(-2, "LuaThreaded");
@@ -230,6 +278,15 @@ GMOD_MODULE_OPEN()
 
 	LUA->PushCFunction(newindex);
 	LUA->SetField(-2, "__newindex");
+
+	LUA->PushCFunction(ILuaInterface_RunString);
+	LUA->SetField(-2, "RunString");
+
+	LUA->PushCFunction(ILuaInterface_InitClasses);
+	LUA->SetField(-2, "InitClasses");
+
+	LUA->PushCFunction(ILuaInterface_InitLibraries);
+	LUA->SetField(-2, "InitLibraries");
 
 	LUA->Pop(1);
 
