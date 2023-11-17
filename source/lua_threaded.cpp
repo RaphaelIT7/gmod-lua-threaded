@@ -143,7 +143,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 {
 	ILuaInterface* IFace = Get(LUA, 1);
 
-	IFace->RunString("RunString", "RunString", LUA->CheckString(2), true, true); // ToDo: Change this. The Interface will be on another Thread so fix this!
+	IFace->RunString("", "", LUA->CheckString(2), true, true); // ToDo: Change this. The Interface will be on another Thread so fix this!
 
 	return 0;
 }
@@ -286,8 +286,9 @@ GMOD_MODULE_OPEN()
 	LUA->PushCFunction(ILuaInterface_InitClasses);
 	LUA->SetField(-2, "InitClasses");
 
-	LUA->PushCFunction(ILuaInterface_InitLibraries);
-	LUA->SetField(-2, "InitLibraries");
+	// NOTE: Currently broken?
+	//LUA->PushCFunction(ILuaInterface_InitLibraries);
+	//LUA->SetField(-2, "InitLibraries");
 
 	LUA->Pop(1);
 
