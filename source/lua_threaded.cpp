@@ -213,7 +213,8 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 	//IFace->Init(); We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
 	lua_State* state = func_luaL_newstate();
-	lua_atpanic(state, LuaPanic);
+
+	func_lua_atpanic(state, LuaPanic);
 	
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 

@@ -7,6 +7,7 @@ CloseLuaInterface func_CloseLuaInterface;
 luaL_newstate func_luaL_newstate;
 TLuaPanic func_LuaPanic;
 TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
+Tlua_atpanic func_lua_atpanic;
 
 InitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
@@ -35,6 +36,9 @@ void Symbols_Init()
 
 	func_LuaPanic = (TLuaPanic)symfinder.Resolve(lua_shared_loader.GetModule(), LuaPanicSym.name.c_str(), LuaPanicSym.length);
 	CheckFunction(func_LuaPanic, "LuaPanic");
+
+	func_lua_atpanic = (Tlua_atpanic)symfinder.Resolve(lua_shared_loader.GetModule(), lua_atpanicSym.name.c_str(), lua_atpanicSym.length);
+	CheckFunction(func_lua_atpanic, "lua_atpanic");
 
 	func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)symfinder.Resolve(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym.name.c_str(), AdvancedLuaErrorReporterSym.length);
 	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");
