@@ -1,10 +1,18 @@
 #include "detours.h"
+#include "lua_threaded.h"
 #include <GarrysMod/Lua/Interface.h>
-#include <GarrysMod/Lua/LuaInterface.h>
 #include <GarrysMod/Lua/LuaObject.h>
 #include <unordered_map>
 #include <lua.h>
 #include <vector>
+
+struct ILuaValue
+{
+	int type;
+
+	int value1;
+	const char* value2;
+};
 
 struct ILuaAction
 {
@@ -18,6 +26,7 @@ struct ILuaThread
 	CThreadFastMutex mutex;
 
 	std::vector<ILuaAction*> actions;
+	std::unordered_map<std::string, ILuaValue> shared_table;
 
 	bool run = true;
 	bool threaded = false;
@@ -37,7 +46,7 @@ struct LUA_ILuaInterface
 	int ID;
 };
 
-inline void CheckType(GarrysMod::Lua::ILuaBase* LUA, int32_t index)
+inline void CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, metatype))
 		luaL_typerror(LUA->GetState(), index, metaname);
@@ -48,7 +57,7 @@ inline LUA_ILuaInterface *GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 	return LUA->GetUserType<LUA_ILuaInterface>(index, metatype);
 }
 
-static ILuaInterface* Get(GarrysMod::Lua::ILuaBase* LUA, int32_t index)
+static ILuaInterface* Get(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	CheckType(LUA, index);
 	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
@@ -187,18 +196,50 @@ LUA_FUNCTION(ILuaInterface_RunString)
 
 LUA_FUNCTION(ILuaInterface_InitClasses)
 {
-	ILuaInterface* IFace = Get(LUA, 1);
+	LUA_ILuaInterface* IData = GetUserdata(LUA, 1);
 
-	func_InitLuaClasses(IFace);
+	ILuaThread* thread = interfaces[IData->ID];
+	if (!thread)
+	{
+		LUA->ThrowError("Invalid ILuaInterface!");
+	}
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = "initclasses";
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		func_InitLuaClasses(IData->IFace);
+	}
 
 	return 0;
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
 {
-	ILuaInterface* IFace = Get(LUA, 1);
+	LUA_ILuaInterface* IData = GetUserdata(LUA, 1);
 
-	func_InitLuaLibraries(IFace);
+	ILuaThread* thread = interfaces[IData->ID];
+	if (!thread)
+	{
+		LUA->ThrowError("Invalid ILuaInterface!");
+	}
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = "initlibraries";
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		func_InitLuaLibraries(IData->IFace);
+	}
 
 	return 0;
 }
@@ -220,7 +261,7 @@ LUA_FUNCTION(LuaThread_GetAllInterfaces)
 
 LUA_FUNCTION(LuaThread_GetInterface)
 {
-	int id = LUA->CheckNumber(1);
+	double id = LUA->CheckNumber(1);
 
 	ILuaThread* thread = interfaces[id];
 	if (!thread) { return 0; }
@@ -258,6 +299,8 @@ ILuaInterface* CreateInterface()
 
 	IFace->SetState(state); // Set the State
 
+	InitLuaThreaded(IFace);
+
 	return IFace;
 }
 
@@ -277,6 +320,12 @@ unsigned LuaThread(void* data)
 			{
 				func_luaL_loadstring(IFace->GetState(), action->data);
 				IFace->PCall(0, LUA_MULTRET, 0);
+			} else if (strcmp(action->type, "initclasses"))
+			{
+				func_InitLuaClasses(IFace);
+			} else if (strcmp(action->type, "initlibraries"))
+			{
+				func_InitLuaLibraries(IFace);
 			}
 
 			delete action;
@@ -285,6 +334,8 @@ unsigned LuaThread(void* data)
 		thread_data->actions.clear();
 
 		thread_data->mutex.Unlock();
+
+		ThreadSleep(1); // Sleep 1 ms
 	}
 
 	func_CloseLuaInterface(IFace);
@@ -305,8 +356,7 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 	if (thread->threaded) {
 		CreateSimpleThread(LuaThread, thread);
 	} else {
-		ILuaInterface* IFace = CreateInterface();
-		thread->IFace = IFace;
+		thread->IFace = CreateInterface();
 	}
 
 	return 0;
@@ -314,7 +364,6 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 LUA_FUNCTION(LuaThread_CloseInterface)
 {
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	LUA_ILuaInterface* obj = GetUserdata(LUA, 0);
 
 	double id = obj->ID;
@@ -338,10 +387,8 @@ void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
 	LUA->SetField(-2, Name);
 }
 
-GMOD_MODULE_OPEN()
+void InitLuaThreaded(ILuaInterface* LUA)
 {
-	Symbols_Init();
-
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, LuaThread_GetAllInterfaces, "GetAllInterfaces");
@@ -351,9 +398,16 @@ GMOD_MODULE_OPEN()
 
 			LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop(2);
+}
+
+GMOD_MODULE_OPEN()
+{
+	Symbols_Init();
+
+	InitLuaThreaded((ILuaInterface*)LUA);
 
 	LUA->CreateTable();
-	LUA->SetField( GarrysMod::Lua::INDEX_REGISTRY, table_name );
+	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
 	metatype = LUA->CreateMetaTable(metaname);
 
@@ -378,9 +432,9 @@ GMOD_MODULE_OPEN()
 	LUA->PushCFunction(ILuaInterface_InitClasses);
 	LUA->SetField(-2, "InitClasses");
 
-	// NOTE: Currently broken?
-	//LUA->PushCFunction(ILuaInterface_InitLibraries);
-	//LUA->SetField(-2, "InitLibraries");
+	// NOTE: This can crash?!?
+	LUA->PushCFunction(ILuaInterface_InitLibraries);
+	LUA->SetField(-2, "InitLibraries");
 
 	LUA->Pop(1);
 
