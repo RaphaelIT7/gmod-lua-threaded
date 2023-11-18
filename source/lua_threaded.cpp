@@ -301,7 +301,7 @@ LUA_FUNCTION(ILuaInterface_GetTable)
 
 ILuaValue* GetOrCreate(ILuaThread* thread, const char* key)
 {
-	ILuaValue* val = thread->shared_table[key];
+	ILuaValue* val = thread->shared_table[(std::string)key];
 
 	if (val)
 		return val;
@@ -326,7 +326,7 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 
 	if (type == Type::Nil)
 	{
-		ILuaValue* val = thread->shared_table[key];
+		ILuaValue* val = thread->shared_table[(std::string)key];
 		if (val)
 		{
 			thread->shared_table.erase(key);
@@ -364,7 +364,7 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 		val->ang = LUA->GetAngle(3);
 	}
 
-	thread->shared_table[key] = val;
+	thread->shared_table[(std::string)key] = val;
 
 	return 0;
 }
@@ -398,16 +398,12 @@ LUA_FUNCTION(LuaThread_GetInterface)
 
 int LuaPanic(lua_State* state)
 {
-	func_LuaPanic(state);
-
-	return 0;
+	return func_LuaPanic(state);;
 }
 
 int AdvancedLuaErrorReporter(lua_State* state)
 {
-	func_AdvancedLuaErrorReporter(state);
-
-	return 0;
+	return func_AdvancedLuaErrorReporter(state);
 }
 
 ILuaInterface* CreateInterface()
