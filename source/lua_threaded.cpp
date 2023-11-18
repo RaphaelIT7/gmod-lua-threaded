@@ -9,7 +9,7 @@
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
 
-CThreadFastMutex* shared_table_mutex;
+CThreadFastMutex shared_table_mutex;
 std::unordered_map<std::string, ILuaValue*> shared_table;
 
 static int32_t metatype = GarrysMod::Lua::Type::NONE;
@@ -367,12 +367,12 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	return 0;
 }
 
-LUA_FUNCTION(LuaThreaded_GetTable)
+LUA_FUNCTION(LuaThread_GetTable)
 {
     ILuaInterface* ILUA = (ILuaInterface*)LUA;
 
     LUA->CreateTable();
-    shared_table_mutex->Lock();
+    shared_table_mutex.Lock();
     for (auto& [key, value] : shared_table)
     {
         switch (value->type)
@@ -408,7 +408,7 @@ LUA_FUNCTION(LuaThreaded_GetTable)
 
         LUA->SetField(-2, key.c_str());
     }
-    shared_table_mutex->Unlock();
+    shared_table_mutex.Unlock();
 
     return 1;
 }
@@ -486,7 +486,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 
 	if (type == Type::Nil)
 	{
-		shared_table_mutex->Lock();
+		shared_table_mutex.Lock();
 		if (shared_table.find(key) == shared_table.end())
 			return 0;
 
@@ -496,7 +496,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 			shared_table.erase(key);
 			delete val;
 		}
-		shared_table_mutex->Unlock();
+		shared_table_mutex.Unlock();
 
 		return 0;
 	}
@@ -506,9 +506,9 @@ LUA_FUNCTION(LuaThread_SetValue)
 
 	FillValue(LUA, val, 2, type);
 
-	shared_table_mutex->Lock();
+	shared_table_mutex.Lock();
 	shared_table[key] = val;
-	shared_table_mutex->Unlock();
+	shared_table_mutex.Unlock();
 
 	return 0;
 }
