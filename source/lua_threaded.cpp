@@ -18,6 +18,11 @@ struct ILuaValue
 	QAngle ang;
 };
 
+struct ILuaKey
+{
+	const char* name;
+};
+
 struct ILuaAction
 {
 	const char* type;
@@ -30,7 +35,7 @@ struct ILuaThread
 	CThreadFastMutex mutex;
 
 	std::vector<ILuaAction*> actions;
-	std::unordered_map<std::string, ILuaValue*> shared_table;
+	std::unordered_map<ILuaKey*, ILuaValue*> shared_table;
 
 	bool run = true;
 	bool threaded = false;
@@ -293,20 +298,35 @@ LUA_FUNCTION(ILuaInterface_GetTable)
 			continue;
 		}
 
-		LUA->SetField(-2, key.c_str());
+		LUA->SetField(-2, key->name);
 	}
 
 	return 1;
 }
 
-ILuaValue* GetOrCreate(ILuaThread* thread, std::string key)
+ILuaKey* GetKeyOrCreate(ILuaThread* thread, const char* name, bool dontcreate = false)
 {
-	if (thread->shared_table.find(key) == thread->shared_table.end())
+	for (auto& [key, value] : thread->shared_table) // ToDo: Fix this shit code
 	{
-		ILuaValue* val = thread->shared_table[key];
+		if (strcmp(key->name, name) == 0)
+			return key;
+	}
+	
+	ILuaKey* val = nullptr;
+	if (!dontcreate) {
+		val = new ILuaKey;
+		val->name = name;
+	}
 
-		if (val)
-			return val;
+	return val;
+}
+
+ILuaValue* GetOrCreate(ILuaThread* thread, const char* name)
+{
+	for (auto& [key, value] : thread->shared_table)
+	{
+		if (strcmp(key->name, name) == 0)
+			return value;
 	}
 
 	return new ILuaValue;
@@ -317,31 +337,31 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 	//ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILuaThread* thread = GetValidThread(LUA, 1);
 
-	std::string key;
+	const char* key;
 	int type;
 	if (ThreadInMainThread()) {
-		key = (std::string)LUA->CheckString(2);
+		key = LUA->CheckString(2);
 		type = LUA->GetType(3);
 	} else {
-		key = (std::string)LUA->CheckString(1);
+		key = LUA->CheckString(1);
 		type = LUA->GetType(2);
 	}
 
 	if (type == Type::Nil)
 	{
-		if (thread->shared_table.find(key) == thread->shared_table.end())
-			return 0;
-
-		ILuaValue* val = thread->shared_table[key];
-		if (val)
+		ILuaKey* ikey = GetKeyOrCreate(thread, key, true);
+		if (ikey)
 		{
-			thread->shared_table.erase(key);
+			ILuaValue* val = thread->shared_table[ikey];
+			thread->shared_table.erase(ikey);
 			delete val;
+			delete ikey;
 		}
 
 		return 0;
 	}
 
+	ILuaKey* IKey = GetKeyOrCreate(thread, key);
 	ILuaValue* val = GetOrCreate(thread, key);
 	val->type = type;
 	if (type == Type::Number)
@@ -370,7 +390,7 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 		val->ang = LUA->GetAngle(3);
 	}
 
-	thread->shared_table[key] = val;
+	thread->shared_table[IKey] = val;
 
 	return 0;
 }
