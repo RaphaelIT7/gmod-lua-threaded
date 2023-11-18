@@ -289,7 +289,7 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 	thread->threaded = !not_threaded;
 
 	if (thread->threaded) {
-		CreateSimpleThread(LuaThread, nullptr);
+		CreateSimpleThread(LuaThread, thread);
 	} else {
 		ILuaInterface* IFace = CreateInterface();
 		thread->IFace = IFace;
