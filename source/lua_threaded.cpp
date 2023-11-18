@@ -4,6 +4,7 @@
 #include <GarrysMod/Lua/LuaObject.h>
 #include <unordered_map>
 #include <lua.h>
+#include <vector>
 
 struct ILuaAction
 {
