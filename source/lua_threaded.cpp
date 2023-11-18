@@ -382,6 +382,7 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 LUA_FUNCTION(LuaThread_CloseInterface)
 {
+	CheckType(LUA, 1);
 	LUA_ILuaInterface* obj = GetUserdata(LUA, 1);
 
 	double id = obj->ID;
