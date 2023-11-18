@@ -440,12 +440,8 @@ LUA_FUNCTION(LuaThread_GetTable)
     shared_table_mutex.Lock();
     for (auto& [key, value] : shared_table)
     {
-        switch (value->type)
-        {
-			PushValue(LUA, value);
-        }
-
-        LUA->SetField(-2, key.c_str());
+		PushValue(LUA, value);
+		LUA->SetField(-2, key.c_str());
     }
     shared_table_mutex.Unlock();
 
