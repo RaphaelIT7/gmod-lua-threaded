@@ -316,14 +316,14 @@ unsigned LuaThread(void* data)
 
 		for (ILuaAction* action : thread_data->actions)
 		{
-			if (strcmp(action->type, "run"))
+			if (strcmp(action->type, "run") == 0)
 			{
 				func_luaL_loadstring(IFace->GetState(), action->data);
 				IFace->PCall(0, LUA_MULTRET, 0);
-			} else if (strcmp(action->type, "initclasses"))
+			} else if (strcmp(action->type, "initclasses") == 0)
 			{
 				func_InitLuaClasses(IFace);
-			} else if (strcmp(action->type, "initlibraries"))
+			} else if (strcmp(action->type, "initlibraries") == 0)
 			{
 				func_InitLuaLibraries(IFace);
 			}
