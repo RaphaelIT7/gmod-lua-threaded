@@ -530,8 +530,8 @@ void InitLuaThreaded(ILuaInterface* LUA, int id)
 
 			if (!ThreadInMainThread()) 
 			{
-				//Add_Func(LUA, ILuaInterface_GetTable, "GetTable");
-				//Add_Func(LUA, ILuaInterface_SetValue, "SetValue");
+				Add_Func(LUA, ILuaInterface_GetTable, "GetTable");
+				Add_Func(LUA, ILuaInterface_SetValue, "SetValue");
 			}
 
 			LUA->SetField(-2, "LuaThreaded");
