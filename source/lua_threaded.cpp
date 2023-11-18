@@ -5,8 +5,25 @@
 #include <unordered_map>
 #include <lua.h>
 
+struct ILuaAction
+{
+	const char* type;
+	const char* data;
+};
+
+struct ILuaThread
+{
+	ILuaInterface* IFace;
+	CThreadFastMutex mutex;
+
+	std::vector<ILuaAction*> actions;
+
+	bool run = true;
+	bool threaded = false;
+};
+
 int interfaces_count = 0;
-std::unordered_map<double, ILuaInterface*> interfaces;
+std::unordered_map<double, ILuaThread*> interfaces;
 
 static int32_t metatype = GarrysMod::Lua::Type::NONE;
 static const char metaname[] = "ILuaInterface";
@@ -141,10 +158,28 @@ LUA_FUNCTION_STATIC(newindex)
 */
 LUA_FUNCTION(ILuaInterface_RunString)
 {
-	ILuaInterface* IFace = Get(LUA, 1);
+	LUA_ILuaInterface* IData = GetUserdata(LUA, 1);
+	const char* str = LUA->CheckString(2);
 
-	func_luaL_loadstring(IFace->GetState(), LUA->CheckString(2)); // ToDo: Change this. The Interface will be on another Thread so fix this!
-	IFace->PCall(0, LUA_MULTRET, 0);
+	ILuaThread* thread = interfaces[IData->ID];
+	if (!thread)
+	{
+		LUA->ThrowError("Invalid ILuaInterface!");
+	}
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = "run";
+		action->data = str;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		func_luaL_loadstring(thread->IFace->GetState(), str);
+		thread->IFace->PCall(0, LUA_MULTRET, 0);
+	}
 
 	return 0;
 }
@@ -176,7 +211,7 @@ LUA_FUNCTION(LuaThread_GetInterface)
 
 	if (id < 0 || id > interfaces_count) { return 0; }
 
-	ILuaInterface* IFace = interfaces[id];
+	ILuaInterface* IFace = interfaces[id]->IFace;
 	if (!IFace) { return 0; }
 
 	Push(LUA, IFace, id);
@@ -198,18 +233,11 @@ LUA_FUNCTION(AdvancedLuaErrorReporter)
 	return 0;
 }
 
-LUA_FUNCTION(LuaThread_CreateInterface)
+ILuaInterface* CreateInterface(ILuaThread* data)
 {
 	ILuaInterface* IFace = func_CreateLuaInterface(true);
 
-	interfaces_count += 1;
-	interfaces[interfaces_count] = IFace;
-
-	Push(LUA, IFace, interfaces_count);
-
-	if (IFace->GetState() == nullptr) {
-		Msg("ILuaInterface got no State!\n");
-	}
+	data->IFace = IFace;
 
 	//IFace->Init(); We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
@@ -221,24 +249,72 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 	IFace->SetState(state); // Set the State
 
-	return 1;
+	return IFace;
+}
+
+unsigned LuaThread(void* data)
+{
+	ILuaThread* thread_data = (ILuaThread*)data;
+	ILuaInterface* IFace = CreateInterface(thread_data);
+
+	while(thread_data->run)
+	{
+		thread_data->mutex.Lock();
+
+		for (ILuaAction* action : thread_data->actions)
+		{
+			if (strcmp(action->type, "run"))
+			{
+				func_luaL_loadstring(IFace->GetState(), action->data);
+				IFace->PCall(0, LUA_MULTRET, 0);
+			}
+
+			delete action;
+		}
+
+		thread_data->actions.clear();
+
+		thread_data->mutex.Unlock();
+	}
+
+	func_CloseLuaInterface(IFace);
+
+	return 0;
+}
+
+LUA_FUNCTION(LuaThread_CreateInterface)
+{
+	bool not_threaded = LUA->GetBool(1);
+
+	ILuaThread* thread = new ILuaThread;
+	thread->threaded = !not_threaded;
+
+	if (thread->threaded) {
+		CreateSimpleThread(LuaThread, nullptr);
+	} else {
+		ILuaInterface* IFace = CreateInterface(thread);
+	}
+
+	return 0;
 }
 
 LUA_FUNCTION(LuaThread_CloseInterface)
 {
 	ILuaInterface* ILUA = (ILuaInterface*)LUA;
-	ILuaObject* obj = ILUA->GetObject(0);
+	LUA_ILuaInterface* obj = GetUserdata(LUA, 0);
 
-	double id = obj->GetMemberDouble("ID", -1);
-	if (id == -1) 
+	double id = obj->ID;
+	if (!interfaces[id]) 
 	{
-		LUA->ThrowError("Failed to get a Valid ID!");
+		LUA->ThrowError("Invalid ILuaInterface!");
 	}
 
-	ILuaInterface* IFace = interfaces[id];
-	func_CloseLuaInterface(IFace);
-
-	interfaces[id] = nullptr;
+	if (interfaces[obj->ID]->threaded) {
+		interfaces[id]->run = false;
+	} else {
+		func_CloseLuaInterface(obj->IFace);
+		interfaces[id] = nullptr;
+	}
 
 	return 0;
 }
