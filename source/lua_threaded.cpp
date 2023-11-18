@@ -416,6 +416,7 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 			}
 			break;
 		default:
+			LUA->PushNil();
 			break;
 	}
 }
@@ -440,6 +441,18 @@ LUA_FUNCTION(LuaThread_GetTable)
     return 1;
 }
 
+void SafeDelete(ILuaValue* value)
+{
+	if (value->type == Type::Table)
+	{
+		for (auto& [key, val] : value->tbl)
+		{
+			SafeDelete(val);
+		}
+	}
+
+	delete value;
+}
 
 ILuaValue* GetOrCreate(std::string key)
 {
@@ -448,8 +461,17 @@ ILuaValue* GetOrCreate(std::string key)
 	{
 		ILuaValue* val = it->second;
 
-		if (val)
+		if (val) {
+			if (val->type == Type::Table)
+			{
+				for (auto& [key, val] : val->tbl)
+				{
+					SafeDelete(val);
+				}
+			}
+
 			return val;
+		}
 	}
 
 	return new ILuaValue;
@@ -521,7 +543,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 		if (val)
 		{
 			shared_table.erase(key);
-			delete val;
+			SafeDelete(val);
 		}
 		shared_table_mutex.Unlock();
 
