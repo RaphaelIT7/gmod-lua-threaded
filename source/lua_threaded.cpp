@@ -188,6 +188,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
 		return;
 	}
+	Msg("[Code] %i\n", result);
 
 	LUA->PCall(0, LUA_MULTRET, 0);
 }
@@ -354,7 +355,7 @@ unsigned LuaThread(void* data)
 		ThreadSleep(1); // Sleep 1 ms
 	}
 
-	ShutdowInterface(thread_data);
+	//ShutdowInterface(thread_data); // ToDo: Fix the crash
 
 	return 0;
 }
