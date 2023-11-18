@@ -294,6 +294,8 @@ LUA_FUNCTION(ILuaInterface_GetTable)
 
 		LUA->SetField(-2, key.c_str());
 	}
+
+	return 1;
 }
 
 ILuaValue* GetOrCreate(ILuaThread* thread, const char* key)
@@ -354,6 +356,8 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 	}
 
 	thread->shared_table[key] = val;
+
+	return 0;
 }
 
 /*
