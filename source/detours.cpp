@@ -10,6 +10,7 @@ TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 Tlua_atpanic func_lua_atpanic;
 luaL_loadstring func_luaL_loadstring;
 luaL_openlibs func_luaL_openlibs;
+lua_tostring func_lua_tostring;
 
 InitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
