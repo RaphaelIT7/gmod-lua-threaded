@@ -33,6 +33,8 @@ struct ILuaThread
 
 	bool run = true;
 	bool threaded = false;
+	
+	int id = -1;
 };
 
 int interfaces_count = 0;
@@ -400,6 +402,7 @@ ILuaInterface* CreateInterface()
 	IFace->SetState(state); // Set the State
 
 	InitLuaThreaded(IFace);
+	InitMetaTable(IFace);
 
 	return IFace;
 }
@@ -409,6 +412,11 @@ unsigned LuaThread(void* data)
 	ILuaThread* thread_data = (ILuaThread*)data;
 	ILuaInterface* IFace = CreateInterface();
 	thread_data->IFace = IFace;
+
+	IFace->PushSpecial(SPECIAL_GLOB);
+		Push((ILuaBase*)IFace, IFace, thread_data->id);
+		IFace->SetField(-2, "Interface");
+	IFace->Pop(1);
 
 	while(thread_data->run)
 	{
@@ -452,6 +460,8 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 	interfaces_count += 1;
 	interfaces[interfaces_count] = thread;
+
+	thread->id = interfaces_count;
 
 	if (thread->threaded) {
 		CreateSimpleThread(LuaThread, thread);
@@ -510,12 +520,8 @@ void InitLuaThreaded(ILuaInterface* LUA)
 	LUA->Pop(2);
 }
 
-GMOD_MODULE_OPEN()
+void InitMetaTable(ILuaInterface* LUA)
 {
-	Symbols_Init();
-
-	InitLuaThreaded((ILuaInterface*)LUA);
-
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
@@ -553,6 +559,15 @@ GMOD_MODULE_OPEN()
 	LUA->SetField(-2, "SetValue");
 
 	LUA->Pop(1);
+}
+
+GMOD_MODULE_OPEN()
+{
+	Symbols_Init();
+
+	InitLuaThreaded((ILuaInterface*)LUA);
+
+	InitMetaTable((ILuaInterface*)LUA);
 
 	return 0;
 }
