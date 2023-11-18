@@ -310,7 +310,7 @@ ILuaValue* GetOrCreate(ILuaThread* thread, const char* key)
 
 LUA_FUNCTION(ILuaInterface_SetValue)
 {
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	//ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILuaThread* thread = GetValidThread(LUA, 1);
 
 	const char* key = LUA->CheckString(2);
@@ -519,12 +519,7 @@ LUA_FUNCTION(LuaThread_Msg)
 {
 	const char* msg = LUA->CheckString(1);
 
-	LUA->PushSpecial(SPECIAL_GLOB);
-		LUA->GetField(-1, "__InterfaceID");
-		int id = LUA->GetNumber(0);
-	LUA->Pop(2);
-
-	Msg("[LuaThreaded Thread %i] %s\n", id, msg);
+	Msg("[LuaThreaded] %s\n", msg);
 
 	return 0;
 }
