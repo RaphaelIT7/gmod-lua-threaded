@@ -297,6 +297,18 @@ ILuaInterface* CreateInterface()
 	return IFace;
 }
 
+void ShutdowInterface(ILuaThread* thread)
+{
+	for (ILuaAction* action : thread->actions)
+	{
+		delete action;
+	}
+
+	func_CloseLuaInterface(thread->IFace);
+
+	delete thread;
+}
+
 unsigned LuaThread(void* data)
 {
 	ILuaThread* thread_data = (ILuaThread*)data;
@@ -332,7 +344,7 @@ unsigned LuaThread(void* data)
 		ThreadSleep(1); // Sleep 1 ms
 	}
 
-	func_CloseLuaInterface(IFace);
+	ShutdowInterface(thread_data);
 
 	return 0;
 }
@@ -371,8 +383,7 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	if (interfaces[obj->ID]->threaded) {
 		interfaces[id]->run = false;
 	} else {
-		func_CloseLuaInterface(obj->IFace);
-		interfaces[id] = nullptr;
+		ShutdowInterface(interfaces[id]);
 	}
 
 	return 0;
@@ -649,8 +660,14 @@ GMOD_MODULE_CLOSE()
 		if (thread->threaded) {
 			thread->run = false;
 		} else {
-			func_CloseLuaInterface(thread->IFace);
+			ShutdowInterface(thread);
 		}
+	}
+
+	for (auto& [key, val] : shared_table)
+	{
+		PushValue(LUA, val);
+		LUA->SetField(-2, key.c_str());
 	}
 
 	return 0;
