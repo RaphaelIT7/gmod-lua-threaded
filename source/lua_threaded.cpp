@@ -390,7 +390,7 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	if (!thread)
 	{
 		Msg("Failed to get Thread somehow.");
-		return;
+		return 0;
 	}
 
 	if (thread->threaded) {
