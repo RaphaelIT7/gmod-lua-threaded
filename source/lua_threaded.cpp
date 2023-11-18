@@ -180,6 +180,7 @@ LUA_FUNCTION_STATIC(newindex)
 void RunString(ILuaInterface* LUA, const char* str)
 {
 	int result = func_luaL_loadstring(LUA->GetState(), str);
+	Msg("[Code] %i\n", result);
 	if (result != 0)
 	{
 		const char* err = LUA->GetString(-1);
@@ -188,7 +189,6 @@ void RunString(ILuaInterface* LUA, const char* str)
 		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
 		return;
 	}
-	Msg("[Code] %i\n", result);
 
 	LUA->PCall(0, LUA_MULTRET, 0);
 }
@@ -279,7 +279,7 @@ LUA_FUNCTION(LuaThread_GetInterface)
 	return 1;
 }
 
-int LuaPanic(lua_State* state)
+/*int LuaPanic(lua_State* state)
 {
 	return func_LuaPanic(state);;
 }
@@ -287,7 +287,7 @@ int LuaPanic(lua_State* state)
 int AdvancedLuaErrorReporter(lua_State* state)
 {
 	return func_AdvancedLuaErrorReporter(state);
-}
+}*/
 
 ILuaInterface* CreateInterface()
 {
