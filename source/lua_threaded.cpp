@@ -167,6 +167,22 @@ LUA_FUNCTION_STATIC(newindex)
 	return 0;
 }
 
+void RunString(ILuaInterface* LUA, const char* str)
+{
+	int result = func_luaL_loadstring(LUA->GetState(), str);
+	if (result != 0)
+	{
+		const char* err = LUA->GetString(-1);
+		LUA->Pop();
+
+		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
+
+		return 0;
+	}
+
+	LUA->PCall(0, LUA_MULTRET, 0);
+}
+
 LUA_FUNCTION(ILuaInterface_RunString)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
@@ -182,18 +198,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		int result = func_luaL_loadstring(thread->IFace->GetState(), str);
-		if (result != 0)
-		{
-			const char* err = thread->IFace->GetString(-1);
-			thread->IFace->Pop();
-
-			Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
-
-			return 0;
-		}
-
-		thread->IFace->PCall(0, LUA_MULTRET, 0);
+		RunString(thread->IFace, str);
 	}
 
 	return 0;
@@ -309,18 +314,7 @@ unsigned LuaThread(void* data)
 		{
 			if (strcmp(action->type, "run") == 0)
 			{
-				int result = func_luaL_loadstring(IFace->GetState(), action->data);
-				if (result != 0)
-				{
-					const char* err = IFace->GetString(-1);
-					IFace->Pop();
-
-					Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
-
-					return 0;
-				}
-
-				IFace->PCall(0, LUA_MULTRET, 0);
+				RunString(IFace, action->data);
 			} else if (strcmp(action->type, "initclasses") == 0)
 			{
 				func_InitLuaClasses(IFace);
