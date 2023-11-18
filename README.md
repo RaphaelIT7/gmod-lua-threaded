@@ -10,4 +10,3 @@ This project aims to add a multithreading library to Gmod.
 - [ ] Shared Table  
 - [ ] Add all Gmod libraries  
 - [ ] Created ILuaInterface should load all Gmod scripts/allow one to do so  
-- [ ] Cleanup the code  
