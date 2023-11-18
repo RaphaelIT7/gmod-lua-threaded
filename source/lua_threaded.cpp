@@ -377,5 +377,13 @@ GMOD_MODULE_CLOSE()
 	LUA->PushNil();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, metaname);
 
+	for (auto& [id, thread]: interfaces) {
+		if (thread->threaded) {
+			thread->run = false;
+		} else {
+			func_CloseLuaInterface(thread->IFace);
+		}
+	}
+
 	return 0;
 }
