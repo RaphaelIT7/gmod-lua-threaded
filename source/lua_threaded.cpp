@@ -180,7 +180,7 @@ LUA_FUNCTION_STATIC(newindex)
 
 void RunString(ILuaInterface* LUA, const char* str)
 {
-	LUA->RunStringEx("", "", str, true, true, true);
+	LUA->RunStringEx("", "", str, true, true, true, true);
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
