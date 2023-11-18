@@ -4,9 +4,9 @@ This project aims to add a multithreading library to Gmod.
 
 ## What is implemented
 - [x] Lua Panics handled  
+- [x] print should work  
 
 ## ToDo/Testing
 - [ ] Shared Table  
-- [ ] Add all Gmod libraries (Currently crashes upon loading it. Same crash as print)  
-- [ ] Print should work (Currently crashes inside GMOD_Print `lua_shared.so`)  
-- [ ] Created ILuaInterface should load all Gmod scripts/allow one to do so´ 
+- [ ] Add all Gmod libraries  
+- [ ] Created ILuaInterface should load all Gmod scripts/allow one to do so  

@@ -314,8 +314,16 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 	//ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILuaThread* thread = GetValidThread(LUA, 1);
 
-	const char* key = LUA->CheckString(2);
-	int type = LUA->GetType(3);
+	const char* key;
+	int type;
+	if (ThreadInMainThread()) {
+		key = LUA->CheckString(2);
+		type = LUA->GetType(3);
+	} else {
+		key = LUA->CheckString(1);
+		type = LUA->GetType(2);
+	}
+
 	if (type == Type::Nil)
 	{
 		ILuaValue* val = thread->shared_table[key];
@@ -569,7 +577,6 @@ void InitMetaTable(ILuaInterface* LUA)
 	LUA->PushCFunction(ILuaInterface_InitClasses);
 	LUA->SetField(-2, "InitClasses");
 
-	// NOTE: This can crash?!?
 	LUA->PushCFunction(ILuaInterface_InitLibraries);
 	LUA->SetField(-2, "InitLibraries");
 
