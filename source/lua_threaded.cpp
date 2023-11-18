@@ -292,8 +292,7 @@ ILuaValue* GetOrCreate(ILuaThread* thread, const char* key)
 	if (val)
 		return val;
 
-	ILuaValue* val = new ILuaValue;
-	return val;
+	return new ILuaValue;
 }
 
 LUA_FUNCTION(ILuaInterface_SetValue)

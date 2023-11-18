@@ -8,7 +8,5 @@ jobs:
     uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
     with:
       PROJECT_NAME: "lua_threaded"
-      BUILD_64x: "false"
-      LINUX_FILEEXTENTION: "dll"
       BUILD_WINDOWS: "false"
       ARTIFACT_EXPIRE: "1"
