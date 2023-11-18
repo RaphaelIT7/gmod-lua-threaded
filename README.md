@@ -1,6 +1,7 @@
 # gmod-lua-threaded
 
 This project aims to add a multithreading library to Gmod.  
+The Goal is to be able to create a ILuaInterface with all of Gmod's libraries, functions and classes.  
 
 ## What is implemented
 - [x] Lua Panics handled  

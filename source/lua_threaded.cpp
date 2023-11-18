@@ -191,7 +191,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 		return;
 	}
 
-	LUA->CallFunctionProtected(0, LUA_MULTRET, 0);
+	LUA->PCall(0, LUA_MULTRET, 0);
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
