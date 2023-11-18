@@ -519,7 +519,12 @@ LUA_FUNCTION(LuaThread_Msg)
 {
 	const char* msg = LUA->CheckString(1);
 
-	Msg("[LuaThreaded Thread %i] %s", ThreadGetCurrentId(), msg);
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "__InterfaceID");
+		int id = LUA->GetNumber(0);
+	LUA->Pop(2);
+
+	Msg("[LuaThreaded Thread %i] %s\n", id, msg);
 
 	return 0;
 }
@@ -532,6 +537,9 @@ void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
 void InitLuaThreaded(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->PushNumber(0);
+		LUA->SetField(-2, "__InterfaceID");
+
 		LUA->CreateTable();
 			Add_Func(LUA, LuaThread_GetAllInterfaces, "GetAllInterfaces");
 			Add_Func(LUA, LuaThread_GetInterface, "GetInterface");
