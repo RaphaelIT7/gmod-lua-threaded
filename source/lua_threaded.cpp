@@ -176,8 +176,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 		LUA->Pop();
 
 		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
-
-		return 0;
+		return;
 	}
 
 	LUA->PCall(0, LUA_MULTRET, 0);
