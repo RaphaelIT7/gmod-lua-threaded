@@ -65,6 +65,7 @@ inline LUA_ILuaInterface *GetUserdata(ILuaBase *LUA, int index)
 static ILuaInterface* Get(ILuaBase* LUA, int index)
 {
 	CheckType(LUA, index);
+
 	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
 	if(udata == nullptr)
 		LUA->ArgError(index, invalid_error);
@@ -126,15 +127,25 @@ static void Destroy(ILuaBase *LUA, int index)
 
 static ILuaThread* GetValidThread(ILuaBase* LUA, double index)
 {
-	LUA_ILuaInterface* IData = GetUserdata(LUA, index);
-
-	ILuaThread* thread = interfaces[IData->ID];
-	if (!thread)
+	if (ThreadInMainThread())
 	{
-		LUA->ThrowError("Invalid ILuaInterface!");
-	}
+		LUA_ILuaInterface* IData = GetUserdata(LUA, index);
 
-	return thread;
+		ILuaThread* thread = interfaces[IData->ID];
+		if (!thread)
+		{
+			LUA->ThrowError("Invalid ILuaInterface!");
+		}
+
+		return thread;
+	} else {
+		LUA->PushSpecial(SPECIAL_GLOB);
+			LUA->GetField(-1, "__InterfaceID");
+			double id = LUA->GetNumber(0);
+		LUA->Pop(2);
+
+		return interfaces[id];
+	}
 }
 
 /*
@@ -401,7 +412,7 @@ ILuaInterface* CreateInterface()
 	IFace->SetState(state); // Set the State
 
 	InitLuaThreaded(IFace);
-	InitMetaTable(IFace);
+	//InitMetaTable(IFace);
 
 	return IFace;
 }
@@ -413,9 +424,18 @@ unsigned LuaThread(void* data)
 	thread_data->IFace = IFace;
 
 	IFace->PushSpecial(SPECIAL_GLOB);
-		Push((ILuaBase*)IFace, IFace, thread_data->id);
-		IFace->SetField(-2, "Interface");
-	IFace->Pop(1);
+		IFace->PushNumber(thread_data->id);
+		IFace->SetField(-2, "__InterfaceID");
+
+		IFace->CreateTable();
+			IFace->PushCFunction(ILuaInterface_GetTable);
+			IFace->SetField(-2, "GetTable");
+
+			IFace->PushCFunction(ILuaInterface_SetValue);
+			IFace->SetField(-2, "SetValue");
+
+			IFace->SetField(-2, "Interface");
+	IFace->Pop(2);
 
 	while(thread_data->run)
 	{
