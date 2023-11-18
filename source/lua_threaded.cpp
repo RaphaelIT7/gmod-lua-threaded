@@ -417,15 +417,7 @@ ILuaInterface* CreateInterface()
 
 	//InitMetaTable(IFace);
 
-	func_luaopen_base(state);
-	func_luaopen_bit(state);
-	func_luaopen_debug(state);
-	func_luaopen_jit(state);
-	func_luaopen_math(state);
-	func_luaopen_os(state);
-	func_luaopen_package(state);
-	func_luaopen_string(state);
-	func_luaopen_table(state);
+	func_luaL_openlibs(state);
 
 	return IFace;
 }
