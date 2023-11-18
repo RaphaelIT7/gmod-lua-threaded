@@ -255,6 +255,7 @@ unsigned LuaThread(void* data)
 {
 	ILuaThread* thread_data = (ILuaThread*)data;
 	ILuaInterface* IFace = CreateInterface();
+	thread_data->IFace = IFace;
 
 	while(thread_data->run)
 	{
