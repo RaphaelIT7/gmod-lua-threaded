@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <lua.h>
 #include <vector>
+#include "CLuaGameCallback.h"
 //#include <player.h>
 
 struct ILuaValue
@@ -405,19 +406,19 @@ ILuaInterface* CreateInterface()
 {
 	ILuaInterface* IFace = func_CreateLuaInterface(true);
 
-	//IFace->Init(); We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+	IFace->Init(new CLuaGameCallback(), true); //We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
-	lua_State* state = func_luaL_newstate();
+	//lua_State* state = func_luaL_newstate();
 
-	func_lua_atpanic(state, LuaPanic);
+	//func_lua_atpanic(state, LuaPanic);
 	
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 
-	IFace->SetState(state); // Set the State
+	//IFace->SetState(state); // Set the State
 
 	//InitMetaTable(IFace);
 
-	func_luaL_openlibs(state);
+	//func_luaL_openlibs(state);
 
 	return IFace;
 }

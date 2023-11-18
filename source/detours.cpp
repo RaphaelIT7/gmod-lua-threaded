@@ -15,6 +15,13 @@ lua_tostring func_lua_tostring;
 InitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
 
+CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
+CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
+CLuaGameCallback_ErrorPrint func_CLuaGameCallback_ErrorPrint;
+CLuaGameCallback_LuaError func_CLuaGameCallback_LuaError;
+CLuaGameCallback_Msg func_CLuaGameCallback_Msg;
+CLuaGameCallback_MsgColour func_CLuaGameCallback_MsgColour;
+
 template<class T>
 void CheckFunction(T func, const char* name)
 {
@@ -64,4 +71,23 @@ void Symbols_Init()
 
 	func_InitLuaClasses = (InitLuaClasses)symfinder.Resolve(server_loader.GetModule(), InitLuaClassesSym.name.c_str(), InitLuaClassesSym.length);
 	CheckFunction(func_InitLuaClasses, "InitLuaClasses");
+
+
+	func_CLuaGameCallback_CreateLuaObject = (CLuaGameCallback_CreateLuaObject)symfinder.Resolve(server_loader.GetModule(), CLuaGameCallback_CreateLuaObjectSym.name.c_str(), CLuaGameCallback_CreateLuaObjectSym.length);
+	CheckFunction(func_CLuaGameCallback_CreateLuaObject, "CLuaGameCallback::CreateLuaObject");
+
+	func_CLuaGameCallback_DestroyLuaObject = (CLuaGameCallback_DestroyLuaObject)symfinder.Resolve(server_loader.GetModule(), CLuaGameCallback_DestroyLuaObjectSym.name.c_str(), CLuaGameCallback_DestroyLuaObjectSym.length);
+	CheckFunction(func_CLuaGameCallback_DestroyLuaObject, "CLuaGameCallback::DestroyLuaObject");
+
+	func_CLuaGameCallback_ErrorPrint = (CLuaGameCallback_ErrorPrint)symfinder.Resolve(server_loader.GetModule(), CLuaGameCallback_ErrorPrintSym.name.c_str(), CLuaGameCallback_ErrorPrintSym.length);
+	CheckFunction(func_CLuaGameCallback_ErrorPrint, "CLuaGameCallback::ErrorPrint");
+
+	func_CLuaGameCallback_LuaError = (CLuaGameCallback_LuaError)symfinder.Resolve(server_loader.GetModule(), CLuaGameCallback_LuaErrorSym.name.c_str(), CLuaGameCallback_LuaErrorSym.length);
+	CheckFunction(func_CLuaGameCallback_LuaError, "CLuaGameCallback::LuaError");
+
+	func_CLuaGameCallback_Msg = (CLuaGameCallback_Msg)symfinder.Resolve(server_loader.GetModule(), CLuaGameCallback_MsgSym.name.c_str(), CLuaGameCallback_MsgSym.length);
+	CheckFunction(func_CLuaGameCallback_Msg, "CLuaGameCallback::Msg");
+
+	func_CLuaGameCallback_MsgColour = (CLuaGameCallback_MsgColour)symfinder.Resolve(server_loader.GetModule(), CLuaGameCallback_MsgColourSym.name.c_str(), CLuaGameCallback_MsgColourSym.length);
+	CheckFunction(func_CLuaGameCallback_MsgColour, "CLuaGameCallback::MsgColour");
 }

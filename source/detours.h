@@ -53,4 +53,32 @@ typedef void (*InitLuaClasses)(ILuaInterface*);
 const Symbol InitLuaClassesSym = Symbol::FromName("_Z14InitLuaClassesP13ILuaInterface");
 extern InitLuaClasses func_InitLuaClasses;
 
+/*
+	CLuaGameCallback stuff
+*/
+
+typedef ILuaObject* (*CLuaGameCallback_CreateLuaObject)(void*);
+const Symbol CLuaGameCallback_CreateLuaObjectSym = Symbol::FromName("_ZN16CLuaGameCallback15CreateLuaObjectEv");
+extern CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
+
+typedef void (*CLuaGameCallback_DestroyLuaObject)(void*, ILuaObject*);
+const Symbol CLuaGameCallback_DestroyLuaObjectSym = Symbol::FromName("_ZN16CLuaGameCallback16DestroyLuaObjectEP10ILuaObject");
+extern CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
+
+typedef void (*CLuaGameCallback_ErrorPrint)(void*, const char*, bool);
+const Symbol CLuaGameCallback_ErrorPrintSym = Symbol::FromName("_ZN16CLuaGameCallback10ErrorPrintEPKcb");
+extern CLuaGameCallback_ErrorPrint func_CLuaGameCallback_ErrorPrint;
+
+typedef void (*CLuaGameCallback_LuaError)(void*, void*);
+const Symbol CLuaGameCallback_LuaErrorSym = Symbol::FromName("_ZN16CLuaGameCallback8LuaErrorEP9CLuaError");
+extern CLuaGameCallback_LuaError func_CLuaGameCallback_LuaError;
+
+typedef void (*CLuaGameCallback_Msg)(void*, const char*, bool);
+const Symbol CLuaGameCallback_MsgSym = Symbol::FromName("_ZN16CLuaGameCallback3MsgEPKcb");
+extern CLuaGameCallback_Msg func_CLuaGameCallback_Msg;
+
+typedef void (*CLuaGameCallback_MsgColour)(void*, const char*, const Color&);
+const Symbol CLuaGameCallback_MsgColourSym = Symbol::FromName("_ZN16CLuaGameCallback9MsgColourEPKcRK5Color");
+extern CLuaGameCallback_MsgColour func_CLuaGameCallback_MsgColour;
+
 extern void Symbols_Init();
