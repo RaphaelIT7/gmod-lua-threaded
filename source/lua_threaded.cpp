@@ -5,13 +5,16 @@
 #include <unordered_map>
 #include <lua.h>
 #include <vector>
+//#include <player.h>
 
 struct ILuaValue
 {
 	int type;
 
-	int value1;
-	const char* value2;
+	int number;
+	const char* string;
+	Vector vec;
+	QAngle ang;
 };
 
 struct ILuaAction
@@ -26,7 +29,7 @@ struct ILuaThread
 	CThreadFastMutex mutex;
 
 	std::vector<ILuaAction*> actions;
-	std::unordered_map<std::string, ILuaValue> shared_table;
+	std::unordered_map<std::string, ILuaValue*> shared_table;
 
 	bool run = true;
 	bool threaded = false;
@@ -46,18 +49,18 @@ struct LUA_ILuaInterface
 	int ID;
 };
 
-inline void CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
+inline void CheckType(ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, metatype))
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-inline LUA_ILuaInterface *GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
+inline LUA_ILuaInterface *GetUserdata(ILuaBase *LUA, int index)
 {
 	return LUA->GetUserType<LUA_ILuaInterface>(index, metatype);
 }
 
-static ILuaInterface* Get(GarrysMod::Lua::ILuaBase* LUA, int index)
+static ILuaInterface* Get(ILuaBase* LUA, int index)
 {
 	CheckType(LUA, index);
 	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
@@ -67,7 +70,7 @@ static ILuaInterface* Get(GarrysMod::Lua::ILuaBase* LUA, int index)
 	return udata->IFace;
 }
 
-void Push(GarrysMod::Lua::ILuaBase* LUA, ILuaInterface* Interface, int ID)
+void Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
 {
 	if(Interface == nullptr)
 	{
@@ -75,7 +78,7 @@ void Push(GarrysMod::Lua::ILuaBase* LUA, ILuaInterface* Interface, int ID)
 		return;
 	}
 
-	LUA->GetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
+	LUA->GetField(INDEX_REGISTRY, table_name);
 	LUA->PushUserdata(Interface);
 	LUA->GetTable(-2);
 	if(LUA->IsType(-1, metatype))
@@ -102,7 +105,7 @@ void Push(GarrysMod::Lua::ILuaBase* LUA, ILuaInterface* Interface, int ID)
 	LUA->Remove(-2);
 }
 
-static void Destroy(GarrysMod::Lua::ILuaBase *LUA, int32_t index)
+static void Destroy(ILuaBase *LUA, int index)
 {
 	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
 	if (udata == nullptr)
@@ -110,7 +113,7 @@ static void Destroy(GarrysMod::Lua::ILuaBase *LUA, int32_t index)
 
 	ILuaInterface* IFace = udata->IFace;
 
-	LUA->GetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
+	LUA->GetField(INDEX_REGISTRY, table_name);
 	LUA->PushUserdata(IFace);
 	LUA->PushNil();
 	LUA->SetTable(-3);
@@ -119,6 +122,22 @@ static void Destroy(GarrysMod::Lua::ILuaBase *LUA, int32_t index)
 	LUA->SetUserType(index, nullptr);
 }
 
+static ILuaThread* GetValidThread(ILuaBase* LUA, double index)
+{
+	LUA_ILuaInterface* IData = GetUserdata(LUA, index);
+
+	ILuaThread* thread = interfaces[IData->ID];
+	if (!thread)
+	{
+		LUA->ThrowError("Invalid ILuaInterface!");
+	}
+
+	return thread;
+}
+
+/*
+	ILuaInterface functions
+*/
 LUA_FUNCTION_STATIC(gc)
 {
 	if (!LUA->IsType(1, metatype))
@@ -163,19 +182,10 @@ LUA_FUNCTION_STATIC(newindex)
 	return 0;
 }
 
-/*
-	ILuaInterface functions
-*/
 LUA_FUNCTION(ILuaInterface_RunString)
 {
-	LUA_ILuaInterface* IData = GetUserdata(LUA, 1);
+	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* str = LUA->CheckString(2);
-
-	ILuaThread* thread = interfaces[IData->ID];
-	if (!thread)
-	{
-		LUA->ThrowError("Invalid ILuaInterface!");
-	}
 
 	if (thread->threaded)
 	{
@@ -196,13 +206,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 
 LUA_FUNCTION(ILuaInterface_InitClasses)
 {
-	LUA_ILuaInterface* IData = GetUserdata(LUA, 1);
-
-	ILuaThread* thread = interfaces[IData->ID];
-	if (!thread)
-	{
-		LUA->ThrowError("Invalid ILuaInterface!");
-	}
+	ILuaThread* thread = GetValidThread(LUA, 1);
 
 	if (thread->threaded)
 	{
@@ -213,7 +217,7 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		func_InitLuaClasses(IData->IFace);
+		func_InitLuaClasses(thread->IFace);
 	}
 
 	return 0;
@@ -221,13 +225,7 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
 {
-	LUA_ILuaInterface* IData = GetUserdata(LUA, 1);
-
-	ILuaThread* thread = interfaces[IData->ID];
-	if (!thread)
-	{
-		LUA->ThrowError("Invalid ILuaInterface!");
-	}
+	ILuaThread* thread = GetValidThread(LUA, 1);
 
 	if (thread->threaded)
 	{
@@ -238,10 +236,112 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		func_InitLuaLibraries(IData->IFace);
+		func_InitLuaLibraries(thread->IFace);
 	}
 
 	return 0;
+}
+
+LUA_FUNCTION(ILuaInterface_GetTable)
+{
+	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	ILuaThread* thread = GetValidThread(LUA, 1);
+
+	LUA->CreateTable();
+	for (auto& [key, value] : thread->shared_table)
+	{
+		if (value->type == Type::NUMBER)
+		{
+			LUA->PushNumber(value->number);
+		} else if (value->type == Type::Bool)
+		{
+			LUA->PushBool(value->number == 1);
+		} else if (value->type == Type::String)
+		{
+			LUA->PushString(value->string);
+		} else if (value->type == Type::Entity)
+		{
+			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+				LUA->GetField(-1, "Entity");
+					LUA->PushNumber(value->number);
+					LUA->Call(1, 1);
+					ILuaObject* entity = ILUA->GetObject(-1);
+			LUA->Pop(2);
+
+			entity->Push();
+		} else if (value->type == Type::Vector)
+		{
+			LUA->PushVector(value->vec);
+		} else if (value->type == Type::Angle)
+		{
+			LUA->PushAngle(value->ang);
+		} else {
+			LUA->PushNil();
+		}
+
+		LUA->SetField(-2, key.c_str());
+	}
+}
+
+ILuaValue* GetOrCreate(ILuaThread* thread, const char* key)
+{
+	ILuaValue* val = thread->shared_table[key];
+
+	if (val)
+		return val;
+
+	ILuaValue* val = new ILuaValue;
+	return val;
+}
+
+LUA_FUNCTION(ILuaInterface_SetValue)
+{
+	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	ILuaThread* thread = GetValidThread(LUA, 1);
+
+	const char* key = LUA->CheckString(2);
+	int type = LUA->GetType(3);
+	if (type == Type::Nil)
+	{
+		ILuaValue* val = thread->shared_table[key];
+		if (val)
+		{
+			thread->shared_table.erase(key);
+			delete val;
+		}
+
+		return;
+	}
+
+	ILuaValue* val = GetOrCreate(thread, key);
+	val->type = type;
+	if (type == Type::Number)
+	{
+		val->type = type;
+		val->number = LUA->GetNumber(3);
+	} else if (type == Type::Bool)
+	{
+		val->type = type;
+		val->number = LUA->GetBool(3) ? 1 : 0;
+	} else if (type == Type::String)
+	{
+		val->type = type;
+		val->string = LUA->GetString();
+	} else if (type == Type::Entity)
+	{
+		//val->type = type;
+		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
+	} else if (type == Type::Vector)
+	{
+		val->type = type;
+		val->vec = LUA->GetVector(3);
+	} else if (type == Type::Angle)
+	{
+		val->type = type;
+		val->ang = LUA->GetAngle(3);
+	}
+
+	thread->shared_table[key] = val;
 }
 
 /*
@@ -382,6 +482,15 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	return 0;
 }
 
+LUA_FUNCTION(LuaThread_Msg)
+{
+	const char* msg = LUA->CheckString(1);
+
+	Msg("[LuaThreaded Thread %i] %s", ThreadGetCurrentId(), msg);
+
+	return 0;
+}
+
 void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
 	LUA->PushCFunction(Func);
 	LUA->SetField(-2, Name);
@@ -395,6 +504,7 @@ void InitLuaThreaded(ILuaInterface* LUA)
 			Add_Func(LUA, LuaThread_GetInterface, "GetInterface");
 			Add_Func(LUA, LuaThread_CreateInterface, "CreateInterface");
 			Add_Func(LUA, LuaThread_CloseInterface, "CloseInterface");
+			Add_Func(LUA, LuaThread_Msg, "Msg");
 
 			LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop(2);
@@ -435,6 +545,12 @@ GMOD_MODULE_OPEN()
 	// NOTE: This can crash?!?
 	LUA->PushCFunction(ILuaInterface_InitLibraries);
 	LUA->SetField(-2, "InitLibraries");
+
+	LUA->PushCFunction(ILuaInterface_GetTable);
+	LUA->SetField(-2, "GetTable");
+
+	LUA->PushCFunction(ILuaInterface_SetValue);
+	LUA->SetField(-2, "SetValue");
 
 	LUA->Pop(1);
 
