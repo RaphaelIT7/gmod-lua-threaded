@@ -301,9 +301,10 @@ LUA_FUNCTION(ILuaInterface_GetTable)
 
 ILuaValue* GetOrCreate(ILuaThread* thread, std::string key)
 {
-	if (thread->shared_table.find(key) == thread->shared_table.end())
+	auto it = thread->shared_table.find(key);
+	if (it != thread->shared_table.end())
 	{
-		ILuaValue* val = thread->shared_table[key];
+		ILuaValue* val = it->second;
 
 		if (val)
 			return val;
@@ -426,8 +427,6 @@ ILuaInterface* CreateInterface()
 
 	//IFace->SetState(state); // Set the State
 
-	//InitMetaTable(IFace);
-
 	//func_luaL_openlibs(state);
 
 	return IFace;
@@ -439,6 +438,7 @@ unsigned LuaThread(void* data)
 	ILuaInterface* IFace = CreateInterface();
 	thread_data->IFace = IFace;
 	InitLuaThreaded(IFace, thread_data->id);
+	InitMetaTable(IFace);
 
 	while(thread_data->run)
 	{
