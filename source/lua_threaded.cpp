@@ -30,7 +30,6 @@ struct ILuaThread
 	CThreadFastMutex mutex;
 
 	std::vector<ILuaAction*> actions;
-	std::unordered_map<std::string, ILuaValue*> shared_table;
 
 	bool run = true;
 	bool threaded = false;
@@ -40,6 +39,7 @@ struct ILuaThread
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
+std::unordered_map<std::string, ILuaValue*> shared_table;
 
 static int32_t metatype = GarrysMod::Lua::Type::NONE;
 static const char metaname[] = "ILuaInterface";
@@ -256,126 +256,6 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 	return 0;
 }
 
-LUA_FUNCTION(ILuaInterface_GetTable)
-{
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
-	ILuaThread* thread = GetValidThread(LUA, 1);
-
-	LUA->CreateTable();
-	for (auto& [key, value] : thread->shared_table)
-	{
-		if (value->type == Type::NUMBER)
-		{
-			LUA->PushNumber(value->number);
-		} else if (value->type == Type::Bool)
-		{
-			LUA->PushBool(value->number == 1);
-		} else if (value->type == Type::String)
-		{
-			LUA->PushString(value->string);
-		} else if (value->type == Type::Entity)
-		{
-			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-				LUA->GetField(-1, "Entity");
-					LUA->PushNumber(value->number);
-					LUA->Call(1, 1);
-					ILuaObject* entity = ILUA->GetObject(-1);
-			LUA->Pop(2);
-
-			entity->Push();
-		} else if (value->type == Type::Vector)
-		{
-			LUA->PushVector(value->vec);
-		} else if (value->type == Type::Angle)
-		{
-			LUA->PushAngle(value->ang);
-		} else {
-			continue;
-		}
-
-		LUA->SetField(-2, key.c_str());
-	}
-
-	return 1;
-}
-
-ILuaValue* GetOrCreate(ILuaThread* thread, std::string key)
-{
-	auto it = thread->shared_table.find(key);
-	if (it != thread->shared_table.end())
-	{
-		ILuaValue* val = it->second;
-
-		if (val)
-			return val;
-	}
-
-	return new ILuaValue;
-}
-
-LUA_FUNCTION(ILuaInterface_SetValue)
-{
-	//ILuaInterface* ILUA = (ILuaInterface*)LUA;
-	ILuaThread* thread = GetValidThread(LUA, 1);
-
-	std::string key;
-	int type;
-	if (ThreadInMainThread()) {
-		key = (std::string)LUA->CheckString(2);
-		type = LUA->GetType(3);
-	} else {
-		key = (std::string)LUA->CheckString(1);
-		type = LUA->GetType(2);
-	}
-
-	if (type == Type::Nil)
-	{
-		if (thread->shared_table.find(key) == thread->shared_table.end())
-			return 0;
-
-		ILuaValue* val = thread->shared_table[key];
-		if (val)
-		{
-			thread->shared_table.erase(key);
-			delete val;
-		}
-
-		return 0;
-	}
-
-	ILuaValue* val = GetOrCreate(thread, key);
-	val->type = type;
-	if (type == Type::Number)
-	{
-		val->type = type;
-		val->number = LUA->GetNumber(3);
-	} else if (type == Type::Bool)
-	{
-		val->type = type;
-		val->number = LUA->GetBool(3) ? 1 : 0;
-	} else if (type == Type::String)
-	{
-		val->type = type;
-		val->string = LUA->GetString();
-	} else if (type == Type::Entity)
-	{
-		//val->type = type;
-		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
-	} else if (type == Type::Vector)
-	{
-		val->type = type;
-		val->vec = LUA->GetVector(3);
-	} else if (type == Type::Angle)
-	{
-		val->type = type;
-		val->ang = LUA->GetAngle(3);
-	}
-
-	thread->shared_table[key] = val;
-
-	return 0;
-}
-
 /*
 	Module Table
 */
@@ -514,6 +394,115 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	return 0;
 }
 
+LUA_FUNCTION(LuaThread_GetTable)
+{
+	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+
+	LUA->CreateTable();
+	for (auto& [key, value] : shared_table)
+	{
+		if (value->type == Type::NUMBER)
+		{
+			LUA->PushNumber(value->number);
+		} else if (value->type == Type::Bool)
+		{
+			LUA->PushBool(value->number == 1);
+		} else if (value->type == Type::String)
+		{
+			LUA->PushString(value->string);
+		} else if (value->type == Type::Entity)
+		{
+			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+				LUA->GetField(-1, "Entity");
+					LUA->PushNumber(value->number);
+					LUA->Call(1, 1);
+					ILuaObject* entity = ILUA->GetObject(-1);
+			LUA->Pop(2);
+
+			entity->Push();
+		} else if (value->type == Type::Vector)
+		{
+			LUA->PushVector(value->vec);
+		} else if (value->type == Type::Angle)
+		{
+			LUA->PushAngle(value->ang);
+		} else {
+			continue;
+		}
+
+		LUA->SetField(-2, key.c_str());
+	}
+
+	return 1;
+}
+
+ILuaValue* GetOrCreate(std::string key)
+{
+	auto it = shared_table.find(key);
+	if (it != shared_table.end())
+	{
+		ILuaValue* val = it->second;
+
+		if (val)
+			return val;
+	}
+
+	return new ILuaValue;
+}
+
+LUA_FUNCTION(LuaThread_SetValue)
+{
+	std::string key = (std::string)LUA->CheckString(1);
+	int type = LUA->GetType(2);
+
+	if (type == Type::Nil)
+	{
+		if (shared_table.find(key) == shared_table.end())
+			return 0;
+
+		ILuaValue* val = shared_table[key];
+		if (val)
+		{
+			shared_table.erase(key);
+			delete val;
+		}
+
+		return 0;
+	}
+
+	ILuaValue* val = GetOrCreate(key);
+	val->type = type;
+	if (type == Type::Number)
+	{
+		val->type = type;
+		val->number = LUA->GetNumber(3);
+	} else if (type == Type::Bool)
+	{
+		val->type = type;
+		val->number = LUA->GetBool(3) ? 1 : 0;
+	} else if (type == Type::String)
+	{
+		val->type = type;
+		val->string = LUA->GetString();
+	} else if (type == Type::Entity)
+	{
+		//val->type = type;
+		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
+	} else if (type == Type::Vector)
+	{
+		val->type = type;
+		val->vec = LUA->GetVector(3);
+	} else if (type == Type::Angle)
+	{
+		val->type = type;
+		val->ang = LUA->GetAngle(3);
+	}
+
+	shared_table[key] = val;
+
+	return 0;
+}
+
 int LuaThread_Msg(lua_State* L)
 {
 	const char* msg = func_lua_tostring(L, 1, NULL);
@@ -543,8 +532,8 @@ void InitLuaThreaded(ILuaInterface* LUA, int id)
 
 			if (!ThreadInMainThread()) 
 			{
-				Add_Func(LUA, ILuaInterface_GetTable, "GetTable");
-				Add_Func(LUA, ILuaInterface_SetValue, "SetValue");
+				Add_Func(LUA, LuaThread_GetTable, "GetTable");
+				Add_Func(LUA, LuaThread_SetValue, "SetValue");
 			}
 
 			LUA->SetField(-2, "LuaThreaded");
@@ -581,12 +570,6 @@ void InitMetaTable(ILuaInterface* LUA)
 
 	LUA->PushCFunction(ILuaInterface_InitLibraries);
 	LUA->SetField(-2, "InitLibraries");
-
-	LUA->PushCFunction(ILuaInterface_GetTable);
-	LUA->SetField(-2, "GetTable");
-
-	LUA->PushCFunction(ILuaInterface_SetValue);
-	LUA->SetField(-2, "SetValue");
 
 	LUA->Pop(1);
 }
