@@ -25,6 +25,7 @@ struct ILuaThread
 {
 	ILuaInterface* IFace;
 	CThreadFastMutex mutex;
+	int shared_tbl_reference = -1;
 
 	std::vector<ILuaAction*> actions;
 

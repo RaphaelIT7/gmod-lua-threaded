@@ -9,6 +9,7 @@
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
 
+int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
 std::unordered_map<std::string, ILuaValue*> shared_table;
 
@@ -183,7 +184,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 	Msg("[Code] %i\n", result);
 	if (result != 0)
 	{
-		const char* err = LUA->GetString(-1);
+		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
 		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
