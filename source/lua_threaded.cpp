@@ -299,12 +299,15 @@ LUA_FUNCTION(ILuaInterface_GetTable)
 	return 1;
 }
 
-ILuaValue* GetOrCreate(ILuaThread* thread, const char* key)
+ILuaValue* GetOrCreate(ILuaThread* thread, std::string key)
 {
-	ILuaValue* val = thread->shared_table[(std::string)key];
+	if (thread->shared_table.find(key) == thread->shared_table.end())
+	{
+		ILuaValue* val = thread->shared_table[key];
 
-	if (val)
-		return val;
+		if (val)
+			return val;
+	}
 
 	return new ILuaValue;
 }
@@ -314,19 +317,22 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 	//ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILuaThread* thread = GetValidThread(LUA, 1);
 
-	const char* key;
+	std::string key;
 	int type;
 	if (ThreadInMainThread()) {
-		key = LUA->CheckString(2);
+		key = (std::string)LUA->CheckString(2);
 		type = LUA->GetType(3);
 	} else {
-		key = LUA->CheckString(1);
+		key = (std::string)LUA->CheckString(1);
 		type = LUA->GetType(2);
 	}
 
 	if (type == Type::Nil)
 	{
-		ILuaValue* val = thread->shared_table[(std::string)key];
+		if (thread->shared_table.find(key) == thread->shared_table.end())
+			return 0;
+
+		ILuaValue* val = thread->shared_table[key];
 		if (val)
 		{
 			thread->shared_table.erase(key);
@@ -364,7 +370,7 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 		val->ang = LUA->GetAngle(3);
 	}
 
-	thread->shared_table[(std::string)key] = val;
+	thread->shared_table[key] = val;
 
 	return 0;
 }
