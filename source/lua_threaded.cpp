@@ -103,20 +103,30 @@ static ILuaThread* GetValidThread(ILuaBase* LUA, double index)
 	{
 		LUA_ILuaInterface* IData = GetUserdata(LUA, index);
 
-		ILuaThread* thread = interfaces[IData->ID];
-		if (!thread)
+		auto it = interfaces.find(IData->ID);
+		if (it != interfaces.end())
 		{
-			LUA->ThrowError("Invalid ILuaInterface!");
-		}
+			ILuaThread* thread = it->second;
+			if (!thread)
+			{
+				LUA->ThrowError("Invalid ILuaInterface!");
+			}
 
-		return thread;
+			return thread;
+		}
 	} else {
 		LUA->PushSpecial(SPECIAL_GLOB);
 			LUA->GetField(-1, "__InterfaceID");
 			double id = LUA->GetNumber(0);
 		LUA->Pop(2);
 
-		return interfaces[id];
+		auto it = interfaces.find(id);
+		if (it != interfaces.end())
+		{
+			return it->second;
+		}
+
+		return nullptr;
 	}
 }
 
@@ -375,15 +385,18 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	LUA_ILuaInterface* obj = GetUserdata(LUA, 0);
 
 	double id = obj->ID;
-	if (!interfaces[id]) 
+	ILuaThread* thread = GetValidThread(LUA, id);
+
+	if (!thread)
 	{
-		LUA->ThrowError("Invalid ILuaInterface!");
+		Msg("Failed to get Thread somehow.");
+		return;
 	}
 
-	if (interfaces[obj->ID]->threaded) {
-		interfaces[id]->run = false;
+	if (thread->threaded) {
+		thread->run = false;
 	} else {
-		ShutdowInterface(interfaces[id]);
+		ShutdowInterface(thread);
 	}
 
 	return 0;
