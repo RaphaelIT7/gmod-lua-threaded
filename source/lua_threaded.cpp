@@ -378,6 +378,48 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	return 0;
 }
 
+void PushValue(ILuaBase* LUA, ILuaValue* value)
+{
+	switch (value->type)
+	{
+		case Type::NUMBER:
+			LUA->PushNumber(value->number);
+			break;
+		case Type::BOOL:
+			LUA->PushBool(value->number == 1);
+			break;
+		case Type::STRING:
+			LUA->PushString(value->string);
+			break;
+		case Type::ENTITY:
+			/*
+			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+				LUA->GetField(-1, "Entity");
+					LUA->PushNumber(value->number);
+					LUA->Call(1, 1);
+					ILuaObject* entity = ILUA->GetObject(-1);
+			LUA->Pop(2);
+			*/
+			break;
+		case Type::VECTOR:
+			LUA->PushVector(value->vec);
+			break;
+		case Type::ANGLE:
+			LUA->PushAngle(value->ang);
+			break;
+		case Type::Table:
+			LUA->CreateTable();
+			for (auto& [key, val] : value->tbl)
+			{
+				PushValue(LUA, val);
+				LUA->SetField(-2, key.c_str());
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 LUA_FUNCTION(LuaThread_GetTable)
 {
     ILuaInterface* ILUA = (ILuaInterface*)LUA;
@@ -388,33 +430,7 @@ LUA_FUNCTION(LuaThread_GetTable)
     {
         switch (value->type)
         {
-            case Type::NUMBER:
-                LUA->PushNumber(value->number);
-                break;
-            case Type::BOOL:
-                LUA->PushBool(value->number == 1);
-                break;
-            case Type::STRING:
-                LUA->PushString(value->string);
-                break;
-            case Type::ENTITY:
-                /*
-				LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-					LUA->GetField(-1, "Entity");
-						LUA->PushNumber(value->number);
-						LUA->Call(1, 1);
-						ILuaObject* entity = ILUA->GetObject(-1);
-				LUA->Pop(2);
-				*/
-                break;
-            case Type::VECTOR:
-                LUA->PushVector(value->vec);
-                break;
-            case Type::ANGLE:
-                LUA->PushAngle(value->ang);
-                break;
-            default:
-                continue;
+			PushValue(LUA, value);
         }
 
         LUA->SetField(-2, key.c_str());

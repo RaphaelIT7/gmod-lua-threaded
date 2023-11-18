@@ -36,4 +36,5 @@ struct ILuaThread
 
 extern void InitLuaThreaded(ILuaInterface*, int = 0);
 extern void InitMetaTable(ILuaInterface*);
-extern void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type);
+extern void PushValue(ILuaBase*, ILuaValue*);
+extern void FillValue(ILuaBase*, ILuaValue*, int, int);
