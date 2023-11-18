@@ -367,49 +367,52 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	return 0;
 }
 
-LUA_FUNCTION(LuaThread_GetTable)
+LUA_FUNCTION(LuaThreaded_GetTable)
 {
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+    ILuaInterface* ILUA = (ILuaInterface*)LUA;
 
-	LUA->CreateTable();
-	shared_table_mutex->Lock();
-	for (auto& [key, value] : shared_table)
-	{
-		if (value->type == Type::NUMBER)
-		{
-			LUA->PushNumber(value->number);
-		} else if (value->type == Type::Bool)
-		{
-			LUA->PushBool(value->number == 1);
-		} else if (value->type == Type::String)
-		{
-			LUA->PushString(value->string);
-		} else if (value->type == Type::Entity)
-		{
-			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-				LUA->GetField(-1, "Entity");
-					LUA->PushNumber(value->number);
-					LUA->Call(1, 1);
-					ILuaObject* entity = ILUA->GetObject(-1);
-			LUA->Pop(2);
+    LUA->CreateTable();
+    shared_table_mutex->Lock();
+    for (auto& [key, value] : shared_table)
+    {
+        switch (value->type)
+        {
+            case Type::NUMBER:
+                LUA->PushNumber(value->number);
+                break;
+            case Type::BOOL:
+                LUA->PushBool(value->number == 1);
+                break;
+            case Type::STRING:
+                LUA->PushString(value->string);
+                break;
+            case Type::ENTITY:
+                /*
+				LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+					LUA->GetField(-1, "Entity");
+						LUA->PushNumber(value->number);
+						LUA->Call(1, 1);
+						ILuaObject* entity = ILUA->GetObject(-1);
+				LUA->Pop(2);
+				*/
+                break;
+            case Type::VECTOR:
+                LUA->PushVector(value->vec);
+                break;
+            case Type::ANGLE:
+                LUA->PushAngle(value->ang);
+                break;
+            default:
+                continue;
+        }
 
-			entity->Push();
-		} else if (value->type == Type::Vector)
-		{
-			LUA->PushVector(value->vec);
-		} else if (value->type == Type::Angle)
-		{
-			LUA->PushAngle(value->ang);
-		} else {
-			continue;
-		}
+        LUA->SetField(-2, key.c_str());
+    }
+    shared_table_mutex->Unlock();
 
-		LUA->SetField(-2, key.c_str());
-	}
-	shared_table_mutex->Unlock();
-
-	return 1;
+    return 1;
 }
+
 
 ILuaValue* GetOrCreate(std::string key)
 {
