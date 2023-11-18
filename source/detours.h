@@ -38,8 +38,8 @@ typedef void (*luaL_openlibs)(lua_State*);
 const Symbol luaL_openlibsSym = Symbol::FromName("luaL_openlibs");
 extern luaL_openlibs func_luaL_openlibs;
 
-typedef const char* (*lua_tostring)(lua_State*, int);
-const Symbol lua_tostringSym = Symbol::FromName("lua_tostring");
+typedef const char* (*lua_tostring)(lua_State*, int, int);
+const Symbol lua_tostringSym = Symbol::FromName("lua_tolstring");
 extern lua_tostring func_lua_tostring;
 
 /*

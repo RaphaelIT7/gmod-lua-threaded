@@ -505,7 +505,7 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 
 int LuaThread_Msg(lua_State* L)
 {
-	const char* msg = func_lua_tostring(L, 1);
+	const char* msg = func_lua_tostring(L, 1, NULL);
 
 	Msg("[LuaThreaded] %s\n", msg);
 
