@@ -278,7 +278,7 @@ LUA_FUNCTION(ILuaInterface_GetTable)
 		{
 			LUA->PushAngle(value->ang);
 		} else {
-			LUA->PushNil();
+			continue;
 		}
 
 		LUA->SetField(-2, key.c_str());
@@ -312,7 +312,7 @@ LUA_FUNCTION(ILuaInterface_SetValue)
 			delete val;
 		}
 
-		return;
+		return 0;
 	}
 
 	ILuaValue* val = GetOrCreate(thread, key);
