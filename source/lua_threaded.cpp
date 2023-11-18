@@ -583,7 +583,7 @@ GMOD_MODULE_OPEN()
 {
 	Symbols_Init();
 
-	InitLuaThreaded((ILuaInterface*)LUA, 0);
+	InitLuaThreaded((ILuaInterface*)LUA);
 
 	InitMetaTable((ILuaInterface*)LUA);
 

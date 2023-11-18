@@ -2,5 +2,5 @@
 
 using namespace GarrysMod::Lua;
 
-extern void InitLuaThreaded(ILuaInterface*);
+extern void InitLuaThreaded(ILuaInterface*, int = 0);
 extern void InitMetaTable(ILuaInterface*);
