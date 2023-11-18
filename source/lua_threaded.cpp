@@ -503,9 +503,9 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 	return 0;
 }
 
-LUA_FUNCTION(LuaThread_Msg)
+int LuaThread_Msg(lua_State* L)
 {
-	const char* msg = LUA->CheckString(1);
+	const char* msg = func_lua_tostring(L, 1);
 
 	Msg("[LuaThreaded] %s\n", msg);
 

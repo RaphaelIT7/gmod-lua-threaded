@@ -51,6 +51,9 @@ void Symbols_Init()
 	func_luaL_openlibs = (luaL_openlibs)symfinder.Resolve(lua_shared_loader.GetModule(), luaL_openlibsSym.name.c_str(), luaL_openlibsSym.length);
 	CheckFunction(func_luaL_openlibs, "luaL_openlibs");
 
+	func_lua_tostring = (lua_tostring)symfinder.Resolve(lua_shared_loader.GetModule(), lua_tostringSym.name.c_str(), lua_tostringSym.length);
+	CheckFunction(func_lua_tostring, "lua_tostring");
+
 	/*
 		Server suff
 	*/
