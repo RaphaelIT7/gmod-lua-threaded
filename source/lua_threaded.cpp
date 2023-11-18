@@ -415,7 +415,6 @@ ILuaInterface* CreateInterface()
 
 	IFace->SetState(state); // Set the State
 
-	InitLuaThreaded(IFace);
 	//InitMetaTable(IFace);
 
 	return IFace;
@@ -426,20 +425,7 @@ unsigned LuaThread(void* data)
 	ILuaThread* thread_data = (ILuaThread*)data;
 	ILuaInterface* IFace = CreateInterface();
 	thread_data->IFace = IFace;
-
-	IFace->PushSpecial(SPECIAL_GLOB);
-		IFace->PushNumber(thread_data->id);
-		IFace->SetField(-2, "__InterfaceID");
-
-		IFace->CreateTable();
-			IFace->PushCFunction(ILuaInterface_GetTable);
-			IFace->SetField(-2, "GetTable");
-
-			IFace->PushCFunction(ILuaInterface_SetValue);
-			IFace->SetField(-2, "SetValue");
-
-			IFace->SetField(-2, "Interface");
-	IFace->Pop(2);
+	InitLuaThreaded(IFace, thread_data->id);
 
 	while(thread_data->run)
 	{
@@ -529,10 +515,10 @@ void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
 	LUA->SetField(-2, Name);
 }
 
-void InitLuaThreaded(ILuaInterface* LUA)
+void InitLuaThreaded(ILuaInterface* LUA, int id)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
-		LUA->PushNumber(0);
+		LUA->PushNumber(id);
 		LUA->SetField(-2, "__InterfaceID");
 
 		LUA->CreateTable();
@@ -541,6 +527,12 @@ void InitLuaThreaded(ILuaInterface* LUA)
 			Add_Func(LUA, LuaThread_CreateInterface, "CreateInterface");
 			Add_Func(LUA, LuaThread_CloseInterface, "CloseInterface");
 			Add_Func(LUA, LuaThread_Msg, "Msg");
+
+			if (!ThreadInMainThread()) 
+			{
+				Add_Func(LUA, ILuaInterface_GetTable, "GetTable");
+				Add_Func(LUA, ILuaInterface_SetValue, "SetValue");
+			}
 
 			LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop(2);
@@ -591,7 +583,7 @@ GMOD_MODULE_OPEN()
 {
 	Symbols_Init();
 
-	InitLuaThreaded((ILuaInterface*)LUA);
+	InitLuaThreaded((ILuaInterface*)LUA, 0);
 
 	InitMetaTable((ILuaInterface*)LUA);
 
