@@ -234,11 +234,9 @@ LUA_FUNCTION(AdvancedLuaErrorReporter)
 	return 0;
 }
 
-ILuaInterface* CreateInterface(ILuaThread* data)
+ILuaInterface* CreateInterface()
 {
 	ILuaInterface* IFace = func_CreateLuaInterface(true);
-
-	data->IFace = IFace;
 
 	//IFace->Init(); We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
@@ -256,7 +254,7 @@ ILuaInterface* CreateInterface(ILuaThread* data)
 unsigned LuaThread(void* data)
 {
 	ILuaThread* thread_data = (ILuaThread*)data;
-	ILuaInterface* IFace = CreateInterface(thread_data);
+	ILuaInterface* IFace = CreateInterface();
 
 	while(thread_data->run)
 	{
@@ -293,7 +291,8 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 	if (thread->threaded) {
 		CreateSimpleThread(LuaThread, nullptr);
 	} else {
-		ILuaInterface* IFace = CreateInterface(thread);
+		ILuaInterface* IFace = CreateInterface();
+		thread->IFace = IFace;
 	}
 
 	return 0;
