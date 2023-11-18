@@ -299,6 +299,9 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 	ILuaThread* thread = new ILuaThread;
 	thread->threaded = !not_threaded;
 
+	interfaces_count += 1;
+	interfaces[interfaces_count] = thread;
+
 	if (thread->threaded) {
 		CreateSimpleThread(LuaThread, thread);
 	} else {
