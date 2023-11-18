@@ -206,16 +206,26 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 /*
 	Module Table
 */
+LUA_FUNCTION(LuaThread_GetAllInterfaces)
+{
+	LUA->CreateTable();
+
+	for (auto& [id, thread]: interfaces) {
+		Push(LUA, thread->IFace, id);
+		LUA->SetField(-2, std::to_string(id).c_str());
+	}
+
+	return 1;
+}
+
 LUA_FUNCTION(LuaThread_GetInterface)
 {
 	int id = LUA->CheckNumber(1);
 
-	if (id < 0 || id > interfaces_count) { return 0; }
+	ILuaThread* thread = interfaces[id];
+	if (!thread) { return 0; }
 
-	ILuaInterface* IFace = interfaces[id]->IFace;
-	if (!IFace) { return 0; }
-
-	Push(LUA, IFace, id);
+	Push(LUA, thread->IFace, id);
 
 	return 1;
 }
@@ -331,6 +341,7 @@ GMOD_MODULE_OPEN()
 
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
+			Add_Func(LUA, LuaThread_GetAllInterfaces, "GetAllInterfaces");
 			Add_Func(LUA, LuaThread_GetInterface, "GetInterface");
 			Add_Func(LUA, LuaThread_CreateInterface, "CreateInterface");
 			Add_Func(LUA, LuaThread_CloseInterface, "CloseInterface");
