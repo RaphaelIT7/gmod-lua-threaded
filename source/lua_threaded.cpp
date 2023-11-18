@@ -382,7 +382,7 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 LUA_FUNCTION(LuaThread_CloseInterface)
 {
-	LUA_ILuaInterface* obj = GetUserdata(LUA, 0);
+	LUA_ILuaInterface* obj = GetUserdata(LUA, 1);
 
 	double id = obj->ID;
 	ILuaThread* thread = GetValidThread(LUA, id);
