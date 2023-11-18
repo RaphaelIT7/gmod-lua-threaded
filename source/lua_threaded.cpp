@@ -387,16 +387,16 @@ LUA_FUNCTION(LuaThread_GetInterface)
 	return 1;
 }
 
-LUA_FUNCTION(LuaPanic)
+int LuaPanic(lua_State* state)
 {
-	func_LuaPanic(LUA->GetState());
+	func_LuaPanic(state);
 
 	return 0;
 }
 
-LUA_FUNCTION(AdvancedLuaErrorReporter)
+int AdvancedLuaErrorReporter(lua_State* state)
 {
-	func_AdvancedLuaErrorReporter(LUA->GetState());
+	func_AdvancedLuaErrorReporter(state);
 
 	return 0;
 }
