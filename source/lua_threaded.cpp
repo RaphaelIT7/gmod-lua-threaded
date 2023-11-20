@@ -238,9 +238,13 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 void* g_pGlobalLuaLibraryFactorySig;
 void InitLuaLibraries(ILuaInterface* LUA)
 {
+	Msg("InitLuaLibraries called\n");
 	if (g_pGlobalLuaLibraryFactorySig)
 	{
+		Msg("InitLuaLibraries - Calling CLuaGlobalLibrary::InitLibraries\n");
 		func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
+	} else {
+		Msg("Missing g_pGlobalLuaLibraryFactorySig!\n");
 	}
 
 	func_InitLuaLibraries(LUA);
