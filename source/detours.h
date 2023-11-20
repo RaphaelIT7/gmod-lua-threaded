@@ -123,6 +123,7 @@ const std::vector<Symbol> CLuaGameCallback_MsgColourSym = {
 };
 
 extern void Symbols_Init();
+extern void* FindSymbol(std::string);
 
 static SymbolFinder symbol_finder;
 template<class T>

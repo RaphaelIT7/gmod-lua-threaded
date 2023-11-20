@@ -263,6 +263,42 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 	return 0;
 }
 
+void LoadFunction(ILuaInterface* LUA, const char* func)
+{
+	void* loaded_func = FindSymbol((std::string)func);
+
+	if (loaded_func == nullptr)
+	{
+		Msg("Failed to find function %s\n", func);
+	} else {
+		LUA->PushSpecial(SPECIAL_GLOB);
+			LUA->PushCFunction((CFunc)loaded_func);
+			LUA->SetField(-2, func);
+		LUA->Pop();
+	}
+}
+
+LUA_FUNCTION(ILuaInterface_LoadFunction)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+	const char* func = LUA->CheckString(2);
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = "loadfunc";
+		action->data = func;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		LoadFunction(thread->IFace, func);
+	}
+
+	return 0;
+}
+
 /*
 	Module Table
 */
@@ -354,6 +390,9 @@ unsigned LuaThread(void* data)
 			} else if (strcmp(action->type, "initlibraries") == 0)
 			{
 				InitLuaLibraries(IFace);
+			} else if (strcmp(action->type, "loadfunc") == 0)
+			{
+				LoadFunction(IFace, action->data);
 			}
 
 			delete action;
@@ -658,6 +697,9 @@ void InitMetaTable(ILuaInterface* LUA)
 
 	LUA->PushCFunction(ILuaInterface_InitLibraries);
 	LUA->SetField(-2, "InitLibraries");
+
+	LUA->PushCFunction(ILuaInterface_LoadFunction);
+	LUA->SetField(-2, "LoadFunction");
 
 	LUA->Pop(1);
 }
