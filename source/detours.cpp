@@ -34,23 +34,42 @@ void hook_InitLuaClasses(GarrysMod::Lua::ILuaInterface* LUA)
 }
 
 std::string current_library = "";
-std::vector<ILuaObject*> library_funcs;
+std::unordered_map<std::string, std::vector<CLuaLibraryFunction*>> library_funcs;
 void hook_CLuaLibrary_CLuaLibrary(void* funky_class, const char* pName)
 {
 	current_library = pName;
 
-	library_funcs.push_back((ILuaObject*)funky_class); // I should create the CLuaLibrary class. CLuaLibrary <- CLuaUser <- CLuaTable <- CLuaUser?
+	std::vector<CLuaLibraryFunction*> funcs;
+	library_funcs[current_library] = funcs;
 
 	detour_CLuaLibrary_CLuaLibrary.GetTrampoline<CLuaLibrary_CLuaLibrary>()(funky_class, pName);
 
 	current_library = "";
 }
 
+void hook_CLuaLibrary_Add(void* funky_class, CLuaLibraryFunction* func)
+{
+	if (current_library == "")
+	{
+		Msg("Unknown Library!\n");
+	} else {
+		library_funcs[current_library].push_back(func);
+	}
+
+	detour_CLuaLibrary_Add.GetTrampoline<CLuaLibrary_Add>()(funky_class, func);
+}
+
 void AddLibraries(ILuaInterface* LUA)
 {
-	for (ILuaObject* obj : library_funcs)
+	for (auto& [key, value] : library_funcs)
 	{
-		LUA->PushLuaObject(obj);
+		LUA->CreateTable();
+		for (auto& libaryfunc : value)
+		{
+			LUA->PushCFunction(libaryfunc->function);
+			LUA->SetField(-2, libaryfunc->name);
+		}
+		LUA->SetField(-2, key.c_str());
 	}
 }
 
@@ -104,6 +123,10 @@ void Detours_Init()
 	void* sv_CLuaLibrary_CLuaLibrary = LoadFunction(server_loader.GetModule(), CLuaLibrary_CLuaLibrarySym);
 	CheckFunction(sv_CLuaLibrary_CLuaLibrary, "CLuaLibrary::CLuaLibrary");
 	CreateDetour(&detour_CLuaLibrary_CLuaLibrary, "CLuaLibrary::CLuaLibrary", reinterpret_cast<void*>(sv_CLuaLibrary_CLuaLibrary), reinterpret_cast<void*>(&hook_CLuaLibrary_CLuaLibrary));
+
+	void* sv_CLuaLibrary_Add = LoadFunction(server_loader.GetModule(), CLuaLibrary_AddSym);
+	CheckFunction(sv_CLuaLibrary_Add, "CLuaLibrary::Add");
+	CreateDetour(&detour_CLuaLibrary_Add, "CLuaLibrary::Add", reinterpret_cast<void*>(sv_CLuaLibrary_Add), reinterpret_cast<void*>(&hook_CLuaLibrary_Add));
 
 	Msg("	--- Finished Detours ---\n");
 

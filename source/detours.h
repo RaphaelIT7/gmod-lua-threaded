@@ -20,6 +20,14 @@ const Symbol InitLuaClassesSym = Symbol::FromName("_Z14InitLuaClassesP13ILuaInte
 typedef void (*CLuaLibrary_CLuaLibrary)(void*, const char*);
 const Symbol CLuaLibrary_CLuaLibrarySym = Symbol::FromName("_ZN11CLuaLibraryC1EPKc");
 
+struct CLuaLibraryFunction {
+    const char* name;
+    CFunc function;
+};
+
+typedef void (*CLuaLibrary_Add)(void*, CLuaLibraryFunction*);
+const Symbol CLuaLibrary_AddSym = Symbol::FromName("_ZN11CLuaLibrary3AddEP19CLuaLibraryFunction");
+
 extern void AddLibraries(ILuaInterface*);
 
 //---------------------------------------------------------------------------------
