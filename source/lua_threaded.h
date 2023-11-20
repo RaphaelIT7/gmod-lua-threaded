@@ -39,3 +39,5 @@ extern void InitLuaThreaded(ILuaInterface*, int = 0);
 extern void InitMetaTable(ILuaInterface*);
 extern void PushValue(ILuaBase*, ILuaValue*);
 extern void FillValue(ILuaBase*, ILuaValue*, int, int);
+
+extern ILuaThread* FindThread(int);

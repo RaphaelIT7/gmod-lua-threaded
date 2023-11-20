@@ -18,6 +18,17 @@ static const char metaname[] = "ILuaInterface";
 static const char invalid_error[] = "invalid ILuaInterface";
 static const char table_name[] = "ILuaInterface_object";
 
+ILuaThread* FindThread(int id)
+{
+	auto it = interfaces.find(id);
+	if (it != interfaces.end())
+	{
+		return it->second;
+	}
+
+	return nullptr;
+}
+
 struct LUA_ILuaInterface
 {
 	ILuaInterface* IFace;
@@ -104,30 +115,20 @@ static ILuaThread* GetValidThread(ILuaBase* LUA, double index)
 	{
 		LUA_ILuaInterface* IData = GetUserdata(LUA, index);
 
-		auto it = interfaces.find(IData->ID);
-		if (it != interfaces.end())
+		ILuaThread* thread = FindThread(IData->ID);
+		if (!thread)
 		{
-			ILuaThread* thread = it->second;
-			if (!thread)
-			{
-				LUA->ThrowError("Invalid ILuaInterface!");
-			}
-
-			return thread;
+			LUA->ThrowError("Invalid ILuaInterface!");
 		}
+
+		return thread;
 	} else {
 		LUA->PushSpecial(SPECIAL_GLOB);
 			LUA->GetField(-1, "__InterfaceID");
 			double id = LUA->GetNumber(0);
 		LUA->Pop(2);
 
-		auto it = interfaces.find(id);
-		if (it != interfaces.end())
-		{
-			return it->second;
-		}
-
-		return nullptr;
+		return FindThread(id);
 	}
 }
 
