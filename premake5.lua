@@ -42,4 +42,3 @@ CreateWorkspace({name = "lua_threaded", abi_compatible = false})
 
         filter("system:linux or macosx")
             files({"source/posix/*.cpp", "source/posix/*.hpp"})
-            targetextension(".so")

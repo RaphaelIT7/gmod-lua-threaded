@@ -1,7 +1,10 @@
-#include <GarrysMod/Lua/LuaInterface.h>
-#include <GarrysMod/FactoryLoader.hpp>
-#include "CLuaGameCallback.h"
+#include "detours.h"
+#include "lua_threaded.h"
+#include <GarrysMod/Lua/Interface.h>
+#include <GarrysMod/Lua/LuaObject.h>
 #include <lua.h>
+#include "CLuaGameCallback.h"
+//#include <player.h>
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
@@ -189,7 +192,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 		return;
 	}
 
-	LUA->PCall(0, -1, 0);
+	LUA->PCall(0, LUA_MULTRET, 0);
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
@@ -237,8 +240,6 @@ void InitLuaLibraries(ILuaInterface* LUA)
 {
 	Msg("InitLuaLibraries called\n");
 	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
-
-	AddLibraries(LUA);
 
 	func_InitLuaLibraries(LUA);
 }
@@ -603,6 +604,11 @@ int LuaThread_Msg(lua_State* L)
 	return 0;
 }
 
+void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
+	LUA->PushCFunction(Func);
+	LUA->SetField(-2, Name);
+}
+
 void InitLuaThreaded(ILuaInterface* LUA, int id)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -656,31 +662,35 @@ void InitMetaTable(ILuaInterface* LUA)
 	LUA->Pop(1);
 }
 
-void Lua_Init(GarrysMod::Lua::ILuaBase* LUA)
+GMOD_MODULE_OPEN()
 {
-	GlobalLUA = LUA;
+	Symbols_Init();
 
 	InitLuaThreaded((ILuaInterface*)LUA);
 
 	InitMetaTable((ILuaInterface*)LUA);
+
+	return 0;
 }
 
-void Server_Init()
+GMOD_MODULE_CLOSE()
 {
-}
+	LUA->PushNil();
+	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, metaname);
 
-void Lua_Shutdown()
-{
-
-}
-
-static SourceSDK::FactoryLoader luashared_loader("lua_shared");
-GarrysMod::Lua::ILuaInterface* GetRealm(unsigned char realm) {
-	GarrysMod::Lua::ILuaShared* LuaShared = (GarrysMod::Lua::ILuaShared*)luashared_loader.GetFactory()(GMOD_LUASHARED_INTERFACE, nullptr);
-	if (LuaShared == nullptr) {
-		Msg("failed to get ILuaShared!\n");
-		return nullptr;
+	for (auto& [id, thread]: interfaces) {
+		if (thread->threaded) {
+			thread->run = false;
+		} else {
+			ShutdowInterface(thread);
+		}
 	}
 
-	return LuaShared->GetLuaInterface(realm);
+	for (auto& [key, val] : shared_table)
+	{
+		PushValue(LUA, val);
+		LUA->SetField(-2, key.c_str());
+	}
+
+	return 0;
 }
