@@ -1,17 +1,12 @@
+#include "lua.h"
 #include "detours.h"
-#include <GarrysMod/ModuleLoader.hpp>
-#include <scanning/symbolfinder.hpp>
-#include <GarrysMod/InterfacePointers.hpp>
-#include <GarrysMod/Symbols.hpp>
+
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 CreateLuaInterface func_CreateLuaInterface;
 CloseLuaInterface func_CloseLuaInterface;
-/*luaL_newstate func_luaL_newstate;
-TLuaPanic func_LuaPanic;
-TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
-Tlua_atpanic func_lua_atpanic;*/
 luaL_loadstring func_luaL_loadstring;
-//luaL_openlibs func_luaL_openlibs;
 lua_tostring func_lua_tostring;
 
 TInitLuaLibraries func_InitLuaLibraries;
@@ -26,76 +21,141 @@ CLuaGameCallback_LuaError func_CLuaGameCallback_LuaError;
 CLuaGameCallback_Msg func_CLuaGameCallback_Msg;
 CLuaGameCallback_MsgColour func_CLuaGameCallback_MsgColour;
 
-template<class T>
-void CheckFunction(T func, const char* name)
+// Detours.
+Detouring::Hook detour_InitLuaClasses;
+Detouring::Hook detour_CLuaLibrary_CLuaLibrary;
+Detouring::Hook detour_CLuaLibrary_Add;
+
+void hook_InitLuaClasses(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	if (func == nullptr) {
-		Msg("Could not locate %s symbol!\n", name);
+	detour_InitLuaClasses.GetTrampoline<InitLuaClasses>()(LUA);
+
+	Lua_Init(LUA);
+}
+
+std::string current_library = "";
+std::unordered_map<std::string, std::vector<CLuaLibraryFunction*>> library_funcs;
+void hook_CLuaLibrary_CLuaLibrary(void* funky_class, const char* pName)
+{
+	current_library = pName;
+
+	std::vector<CLuaLibraryFunction*> funcs;
+	library_funcs[current_library] = funcs;
+
+	detour_CLuaLibrary_CLuaLibrary.GetTrampoline<CLuaLibrary_CLuaLibrary>()(funky_class, pName);
+
+	current_library = "";
+}
+
+void hook_CLuaLibrary_Add(void* funky_class, CLuaLibraryFunction* func)
+{
+	if (current_library == "")
+	{
+		Msg("Unknown Library!\n");
+	} else {
+		library_funcs[current_library].push_back(func);
+	}
+
+	detour_CLuaLibrary_Add.GetTrampoline<CLuaLibrary_Add>()(funky_class, func);
+}
+
+void AddLibraries(ILuaInterface* LUA)
+{
+	for (auto& [key, value] : library_funcs)
+	{
+		LUA->CreateTable();
+		for (auto& libaryfunc : value)
+		{
+			LUA->PushCFunction(libaryfunc->function);
+			LUA->SetField(-2, libaryfunc->name);
+		}
+		LUA->SetField(-2, key.c_str());
+	}
+}
+
+void Detours_Think()
+{
+}
+
+bool pre = false;
+std::vector<Detouring::Hook*> detours = {};
+void CreateDetour(Detouring::Hook* hook, const char* name, Detouring::Hook::Target target, void* func)
+{
+	hook->Create(target, func);
+	hook->Enable();
+
+	detours.push_back(hook);
+
+	if (!hook->IsValid()) {
+		Msg("	Invalid detour for %s!\n", name);
 	}
 }
 
 SymbolFinder symfinder;
-void* CheckFunction(void* loader, Symbol symbol)
+void* LoadFunction(void* loader, Symbol symbol)
 {
 	return symfinder.Resolve(loader, symbol.name.c_str(), symbol.length);
 }
 
-void* CheckFunction(void* loader, const std::vector<Symbol> symbols)
+void* LoadFunction(void* loader, const std::vector<Symbol> symbols)
 {
 	void* func;
 	for (Symbol sym : symbols)
 	{
-		func = CheckFunction(loader, sym);
+		func = LoadFunction(loader, sym);
 		
 		if (func)
 			return func;
 	}
 }
 
-class lol;
-
-void Symbols_Init() 
+void Detours_Init()
 {
+	Msg("	--- Starting Detours ---\n");
+
+	Msg("		--- InitLuaClasses ---\n");
+	SourceSDK::ModuleLoader server_loader("server");
+	void* sv_InitLuaClasses = LoadFunction(server_loader.GetModule(), InitLuaClassesSym);
+	CheckFunction(sv_InitLuaClasses, "InitLuaClasses");
+	CreateDetour(&detour_InitLuaClasses, "InitLuaClasses", reinterpret_cast<void*>(sv_InitLuaClasses), reinterpret_cast<void*>(&hook_InitLuaClasses));
+	func_InitLuaClasses = detour_InitLuaClasses.GetTrampoline<InitLuaClasses>();
+
+	void* sv_CLuaLibrary_CLuaLibrary = LoadFunction(server_loader.GetModule(), CLuaLibrary_CLuaLibrarySym);
+	CheckFunction(sv_CLuaLibrary_CLuaLibrary, "CLuaLibrary::CLuaLibrary");
+	CreateDetour(&detour_CLuaLibrary_CLuaLibrary, "CLuaLibrary::CLuaLibrary", reinterpret_cast<void*>(sv_CLuaLibrary_CLuaLibrary), reinterpret_cast<void*>(&hook_CLuaLibrary_CLuaLibrary));
+
+	void* sv_CLuaLibrary_Add = LoadFunction(server_loader.GetModule(), CLuaLibrary_AddSym);
+	CheckFunction(sv_CLuaLibrary_Add, "CLuaLibrary::Add");
+	CreateDetour(&detour_CLuaLibrary_Add, "CLuaLibrary::Add", reinterpret_cast<void*>(sv_CLuaLibrary_Add), reinterpret_cast<void*>(&hook_CLuaLibrary_Add));
+
+	Msg("	--- Finished Detours ---\n");
+
+	Msg("	--- Function loader ---\n");
+
 	SourceSDK::ModuleLoader lua_shared_loader("lua_shared");
 
-	func_CreateLuaInterface = (CreateLuaInterface)CheckFunction(lua_shared_loader.GetModule(), CreateLuaInterfaceSym);
+	func_CreateLuaInterface = (CreateLuaInterface)LoadFunction(lua_shared_loader.GetModule(), CreateLuaInterfaceSym);
 	CheckFunction(func_CreateLuaInterface, "CreateLuaInterface");
 
-	func_CloseLuaInterface = (CloseLuaInterface)CheckFunction(lua_shared_loader.GetModule(), CloseLuaInterfaceSym);
+	func_CloseLuaInterface = (CloseLuaInterface)LoadFunction(lua_shared_loader.GetModule(), CloseLuaInterfaceSym);
 	CheckFunction(func_CloseLuaInterface, "CloseLuaInterface");
 
-	/*func_luaL_newstate = (luaL_newstate)CheckFunction(lua_shared_loader.GetModule(), luaL_newstateSym);
-	CheckFunction(func_luaL_newstate, "luaL_newstate");
-
-	func_LuaPanic = (TLuaPanic)CheckFunction(lua_shared_loader.GetModule(), LuaPanicSym);
-	CheckFunction(func_LuaPanic, "LuaPanic");
-
-	func_lua_atpanic = (Tlua_atpanic)CheckFunction(lua_shared_loader.GetModule(), lua_atpanicSym);
-	CheckFunction(func_lua_atpanic, "lua_atpanic");
-
-	func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)CheckFunction(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym);
-	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");*/
-
-	func_luaL_loadstring = (luaL_loadstring)CheckFunction(lua_shared_loader.GetModule(), luaL_loadstringSym);
+	func_luaL_loadstring = (luaL_loadstring)LoadFunction(lua_shared_loader.GetModule(), luaL_loadstringSym);
 	CheckFunction(func_luaL_loadstring, "luaL_loadstring");
 
-	//func_luaL_openlibs = (luaL_openlibs)CheckFunction(lua_shared_loader.GetModule(), luaL_openlibsSym);
-	//CheckFunction(func_luaL_openlibs, "luaL_openlibs");
-
-	func_lua_tostring = (lua_tostring)CheckFunction(lua_shared_loader.GetModule(), lua_tostringSym);
+	func_lua_tostring = (lua_tostring)LoadFunction(lua_shared_loader.GetModule(), lua_tostringSym);
 	CheckFunction(func_lua_tostring, "lua_tostring");
 
 	/*
 		Server suff
 	*/
-	SourceSDK::ModuleLoader server_loader("server");
-	func_InitLuaLibraries = (TInitLuaLibraries)CheckFunction(server_loader.GetModule(), InitLuaLibrariesSym);
+	func_InitLuaLibraries = (TInitLuaLibraries)LoadFunction(server_loader.GetModule(), InitLuaLibrariesSym);
 	CheckFunction(func_InitLuaLibraries, "InitLuaLibraries");
 
-	func_InitLuaClasses = (InitLuaClasses)CheckFunction(server_loader.GetModule(), InitLuaClassesSym);
+	func_InitLuaClasses = (InitLuaClasses)LoadFunction(server_loader.GetModule(), InitLuaClassesSym);
 	CheckFunction(func_InitLuaClasses, "InitLuaClasses");
 
-	func_CLuaGlobalLibrary_InitLibraries = (CLuaGlobalLibrary_InitLibraries)CheckFunction(server_loader.GetModule(), CLuaGlobalLibrary_InitLibrariesSym);
+	func_CLuaGlobalLibrary_InitLibraries = (CLuaGlobalLibrary_InitLibraries)LoadFunction(server_loader.GetModule(), CLuaGlobalLibrary_InitLibrariesSym);
 	CheckFunction(func_CLuaGlobalLibrary_InitLibraries, "CLuaGlobalLibrary::InitLibraries");
 
 	SourceSDK::FactoryLoader fac_server_loader( "server" );
@@ -107,21 +167,34 @@ void Symbols_Init()
 	/*
 		CLuaGameCallback stuff
 	*/
-	func_CLuaGameCallback_CreateLuaObject = (CLuaGameCallback_CreateLuaObject)CheckFunction(server_loader.GetModule(), CLuaGameCallback_CreateLuaObjectSym);
+	func_CLuaGameCallback_CreateLuaObject = (CLuaGameCallback_CreateLuaObject)LoadFunction(server_loader.GetModule(), CLuaGameCallback_CreateLuaObjectSym);
 	CheckFunction(func_CLuaGameCallback_CreateLuaObject, "CLuaGameCallback::CreateLuaObject");
 
-	func_CLuaGameCallback_DestroyLuaObject = (CLuaGameCallback_DestroyLuaObject)CheckFunction(server_loader.GetModule(), CLuaGameCallback_DestroyLuaObjectSym);
+	func_CLuaGameCallback_DestroyLuaObject = (CLuaGameCallback_DestroyLuaObject)LoadFunction(server_loader.GetModule(), CLuaGameCallback_DestroyLuaObjectSym);
 	CheckFunction(func_CLuaGameCallback_DestroyLuaObject, "CLuaGameCallback::DestroyLuaObject");
 
-	func_CLuaGameCallback_ErrorPrint = (CLuaGameCallback_ErrorPrint)CheckFunction(server_loader.GetModule(), CLuaGameCallback_ErrorPrintSym);
+	func_CLuaGameCallback_ErrorPrint = (CLuaGameCallback_ErrorPrint)LoadFunction(server_loader.GetModule(), CLuaGameCallback_ErrorPrintSym);
 	CheckFunction(func_CLuaGameCallback_ErrorPrint, "CLuaGameCallback::ErrorPrint");
 
-	func_CLuaGameCallback_LuaError = (CLuaGameCallback_LuaError)CheckFunction(server_loader.GetModule(), CLuaGameCallback_LuaErrorSym);
+	func_CLuaGameCallback_LuaError = (CLuaGameCallback_LuaError)LoadFunction(server_loader.GetModule(), CLuaGameCallback_LuaErrorSym);
 	CheckFunction(func_CLuaGameCallback_LuaError, "CLuaGameCallback::LuaError");
 
-	func_CLuaGameCallback_Msg = (CLuaGameCallback_Msg)CheckFunction(server_loader.GetModule(), CLuaGameCallback_MsgSym);
+	func_CLuaGameCallback_Msg = (CLuaGameCallback_Msg)LoadFunction(server_loader.GetModule(), CLuaGameCallback_MsgSym);
 	CheckFunction(func_CLuaGameCallback_Msg, "CLuaGameCallback::Msg");
 
-	func_CLuaGameCallback_MsgColour = (CLuaGameCallback_MsgColour)CheckFunction(server_loader.GetModule(), CLuaGameCallback_MsgColourSym);
+	func_CLuaGameCallback_MsgColour = (CLuaGameCallback_MsgColour)LoadFunction(server_loader.GetModule(), CLuaGameCallback_MsgColourSym);
 	CheckFunction(func_CLuaGameCallback_MsgColour, "CLuaGameCallback::MsgColour");
+
+	Msg("	--- Finished loading functions ---\n");
+}
+
+void Detours_Shutdown()
+{
+	for (Detouring::Hook* hook : detours) {
+		hook->Destroy();
+	}
+
+	/*mutex.Lock();
+	snapshotdata->run = false;
+	mutex.Unlock();*/
 }
