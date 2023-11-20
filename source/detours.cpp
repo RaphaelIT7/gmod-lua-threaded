@@ -58,7 +58,7 @@ void* FindSymbol(std::string name)
 	void* func;
 	for (int i=15; i<35;i++) // Search from _Z15 up to _Z35. Should work in most cases.
 	{
-		func = FindFunction(server_loader.GetModule(), Symbol::FromName(((std::string)"_Z") + std::to_string(i) + ((std::string)"redir__") + name + ((std::string)"P9lua_State"))); // Build a string like: _Z23real__GLobal__ServerLogP13ILuaInterface
+		func = FindFunction(server_loader.GetModule(), Symbol::FromName(((std::string)"_ZL") + std::to_string(i) + ((std::string)"redir__") + name + ((std::string)"P9lua_State"))); // Build a string like: _Z23real__GLobal__ServerLogP13ILuaInterface
 		if (func != nullptr)
 			break;
 	}
