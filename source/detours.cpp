@@ -17,6 +17,7 @@ lua_tostring func_lua_tostring;
 TInitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
 CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
+void* g_pGlobalLuaLibraryFactory;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
