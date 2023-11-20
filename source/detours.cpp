@@ -1,6 +1,8 @@
 #include "detours.h"
 #include <GarrysMod/ModuleLoader.hpp>
 #include <scanning/symbolfinder.hpp>
+#include <GarrysMod/InterfacePointers.hpp>
+#include <GarrysMod/Symbols.hpp>
 
 CreateLuaInterface func_CreateLuaInterface;
 CloseLuaInterface func_CloseLuaInterface;
@@ -12,8 +14,9 @@ luaL_loadstring func_luaL_loadstring;
 //luaL_openlibs func_luaL_openlibs;
 lua_tostring func_lua_tostring;
 
-InitLuaLibraries func_InitLuaLibraries;
+TInitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
+CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
@@ -47,6 +50,8 @@ void* CheckFunction(void* loader, const std::vector<Symbol> symbols)
 			return func;
 	}
 }
+
+class lol;
 
 void Symbols_Init() 
 {
@@ -83,13 +88,24 @@ void Symbols_Init()
 		Server suff
 	*/
 	SourceSDK::ModuleLoader server_loader("server");
-	func_InitLuaLibraries = (InitLuaLibraries)CheckFunction(server_loader.GetModule(), InitLuaLibrariesSym);
+	func_InitLuaLibraries = (TInitLuaLibraries)CheckFunction(server_loader.GetModule(), InitLuaLibrariesSym);
 	CheckFunction(func_InitLuaLibraries, "InitLuaLibraries");
 
 	func_InitLuaClasses = (InitLuaClasses)CheckFunction(server_loader.GetModule(), InitLuaClassesSym);
 	CheckFunction(func_InitLuaClasses, "InitLuaClasses");
 
+	func_CLuaGlobalLibrary_InitLibraries = (CLuaGlobalLibrary_InitLibraries)CheckFunction(server_loader.GetModule(), CLuaGlobalLibrary_InitLibrariesSym);
+	CheckFunction(func_CLuaGlobalLibrary_InitLibraries, "CLuaGlobalLibrary::InitLibraries");
 
+	SourceSDK::FactoryLoader fac_server_loader( "server" );
+	g_pGlobalLuaLibraryFactory = ResolveSymbol<void>(
+		fac_server_loader, g_pGlobalLuaLibraryFactorySym
+	);
+	CheckFunction(g_pGlobalLuaLibraryFactory, "g_pGlobalLuaLibraryFactory");
+
+	/*
+		CLuaGameCallback stuff
+	*/
 	func_CLuaGameCallback_CreateLuaObject = (CLuaGameCallback_CreateLuaObject)CheckFunction(server_loader.GetModule(), CLuaGameCallback_CreateLuaObjectSym);
 	CheckFunction(func_CLuaGameCallback_CreateLuaObject, "CLuaGameCallback::CreateLuaObject");
 

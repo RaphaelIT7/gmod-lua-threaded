@@ -235,6 +235,17 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 	return 0;
 }
 
+void* g_pGlobalLuaLibraryFactorySig;
+void InitLuaLibraries(ILuaInterface* LUA)
+{
+	if (g_pGlobalLuaLibraryFactorySig)
+	{
+		func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
+	}
+
+	func_InitLuaLibraries(LUA);
+}
+
 LUA_FUNCTION(ILuaInterface_InitLibraries)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
@@ -248,7 +259,7 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		func_InitLuaLibraries(thread->IFace);
+		InitLuaLibraries(thread->IFace);
 	}
 
 	return 0;
@@ -344,7 +355,7 @@ unsigned LuaThread(void* data)
 				func_InitLuaClasses(IFace);
 			} else if (strcmp(action->type, "initlibraries") == 0)
 			{
-				func_InitLuaLibraries(IFace);
+				InitLuaLibraries(IFace);
 			}
 
 			delete action;

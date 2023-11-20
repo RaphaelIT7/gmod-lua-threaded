@@ -1,5 +1,7 @@
 #include <GarrysMod/Symbol.hpp>
 #include <GarrysMod/Lua/LuaInterface.h>
+#include <GarrysMod/FactoryLoader.hpp>
+#include <scanning/symbolfinder.hpp>
 #include <vector>
 
 using namespace GarrysMod::Lua;
@@ -54,18 +56,24 @@ const Symbol lua_tostringSym = Symbol::FromName("lua_tolstring");
 /*
 	server_srv stuff
 */
-typedef void (*InitLuaLibraries)(ILuaInterface*);
-extern InitLuaLibraries func_InitLuaLibraries;
+typedef void (*TInitLuaLibraries)(ILuaInterface*);
+extern TInitLuaLibraries func_InitLuaLibraries;
 const Symbol InitLuaLibrariesSym = Symbol::FromName("_Z16InitLuaLibrariesP13ILuaInterface");
 
 typedef void (*InitLuaClasses)(ILuaInterface*);
 extern InitLuaClasses func_InitLuaClasses;
 const Symbol InitLuaClassesSym = Symbol::FromName("_Z14InitLuaClassesP13ILuaInterface");
 
+extern void* g_pGlobalLuaLibraryFactory;
+const Symbol g_pGlobalLuaLibraryFactorySym = Symbol::FromName("_ZL26g_pGlobalLuaLibraryFactory");
+
+typedef void (*CLuaGlobalLibrary_InitLibraries)(void*, ILuaInterface*);
+extern CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
+const Symbol CLuaGlobalLibrary_InitLibrariesSym = Symbol::FromName("_ZN17CLuaGlobalLibrary13InitLibrariesEP13ILuaInterface");
+
 /*
 	CLuaGameCallback stuff
 */
-
 typedef ILuaObject* (*CLuaGameCallback_CreateLuaObject)(void*);
 extern CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 const std::vector<Symbol> CLuaGameCallback_CreateLuaObjectSym = {
@@ -115,3 +123,45 @@ const std::vector<Symbol> CLuaGameCallback_MsgColourSym = {
 };
 
 extern void Symbols_Init();
+
+static SymbolFinder symbol_finder;
+template<class T>
+static inline T* ResolveSymbol(
+	SourceSDK::FactoryLoader& loader, const Symbol& symbol
+)
+{
+	if (symbol.type == Symbol::Type::None)
+		return nullptr;
+
+#if defined SYSTEM_WINDOWS
+
+	auto iface = reinterpret_cast<T**>(symbol_finder.Resolve(
+		loader.GetModule(), symbol.name.c_str(), symbol.length
+	));
+	return iface != nullptr ? *iface : nullptr;
+
+#elif defined SYSTEM_POSIX
+
+	return reinterpret_cast<T*>(symbol_finder.Resolve(
+		loader.GetModule(), symbol.name.c_str(), symbol.length
+	));
+
+#endif
+
+}
+
+template<class T>
+static inline T* ResolveSymbols(
+	SourceSDK::FactoryLoader& loader, const std::vector<Symbol>& symbols
+)
+{
+	T* iface_pointer = nullptr;
+	for (const auto& symbol : symbols)
+	{
+		iface_pointer = ResolveSymbol<T>(loader, symbol);
+		if (iface_pointer != nullptr)
+			break;
+	}
+
+	return iface_pointer;
+}
