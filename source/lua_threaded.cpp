@@ -215,8 +215,6 @@ LUA_FUNCTION(ILuaInterface_RunString)
 		thread->mutex.Lock();
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
-
-		ThreadSleep(1000); // Remove it later
 	} else {
 		RunString(thread->IFace, str);
 	}
