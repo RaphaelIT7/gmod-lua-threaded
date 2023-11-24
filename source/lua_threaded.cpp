@@ -335,12 +335,14 @@ LUA_FUNCTION(LuaThread_GetInterface)
 	return 1;
 }
 
-/*int LuaPanic(lua_State* state)
+int LuaPanic(lua_State* state)
 {
+	Msg("Panic with PCall?!?\n");
+
 	return func_LuaPanic(state);;
 }
 
-int AdvancedLuaErrorReporter(lua_State* state)
+/*int AdvancedLuaErrorReporter(lua_State* state)
 {
 	return func_AdvancedLuaErrorReporter(state);
 }*/
@@ -353,7 +355,7 @@ ILuaInterface* CreateInterface()
 
 	//lua_State* state = func_luaL_newstate();
 
-	//func_lua_atpanic(state, LuaPanic);
+	func_lua_atpanic(IFace->GetState(), LuaPanic);
 	
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 

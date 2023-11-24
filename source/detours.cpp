@@ -6,10 +6,10 @@
 
 CreateLuaInterface func_CreateLuaInterface;
 CloseLuaInterface func_CloseLuaInterface;
-/*luaL_newstate func_luaL_newstate;
+//luaL_newstate func_luaL_newstate;
 TLuaPanic func_LuaPanic;
-TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
-Tlua_atpanic func_lua_atpanic;*/
+//TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
+Tlua_atpanic func_lua_atpanic;
 luaL_loadstring func_luaL_loadstring;
 //luaL_openlibs func_luaL_openlibs;
 lua_tostring func_lua_tostring;
@@ -77,7 +77,7 @@ void Symbols_Init()
 	CheckFunction(func_CloseLuaInterface, "CloseLuaInterface");
 
 	/*func_luaL_newstate = (luaL_newstate)FindFunction(lua_shared_loader.GetModule(), luaL_newstateSym);
-	CheckFunction(func_luaL_newstate, "luaL_newstate");
+	CheckFunction(func_luaL_newstate, "luaL_newstate");*/
 
 	func_LuaPanic = (TLuaPanic)FindFunction(lua_shared_loader.GetModule(), LuaPanicSym);
 	CheckFunction(func_LuaPanic, "LuaPanic");
@@ -85,7 +85,7 @@ void Symbols_Init()
 	func_lua_atpanic = (Tlua_atpanic)FindFunction(lua_shared_loader.GetModule(), lua_atpanicSym);
 	CheckFunction(func_lua_atpanic, "lua_atpanic");
 
-	func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)FindFunction(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym);
+	/*func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)FindFunction(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym);
 	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");*/
 
 	func_luaL_loadstring = (luaL_loadstring)FindFunction(lua_shared_loader.GetModule(), luaL_loadstringSym);

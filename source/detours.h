@@ -27,7 +27,7 @@ const std::vector<Symbol> CloseLuaInterfaceSym = {
 
 /*typedef lua_State* (*luaL_newstate)();
 extern luaL_newstate func_luaL_newstate;
-const Symbol luaL_newstateSym = Symbol::FromName("luaL_newstate");
+const Symbol luaL_newstateSym = Symbol::FromName("luaL_newstate");*/
 
 typedef int (*TLuaPanic)(lua_State*);
 extern TLuaPanic func_LuaPanic;
@@ -37,7 +37,7 @@ typedef void (*Tlua_atpanic)(lua_State*, CFunc);
 extern Tlua_atpanic func_lua_atpanic;
 const Symbol lua_atpanicSym = Symbol::FromName("lua_atpanic");
 
-typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
+/*typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
 extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");*/
 
