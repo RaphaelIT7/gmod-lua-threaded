@@ -181,8 +181,7 @@ LUA_FUNCTION_STATIC(newindex)
 
 void RunString(ILuaInterface* LUA, const char* str)
 {
-	LUA->RunStringEx("", "", str, true, true, true, true);
-	/*int result = func_luaL_loadstring(LUA->GetState(), str);
+	int result = func_luaL_loadstring(LUA->GetState(), str);
 	Msg("[Code] %i\n", result);
 	if (result != 0)
 	{
@@ -193,7 +192,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 		return;
 	}
 
-	LUA->PCall(0, LUA_MULTRET, 0);*/
+	LUA->PCall(0, LUA_MULTRET, 0);
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
