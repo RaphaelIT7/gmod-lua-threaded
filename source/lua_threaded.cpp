@@ -194,11 +194,14 @@ void HandleError(ILuaInterface* LUA, int result)
 void RunString(ILuaInterface* LUA, const char* str)
 {
 	int result = func_luaL_loadstring(LUA->GetState(), str);
-	Msg("[Code] %i\n", result);
+	Msg("[Test 1] %i %i\n", result, LUA->Top());
 	HandleError(LUA, result);
 
+	Msg("[Test 2] %i %i\n", result, LUA->Top());
 	result = LUA->PCall(0, 0, 0);
+	Msg("[Test 3] %i %i\n", result, LUA->Top());
 	HandleError(LUA, result);
+	Msg("[Test 4] %i %i\n", result, LUA->Top());
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
