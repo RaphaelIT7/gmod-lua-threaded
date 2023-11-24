@@ -198,7 +198,7 @@ void RunString(ILuaInterface* LUA, const char* str)
 	HandleError(LUA, result);
 
 	Msg("[Test 2] %i %i\n", result, LUA->Top());
-	result = LUA->PCall(0, 0, 0);
+	result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
 	Msg("[Test 3] %i %i\n", result, LUA->Top());
 	HandleError(LUA, result);
 	Msg("[Test 4] %i %i\n", result, LUA->Top());

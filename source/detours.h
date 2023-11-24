@@ -37,6 +37,10 @@ typedef void (*Tlua_atpanic)(lua_State*, CFunc);
 extern Tlua_atpanic func_lua_atpanic;
 const Symbol lua_atpanicSym = Symbol::FromName("lua_atpanic");
 
+typedef int (*Tlua_pcall)(lua_State*, int, int, int);
+extern Tlua_pcall func_lua_pcall;
+const Symbol lua_pcallSym = Symbol::FromName("lua_pcall");
+
 /*typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
 extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");*/
