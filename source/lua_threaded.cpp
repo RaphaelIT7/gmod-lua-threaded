@@ -179,10 +179,8 @@ LUA_FUNCTION_STATIC(newindex)
 	return 0;
 }
 
-void RunString(ILuaInterface* LUA, const char* str)
+void HandleError(ILuaInterface* LUA, int result)
 {
-	int result = func_luaL_loadstring(LUA->GetState(), str);
-	Msg("[Code] %i\n", result);
 	if (result != 0)
 	{
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
@@ -191,8 +189,16 @@ void RunString(ILuaInterface* LUA, const char* str)
 		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
 		return;
 	}
+}
 
-	LUA->PCall(0, LUA_MULTRET, 0);
+void RunString(ILuaInterface* LUA, const char* str)
+{
+	int result = func_luaL_loadstring(LUA->GetState(), str);
+	Msg("[Code] %i\n", result);
+	HandleError(LUA, result);
+
+	result = LUA->PCall(0, 0, 0);
+	HandleError(LUA, result);
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
@@ -209,6 +215,8 @@ LUA_FUNCTION(ILuaInterface_RunString)
 		thread->mutex.Lock();
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
+
+		ThreadSleep(1000); // Remove it later
 	} else {
 		RunString(thread->IFace, str);
 	}
