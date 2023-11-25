@@ -1,6 +1,7 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 #include <unordered_map>
 #include <vector>
+#include <lua.h>
 
 using namespace GarrysMod::Lua;
 
@@ -33,6 +34,8 @@ struct ILuaThread
 	bool threaded = false;
 	
 	int id = -1;
+
+	jmp_buf jumpBuffer;
 };
 
 extern void InitLuaThreaded(ILuaInterface*, int = 0);

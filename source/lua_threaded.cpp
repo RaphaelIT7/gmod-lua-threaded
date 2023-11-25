@@ -2,7 +2,6 @@
 #include "lua_threaded.h"
 #include <GarrysMod/Lua/Interface.h>
 #include <GarrysMod/Lua/LuaObject.h>
-#include <lua.h>
 #include "CLuaGameCallback.h"
 //#include <player.h>
 
@@ -191,17 +190,28 @@ void HandleError(ILuaInterface* LUA, int result)
 	}
 }
 
-void RunString(ILuaInterface* LUA, const char* str)
+void RunString(ILuaThread* thread, const char* str)
 {
-	int result = func_luaL_loadstring(LUA->GetState(), str);
-	Msg("[Test 1] %i %i\n", result, LUA->Top());
-	HandleError(LUA, result);
+	ILuaInterface* LUA = thread->IFace;
 
-	Msg("[Test 2] %i %i\n", result, LUA->Top());
-	result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
-	Msg("[Test 3] %i %i\n", result, LUA->Top());
-	HandleError(LUA, result);
-	Msg("[Test 4] %i %i\n", result, LUA->Top());
+	if (setjmp(thread->jumpBuffer) == 0)
+    {
+		int result = func_luaL_loadstring(LUA->GetState(), str);
+		Msg("[Test 1] %i %i\n", result, LUA->Top());
+		HandleError(LUA, result);
+
+		Msg("[Test 2] %i %i\n", result, LUA->Top());
+		result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
+		Msg("[Test 3] %i %i\n", result, LUA->Top());
+		HandleError(LUA, result);
+		Msg("[Test 4] %i %i\n", result, LUA->Top());
+	}
+    else
+    {
+		HandleError(LUA, -1);
+
+        Msg("Lua panic handled, continuing...\n");
+    }
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
@@ -219,7 +229,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		RunString(thread->IFace, str);
+		RunString(thread, str);
 	}
 
 	return 0;
@@ -335,11 +345,20 @@ LUA_FUNCTION(LuaThread_GetInterface)
 	return 1;
 }
 
-int LuaPanic(lua_State* state)
+LUA_FUNCTION(LuaPanic)
 {
-	Msg("Panic with PCall?!?\n");
+	Msg("Handling crash?!?\n");
 
-	return func_LuaPanic(state);;
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "__InterfaceID");
+		int id = LUA->GetNumber(0);
+
+	LUA->Pop(2);
+
+	ILuaThread* thread = FindThread(id);
+	longjmp(thread->jumpBuffer, 1);
+
+	return 0;
 }
 
 /*int AdvancedLuaErrorReporter(lua_State* state)
@@ -394,7 +413,7 @@ unsigned LuaThread(void* data)
 		{
 			if (strcmp(action->type, "run") == 0)
 			{
-				RunString(IFace, action->data);
+				RunString(thread_data, action->data);
 			} else if (strcmp(action->type, "initclasses") == 0)
 			{
 				func_InitLuaClasses(IFace);
