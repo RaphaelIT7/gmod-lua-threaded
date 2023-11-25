@@ -3,7 +3,6 @@
 #include <GarrysMod/Lua/Interface.h>
 #include <GarrysMod/Lua/LuaObject.h>
 #include "CLuaGameCallback.h"
-#include <setjmp.h>
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
@@ -356,7 +355,7 @@ LUA_FUNCTION(LuaPanic)
 	LUA->Pop(2);
 
 	ILuaThread* thread = FindThread(id);
-	longjmp(thread->jumpBuffer, 1);
+	std::longjmp(thread->jumpBuffer, 1);
 
 	return 0;
 }
