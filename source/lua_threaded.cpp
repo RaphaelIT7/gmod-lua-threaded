@@ -383,7 +383,7 @@ ILuaInterface* CreateInterface()
 
 	//lua_State* state = func_luaL_newstate();
 
-	func_lua_atpanic(IFace->GetState(), LuaPanic);
+	//func_lua_atpanic(IFace->GetState(), LuaPanic);
 	
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 
