@@ -1,13 +1,15 @@
 # gmod-lua-threaded
 
-This project aims to add a multithreading library to Gmod.  
+WIP  
+A side project I work on to learn more about Lua, and It's API for my [gmod-lua-shared project](https://github.com/RaphaelIT7/gmod-lua-shared)  
+
+This project aims to provide all necessary functions to run Lua on different threads.  
 The Goal is to be able to create a ILuaInterface with all of Gmod's libraries, functions and classes.  
 
 NOTE:  
 This only works on Linux because on Windows creating a ILuaInterface on another thread currently crashes the game.  
 
 ## What is implemented
-- [x] print should work  
 - [x] Shared Table  
 - [x] Better Error handling(It loved to crash on any Lua error.)  
 
