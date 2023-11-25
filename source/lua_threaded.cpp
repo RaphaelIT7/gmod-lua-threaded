@@ -195,7 +195,7 @@ void RunString(ILuaThread* thread, const char* str)
 
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "__InterfaceID");
-		int id = LUA->GetNumber(0);
+		int id = LUA->GetNumber(-1);
 
 	LUA->Pop(2);
 
@@ -358,7 +358,7 @@ LUA_FUNCTION(LuaPanic)
 
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "__InterfaceID");
-		int id = LUA->GetNumber(0);
+		int id = LUA->GetNumber(-1);
 
 	LUA->Pop(2);
 
