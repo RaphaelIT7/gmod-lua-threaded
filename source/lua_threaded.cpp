@@ -193,6 +193,14 @@ void RunString(ILuaThread* thread, const char* str)
 {
 	ILuaInterface* LUA = thread->IFace;
 
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "__InterfaceID");
+		int id = LUA->GetNumber(0);
+
+	LUA->Pop(2);
+
+	Msg("Setting the jumpbuffer for %i\n", id);
+
 	if (setjmp(thread->jumpBuffer) == 0)
     {
 		int result = func_luaL_loadstring(LUA->GetState(), str);
@@ -354,8 +362,10 @@ LUA_FUNCTION(LuaPanic)
 
 	LUA->Pop(2);
 
+	Msg("Jumping for %i\n", id);
+
 	ILuaThread* thread = FindThread(id);
-	std::longjmp(thread->jumpBuffer, 1);
+	//longjmp(thread->jumpBuffer, 1);
 
 	return 0;
 }
