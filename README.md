@@ -9,9 +9,9 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 ## What is implemented
 - [x] print should work  
 - [x] Shared Table  
+- [x] Better Error handling(It loved to crash on any Lua error.)  
 
 ## ToDo/Testing
-- [ ] Better Error handling  
 - [ ] Created ILuaInterface should load all Gmod scripts/allow one to do so  
 - [ ] Recreate all Gmod libraries  
 
@@ -29,7 +29,7 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] cookie  
 - - [x] coroutine - Implemented by Lua  
 - - [ ] cvars  
-- - [ ] debug (Verify)  
+- - [x] debug (Verify)  
 - - [ ] debugoverlay  
 - - [ ] drive?  
 - - [ ] duplicator  
@@ -45,7 +45,7 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] hammer?  
 - - [ ] hook  
 - - [ ] http  
-- - [ ] jit (Verify)  
+- - [x] jit (Verify)  
 - - [ ] list  
 - - [ ] math  
 - - [ ] motionsensor  
@@ -53,7 +53,7 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] net  
 - - [ ] numpad  
 - - [ ] os (Verify)  
-- - [ ] package (Verify)  
+- - [x] package (Verify)  
 - - [ ] physenv  
 - - [ ] player  
 - - [ ] player_manager  

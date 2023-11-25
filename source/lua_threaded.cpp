@@ -192,32 +192,17 @@ void HandleError(ILuaInterface* LUA, int result)
 void RunString(ILuaThread* thread, const char* str)
 {
 	ILuaInterface* LUA = thread->IFace;
-
-	LUA->PushSpecial(SPECIAL_GLOB);
-		LUA->GetField(-1, "__InterfaceID");
-		int id = LUA->GetNumber(-1);
-
-	LUA->Pop(2);
-
-	Msg("Setting the jumpbuffer for %i\n", id);
-
 	if (setjmp(thread->jumpBuffer) == 0)
     {
 		int result = func_luaL_loadstring(LUA->GetState(), str);
-		Msg("[Test 1] %i %i\n", result, LUA->Top());
 		HandleError(LUA, result);
 
-		Msg("[Test 2] %i %i\n", result, LUA->Top());
 		result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
-		Msg("[Test 3] %i %i\n", result, LUA->Top());
 		HandleError(LUA, result);
-		Msg("[Test 4] %i %i\n", result, LUA->Top());
 	}
     else
     {
-		HandleError(LUA, -1);
-
-        Msg("Lua panic handled, continuing...\n");
+		HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
     }
 }
 
@@ -354,15 +339,13 @@ LUA_FUNCTION(LuaThread_GetInterface)
 
 LUA_FUNCTION(LuaPanic)
 {
-	Msg("Handling crash?!?\n");
+	ConDMsg("[LuaThread] Handling Lua Panic!\n");
 
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "__InterfaceID");
 		int id = LUA->GetNumber(-1);
 
 	LUA->Pop(2);
-
-	Msg("Jumping for %i\n", id);
 
 	ILuaThread* thread = FindThread(id);
 	longjmp(thread->jumpBuffer, 1);
@@ -383,7 +366,7 @@ ILuaInterface* CreateInterface()
 
 	//lua_State* state = func_luaL_newstate();
 
-	//func_lua_atpanic(IFace->GetState(), LuaPanic);
+	func_lua_atpanic(IFace->GetState(), LuaPanic);
 	
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 
