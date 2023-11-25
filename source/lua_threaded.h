@@ -1,5 +1,6 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 #include <unordered_map>
+#include <setjmp.h>
 #include <vector>
 #include <lua.h>
 
