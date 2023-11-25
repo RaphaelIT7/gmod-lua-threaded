@@ -365,7 +365,7 @@ LUA_FUNCTION(LuaPanic)
 	Msg("Jumping for %i\n", id);
 
 	ILuaThread* thread = FindThread(id);
-	//longjmp(thread->jumpBuffer, 1);
+	longjmp(thread->jumpBuffer, 1);
 
 	return 0;
 }
