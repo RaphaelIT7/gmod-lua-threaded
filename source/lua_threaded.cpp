@@ -3,7 +3,7 @@
 #include <GarrysMod/Lua/Interface.h>
 #include <GarrysMod/Lua/LuaObject.h>
 #include "CLuaGameCallback.h"
-//#include <player.h>
+#include <setjmp.h>
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
