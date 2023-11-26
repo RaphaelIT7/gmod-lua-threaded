@@ -7,7 +7,7 @@ void CheckType(ILuaBase* LUA, int index)
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-inline LUA_ILuaInterface *GetUserdata(ILuaBase *LUA, int index)
+LUA_ILuaInterface *GetUserdata(ILuaBase *LUA, int index)
 {
 	return LUA->GetUserType<LUA_ILuaInterface>(index, metatype);
 }
