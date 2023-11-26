@@ -3,6 +3,8 @@
 
 GMOD_MODULE_OPEN()
 {
+	Msg("LuaThreaded Loading\n");
+
 	GMOD = new GMOD_Info;
 
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -21,6 +23,8 @@ GMOD_MODULE_OPEN()
 	InitLuaThreaded((ILuaInterface*)LUA);
 
 	InitMetaTable((ILuaInterface*)LUA);
+
+	Msg("LuaThreaded Loaded\n");
 
 	return 0;
 }
