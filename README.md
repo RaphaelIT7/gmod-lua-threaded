@@ -55,7 +55,7 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] navmesh  
 - - [ ] net  
 - - [ ] numpad  
-- - [ ] os (Verify)  
+- - [x] os (Verify)  
 - - [x] package (Verify)  
 - - [ ] physenv  
 - - [ ] player  

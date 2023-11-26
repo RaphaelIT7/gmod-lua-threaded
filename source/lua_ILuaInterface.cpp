@@ -12,7 +12,7 @@ inline LUA_ILuaInterface *GetUserdata(ILuaBase *LUA, int index)
 	return LUA->GetUserType<LUA_ILuaInterface>(index, metatype);
 }
 
-static ILuaInterface* Get(ILuaBase* LUA, int index)
+ILuaInterface* Get(ILuaBase* LUA, int index)
 {
 	CheckType(LUA, index);
 
@@ -58,7 +58,7 @@ void Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
 	LUA->Remove(-2);
 }
 
-static void Destroy(ILuaBase *LUA, int index)
+void Destroy(ILuaBase *LUA, int index)
 {
 	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
 	if (udata == nullptr)
