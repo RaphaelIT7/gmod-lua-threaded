@@ -9,12 +9,12 @@ using namespace GarrysMod::Lua;
 
 enum LuaAction
 {
-	RunString,
-	InitClasses,
-	InitLibraries,
-	LoadFunc,
-	Autorun,
-	RunFile,
+	ACT_RunString,
+	ACT_InitClasses,
+	ACT_InitLibraries,
+	ACT_LoadFunc,
+	ACT_Autorun,
+	ACT_RunFile,
 };
 
 struct ILuaValue
