@@ -1,6 +1,7 @@
 #include <GarrysMod/Lua/Interface.h>
 #include "lua_threaded.h"
 
+GMOD_Info* GMOD;
 void CheckType(ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, metatype))

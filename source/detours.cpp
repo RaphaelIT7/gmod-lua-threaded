@@ -27,6 +27,8 @@ CLuaGameCallback_LuaError func_CLuaGameCallback_LuaError;
 CLuaGameCallback_Msg func_CLuaGameCallback_Msg;
 CLuaGameCallback_MsgColour func_CLuaGameCallback_MsgColour;
 
+IFileSystem* gpFileSystem;
+
 template<class T>
 void CheckFunction(T func, const char* name)
 {
