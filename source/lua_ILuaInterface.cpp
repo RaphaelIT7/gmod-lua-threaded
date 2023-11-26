@@ -273,23 +273,19 @@ void Autorun(ILuaThread* LUA)
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
-	gpFileSystem->FindClose(findHandle);
 
-	FileFindHandle_t findHandle;
-	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/*.lua", "GAME", &findHandle);
+	pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
 		RunFile(LUA, (((std::string)"lua/autorun/server/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
-	gpFileSystem->FindClose(findHandle);
 
 	/*
 		Load sensorbones. Yes. Gmod also loads them.
 	*/
-	FileFindHandle_t findHandle;
-	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/sensorbones/*.lua", "GAME", &findHandle);
+	pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/sensorbones/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
 		RunFile(LUA, (((std::string)"lua/autorun/server/sensorbones/") + pFilename).c_str()); // Kill me later.
