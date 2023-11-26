@@ -169,6 +169,9 @@ void RunString(ILuaThread* thread, const char* str)
     else
     {
 		//HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
+		LUA->Pop();
+
+		Msg("Error Happend.\n");
     }
 }
 
