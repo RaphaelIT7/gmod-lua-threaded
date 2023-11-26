@@ -242,7 +242,7 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 
 void RunFile(ILuaThread* LUA, const char* file)
 {
-	FileHandle_t fh = gpFileSystem->Open(file, "r", "LUA");
+	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
 	if(fh)
 	{
 		int file_len = gpFileSystem->Size(fh);
@@ -263,7 +263,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 
 void Autorun(ILuaThread* LUA)
 {
-	RunFile(LUA, "includes/init.lua");
+	RunFile(LUA, "lua/includes/init.lua");
 
 	/*FileFindHandle_t findHandle;
 	const char *pFilename = gpFileSystem->FindFirstEx("autorun/*.lua", "LUA", &findHandle);
@@ -384,7 +384,7 @@ unsigned LuaThread(void* data)
 				Autorun(thread_data);
 			} else if (strcmp(action->type, "runfile") == 0)
 			{
-				Autorun(thread_data);
+				RunFile(thread_data, action->data);
 			}
 
 			delete action;
