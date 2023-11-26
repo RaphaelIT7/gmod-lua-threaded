@@ -78,8 +78,6 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 
 LUA_FUNCTION(LuaThread_GetTable)
 {
-    ILuaInterface* ILUA = (ILuaInterface*)LUA;
-
     LUA->CreateTable();
     shared_table_mutex.Lock();
     for (auto& [key, value] : shared_table)

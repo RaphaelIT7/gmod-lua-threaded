@@ -91,7 +91,7 @@ ILuaThread* GetValidThread(ILuaBase* LUA, double index)
 	} else {
 		LUA->PushSpecial(SPECIAL_GLOB);
 			LUA->GetField(-1, "__InterfaceID");
-			double id = LUA->GetNumber(0);
+			double id = LUA->GetNumber(-1);
 		LUA->Pop(2);
 
 		return FindThread(id);

@@ -1,6 +1,6 @@
 #include <GarrysMod/Lua/Interface.h>
+#include <lua_ILuaInterface.h>
 #include "CLuaGameCallback.h"
-#include "lua_utils.h"
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
@@ -159,13 +159,7 @@ LUA_FUNCTION(LuaPanic)
 {
 	ConDMsg("[LuaThread] Handling Lua Panic!\n");
 
-	LUA->PushSpecial(SPECIAL_GLOB);
-		LUA->GetField(-1, "__InterfaceID");
-		int id = LUA->GetNumber(-1);
-
-	LUA->Pop(2);
-
-	ILuaThread* thread = FindThread(id);
+	ILuaThread* thread = GetValidThread(LUA, 0);
 	longjmp(thread->jumpBuffer, 1);
 
 	return 0;
