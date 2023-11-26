@@ -15,6 +15,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 
 ## ToDo/Testing
 - [ ] Created ILuaInterface should load all Gmod scripts/allow one to do so  
+- [ ] Documentation  
 - [ ] Recreate all Gmod libraries  
 
 I listed all Libraries below that are serverside. Regardless if they are implemented in lua or in c++.  
@@ -81,3 +82,48 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - [ ] Cleanup the code  
 - [ ] Make this compatible for x86-64  
 - [ ] Look again into Windows  
+
+# Structure
+
+## CLuaGameCallback class
+Creates the CLuaGameCallback class and implements all functions.  
+
+Files:  
+- `CLuaGameCallback.h`
+- `CLuaGameCallback.cpp`
+
+
+## detours
+Contains all signatures and functions we need from Gmod.  
+
+Files:  
+- `detours.h`
+- `detours.cpp`
+
+## lua_ILuaInterface
+Contains all ILuaInterface metatable functions.  
+
+Files:  
+- `lua_ILuaInterface.h`
+- `lua_ILuaInterface.cpp`
+
+## lua_LuaThread
+Contains our LuaThread table and all its functions.  
+
+Files:  
+- `lua_LuaThread.h`
+- `lua_LuaThread.cpp`
+
+## lua_utils
+Contains important functions PushValue, FillValue and so on.  
+
+Files:  
+- `lua_utils.h`
+- `lua_utils.cpp`
+
+## lua_threaded
+Contains module base and manages everything for Init and Shutdown.  
+
+Files:  
+- `lua_threaded.h`
+- `lua_threaded.cpp`
