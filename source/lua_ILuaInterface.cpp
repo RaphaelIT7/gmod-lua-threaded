@@ -265,7 +265,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 		Msg("Failed to find %s!\n", file);
 	}
 
-	FileHandle_t fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
+	fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
 	if(fh)
 	{
 		int file_len = gpFileSystem->Size(fh);
