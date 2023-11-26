@@ -265,15 +265,38 @@ void Autorun(ILuaThread* LUA)
 {
 	RunFile(LUA, "lua/includes/init.lua");
 
-	/*FileFindHandle_t findHandle;
-	const char *pFilename = gpFileSystem->FindFirstEx("autorun/*.lua", "LUA", &findHandle);
+	FileFindHandle_t findHandle;
+	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(); // ToDo
+		RunFile(LUA, (((std::string)"lua/autorun/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
-	gpFileSystem->FindClose(findHandle);*/
+	gpFileSystem->FindClose(findHandle);
+
+	FileFindHandle_t findHandle;
+	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/*.lua", "GAME", &findHandle);
+	while (pFilename)
+	{
+		RunFile(LUA, (((std::string)"lua/autorun/server/") + pFilename).c_str()); // Kill me later.
+
+		pFilename = gpFileSystem->FindNext(findHandle);
+	}
+	gpFileSystem->FindClose(findHandle);
+
+	/*
+		Load sensorbones. Yes. Gmod also loads them.
+	*/
+	FileFindHandle_t findHandle;
+	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/sensorbones/*.lua", "GAME", &findHandle);
+	while (pFilename)
+	{
+		RunFile(LUA, (((std::string)"lua/autorun/server/sensorbones/") + pFilename).c_str()); // Kill me later.
+
+		pFilename = gpFileSystem->FindNext(findHandle);
+	}
+	gpFileSystem->FindClose(findHandle);
 }
 
 LUA_FUNCTION(ILuaInterface_Autorun)
