@@ -265,6 +265,10 @@ void RunFile(ILuaThread* LUA, const char* file)
 		Msg("Failed to find %s!\n", file);
 	}
 
+	Msg("New path: %s\n", (old_path + file).c_str());
+
+	ThreadSleep(100);
+
 	fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
 	if(fh)
 	{
