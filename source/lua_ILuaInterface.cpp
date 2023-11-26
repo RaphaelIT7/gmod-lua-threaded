@@ -162,16 +162,20 @@ void RunString(ILuaThread* thread, const char* str)
     {
 		int result = func_luaL_loadstring(LUA->GetState(), str);
 		HandleError(LUA, result);
+	}
+    else
+    {
+		HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
+    }
 
-		result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
+	if (setjmp(thread->jumpBuffer) == 0)
+    {
+		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
 		HandleError(LUA, result);
 	}
     else
     {
-		//HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
-		LUA->Pop();
-
-		Msg("Error Happend.\n");
+		HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
     }
 }
 
