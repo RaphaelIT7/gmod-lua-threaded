@@ -214,3 +214,14 @@ void ShutdownInterface(ILuaThread* thread)
 
 	delete thread;
 }
+
+std::string ToPath(std::string path)
+{
+    size_t lastSeparatorPos = path.find_last_of("/\\");
+
+    if (lastSeparatorPos != std::string::npos) {
+        return path.substr(0, lastSeparatorPos + 1);
+    }
+
+    return path;
+}

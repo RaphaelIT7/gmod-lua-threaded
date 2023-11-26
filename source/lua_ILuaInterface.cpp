@@ -216,6 +216,8 @@ void* g_pGlobalLuaLibraryFactorySig;
 void InitLuaLibraries(ILuaInterface* LUA)
 {
 	Msg("InitLuaLibraries called\n");
+	InitGlobal(LUA);
+
 	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
 
 	func_InitLuaLibraries(LUA);
@@ -242,6 +244,9 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 
 void RunFile(ILuaThread* LUA, const char* file)
 {
+	std::string old_path = LUA->current_path;
+	LUA->current_path = ToPath(file);
+
 	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
 	if(fh)
 	{
@@ -259,6 +264,26 @@ void RunFile(ILuaThread* LUA, const char* file)
 	} else {
 		Msg("Failed to find %s!\n", file);
 	}
+
+	FileHandle_t fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
+	if(fh)
+	{
+		int file_len = gpFileSystem->Size(fh);
+		char* code = new char[file_len + 1];
+
+		gpFileSystem->Read((void*)code,file_len,fh);
+		code[file_len] = 0;
+
+		gpFileSystem->Close(fh);
+
+		RunString(LUA, code);
+
+		delete[] code;
+	} else {
+		Msg("Failed to find %s! Try 2.\n", file);
+	}
+
+	LUA->current_path = old_path;
 }
 
 void Autorun(ILuaThread* LUA)

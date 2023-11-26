@@ -1,4 +1,4 @@
-#include <GarrysMod/Lua/LuaInterface.h>
+#include <GarrysMod/Lua/Interface.h>
 #include <unordered_map>
 #include "detours.h"
 #include <setjmp.h>
@@ -47,6 +47,8 @@ struct ILuaThread
 	
 	int id = -1;
 
+	std::string current_path;
+
 	jmp_buf jumpBuffer;
 };
 
@@ -75,3 +77,5 @@ extern ILuaThread* FindThread(int);
 
 extern ILuaInterface* CreateInterface();
 extern void ShutdownInterface(ILuaThread*);
+
+extern std::string ToPath(std::string);

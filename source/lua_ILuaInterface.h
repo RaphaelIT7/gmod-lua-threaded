@@ -25,3 +25,5 @@ extern unsigned LuaThread(void*);
 extern void InitMetaTable(ILuaInterface*);
 
 extern ILuaThread* GetValidThread(ILuaBase*, double);
+
+extern void RunFile(ILuaThread*, const char*);
