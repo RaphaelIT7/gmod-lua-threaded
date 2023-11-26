@@ -15,7 +15,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 
 ## ToDo/Testing
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
-- [ ] Change ILuaAction to use Enums instead of strings.  
+- [x] Change ILuaAction to use Enums instead of strings.  
 - [ ] Documentation  
 - [ ] Recreate all Gmod libraries  
 

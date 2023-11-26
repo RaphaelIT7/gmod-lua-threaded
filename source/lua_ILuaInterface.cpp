@@ -180,7 +180,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 	if (thread->threaded)
 	{
 		ILuaAction* action = new ILuaAction;
-		action->type = "run";
+		action->type = LuaAction::RunString;
 		action->data = str;
 
 		thread->mutex.Lock();
@@ -200,7 +200,7 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 	if (thread->threaded)
 	{
 		ILuaAction* action = new ILuaAction;
-		action->type = "initclasses";
+		action->type = LuaAction::InitClasses;
 
 		thread->mutex.Lock();
 		thread->actions.push_back(action);
@@ -228,7 +228,7 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 	if (thread->threaded)
 	{
 		ILuaAction* action = new ILuaAction;
-		action->type = "initlibraries";
+		action->type = LuaAction::InitLibraries;
 
 		thread->mutex.Lock();
 		thread->actions.push_back(action);
@@ -302,7 +302,7 @@ LUA_FUNCTION(ILuaInterface_Autorun)
 	if (thread->threaded)
 	{
 		ILuaAction* action = new ILuaAction;
-		action->type = "autorun";
+		action->type = LuaAction::Autorun;
 
 		thread->mutex.Lock();
 		thread->actions.push_back(action);
@@ -323,7 +323,7 @@ LUA_FUNCTION(ILuaInterface_RunFile)
 	if (thread->threaded)
 	{
 		ILuaAction* action = new ILuaAction;
-		action->type = "runfile";
+		action->type = LuaAction::RunFile;
 		action->data = str;
 
 		thread->mutex.Lock();
@@ -359,7 +359,7 @@ LUA_FUNCTION(ILuaInterface_LoadFunction)
 	if (thread->threaded)
 	{
 		ILuaAction* action = new ILuaAction;
-		action->type = "loadfunc";
+		action->type = LuaAction::LoadFunc;
 		action->data = func;
 
 		thread->mutex.Lock();
@@ -386,22 +386,22 @@ unsigned LuaThread(void* data)
 
 		for (ILuaAction* action : thread_data->actions)
 		{
-			if (strcmp(action->type, "run") == 0)
+			if (action->type == LuaAction::RunString)
 			{
 				RunString(thread_data, action->data);
-			} else if (strcmp(action->type, "initclasses") == 0)
+			} else if (action->type == LuaAction::InitClasses)
 			{
 				func_InitLuaClasses(IFace);
-			} else if (strcmp(action->type, "initlibraries") == 0)
+			} else if (action->type == LuaAction::InitLibraries)
 			{
 				InitLuaLibraries(IFace);
-			} else if (strcmp(action->type, "loadfunc") == 0)
+			} else if (action->type == LuaAction::LoadFunc)
 			{
 				LoadFunction(IFace, action->data);
-			} else if (strcmp(action->type, "autorun") == 0)
+			} else if (action->type == LuaAction::Autorun)
 			{
 				Autorun(thread_data);
-			} else if (strcmp(action->type, "runfile") == 0)
+			} else if (action->type == LuaAction::RunFile)
 			{
 				RunFile(thread_data, action->data);
 			}

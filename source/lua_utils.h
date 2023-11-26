@@ -7,6 +7,16 @@
 
 using namespace GarrysMod::Lua;
 
+enum LuaAction
+{
+	RunString,
+	InitClasses,
+	InitLibraries,
+	LoadFunc,
+	Autorun,
+	RunFile,
+};
+
 struct ILuaValue
 {
 	int type = -1;
@@ -20,7 +30,7 @@ struct ILuaValue
 
 struct ILuaAction
 {
-	const char* type;
+	LuaAction type;
 	const char* data;
 };
 
