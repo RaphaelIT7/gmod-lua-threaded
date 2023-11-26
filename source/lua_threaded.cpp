@@ -3,6 +3,19 @@
 
 GMOD_MODULE_OPEN()
 {
+	GMOD = new GMOD_Info;
+
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "VERSION");
+		GMOD->version = LUA->GetNumber(-1);
+		
+		LUA->GetField(-1, "VERSIONSTR");
+		GMOD->versionstr = LUA->GetString(-1);
+
+		LUA->GetField(-1, "BRANCH");
+		GMOD->branch = LUA->GetString(-1);
+	LUA->Pop(4); // Global, VERSION, VERSIONSTR, BRANCH
+
 	Symbols_Init();
 
 	InitLuaThreaded((ILuaInterface*)LUA);

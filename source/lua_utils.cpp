@@ -181,6 +181,25 @@ ILuaInterface* CreateInterface()
 
 	//func_luaL_openlibs(state);
 
+
+	// Push VERSION, VERSIONSTR, BRANCH, SERVER and CLIENT. Gmod does this inside CLuaManager::Startup();
+	IFace->PushSpecial(SPECIAL_GLOB);
+		IFace->PushNumber(GMOD->version);
+		IFace->SetField(-2, "VERSION");
+
+		IFace->PushString(GMOD->versionstr);
+		IFace->SetField(-2, "VERSIONSTR");
+
+		IFace->PushString(GMOD->branch);
+		IFace->SetField(-2, "BRANCH");
+
+		IFace->PushBool(true);
+		IFace->SetField(-2, "SERVER");
+
+		IFace->PushBool(false);
+		IFace->SetField(-2, "CLIENT");
+	IFace->Pop(1);
+
 	return IFace;
 }
 

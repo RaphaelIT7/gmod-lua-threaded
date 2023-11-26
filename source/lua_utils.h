@@ -40,6 +40,14 @@ struct ILuaThread
 	jmp_buf jumpBuffer;
 };
 
+struct GMOD_Info
+{
+	int version;
+	const char* versionstr;
+	const char* branch;
+};
+
+extern GMOD_Info* GMOD;
 extern int interfaces_count;
 extern std::unordered_map<double, ILuaThread*> interfaces;
 
