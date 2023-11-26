@@ -69,6 +69,8 @@ void* FindSymbol(std::string name)
 
 void Symbols_Init() 
 {
+	gpFileSystem = InterfacePointers::FileSystemServer();
+
 	SourceSDK::ModuleLoader lua_shared_loader("lua_shared");
 
 	func_CreateLuaInterface = (CreateLuaInterface)FindFunction(lua_shared_loader.GetModule(), CreateLuaInterfaceSym);

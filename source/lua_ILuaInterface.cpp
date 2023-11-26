@@ -239,19 +239,80 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 	return 0;
 }
 
-void Autorun(ILuaThread* thread)
+void RunFile(ILuaThread* LUA, const char* file)
 {
+	FileHandle_t fh = gpFileSystem->Open(file, "r", "LUA");
+	if(fh)
+	{
+		int file_len = gpFileSystem->Size(fh);
+		char* code = new char[file_len + 1];
 
+		gpFileSystem->Read((void*)code,file_len,fh);
+		code[file_len] = 0;
+
+		gpFileSystem->Close(fh);
+
+		RunString(LUA, code);
+
+		delete[] code;
+	} else {
+		Msg("Failed to find %s!\n", file);
+	}
+}
+
+void Autorun(ILuaThread* LUA)
+{
+	RunFile(LUA, "includes/init.lua");
+
+	/*FileFindHandle_t findHandle;
+	const char *pFilename = gpFileSystem->FindFirstEx("autorun/*.lua", "LUA", &findHandle);
+	while (pFilename)
+	{
+		RunFile(); // ToDo
+
+		pFilename = gpFileSystem->FindNext(findHandle);
+	}
+	gpFileSystem->FindClose(findHandle);*/
 }
 
 LUA_FUNCTION(ILuaInterface_Autorun)
 {
+	ILuaThread* thread = GetValidThread(LUA, 1);
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = "autorun";
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		Autorun(thread);
+	}
+
 	return 0;
 }
 
 
-LUA_FUNCTION(ILuaInterface_LoadFunctionsInPath)
+LUA_FUNCTION(ILuaInterface_RunFile)
 {
+	ILuaThread* thread = GetValidThread(LUA, 1);
+	const char* str = LUA->CheckString(2);
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = "runfile";
+		action->data = str;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		RunFile(thread, str);
+	}
+
 	return 0;
 }
 
@@ -317,6 +378,12 @@ unsigned LuaThread(void* data)
 			} else if (strcmp(action->type, "loadfunc") == 0)
 			{
 				LoadFunction(IFace, action->data);
+			} else if (strcmp(action->type, "autorun") == 0)
+			{
+				Autorun(thread_data);
+			} else if (strcmp(action->type, "runfile") == 0)
+			{
+				Autorun(thread_data);
 			}
 
 			delete action;
@@ -367,6 +434,12 @@ void InitMetaTable(ILuaInterface* LUA)
 
 	LUA->PushCFunction(ILuaInterface_LoadFunction);
 	LUA->SetField(-2, "LoadFunction");
+
+	LUA->PushCFunction(ILuaInterface_Autorun);
+	LUA->SetField(-2, "Autorun");
+
+	LUA->PushCFunction(ILuaInterface_RunFile);
+	LUA->SetField(-2, "RunFile");
 
 	LUA->Pop(1);
 }

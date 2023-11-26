@@ -1,5 +1,5 @@
 #include <GarrysMod/Lua/LuaInterface.h>
-#include "lua_utils.h"
+#include "lua_utils.h" // We need to include utils here because of ILuaThread. ToDo: Look into it and maybe change it later.
 #include <cstdint>
 
 using namespace GarrysMod::Lua;

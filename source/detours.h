@@ -2,6 +2,7 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 #include <GarrysMod/FactoryLoader.hpp>
 #include <scanning/symbolfinder.hpp>
+#include <filesystem.h>
 #include <vector>
 
 using namespace GarrysMod::Lua;
@@ -125,6 +126,8 @@ const std::vector<Symbol> CLuaGameCallback_MsgColourSym = {
 
 	Symbol::FromSignature("\x55\x8B\xEC\xFF\x75\x08\x68\x30\xE6\x70\x10\xFF\x75\x0C\x6A\x00"),
 };
+
+extern IFileSystem* gpFileSystem;
 
 extern void Symbols_Init();
 extern void* FindSymbol(std::string);
