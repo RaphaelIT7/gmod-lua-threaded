@@ -2912,6 +2912,8 @@ void InitEnums(ILuaInterface* LUA)
 		Msg("5\n");
 		LUA->Pop(1);
 		Msg("6\n");
+
+		Msg("Finished %s. Type: %i\n", gmod_enum.c_str(), type);
 	}
 
 	LUA->Pop(1);
