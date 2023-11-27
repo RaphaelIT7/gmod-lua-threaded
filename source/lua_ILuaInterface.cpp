@@ -227,6 +227,8 @@ void InitLuaLibraries(ILuaInterface* LUA)
 
 	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
 
+	func_CLuaGameEnums_InitLibraries(nullptr, LUA); // Does this work? Probably not.
+
 	func_InitLuaLibraries(LUA);
 }
 
@@ -415,6 +417,7 @@ unsigned LuaThread(void* data)
 	thread_data->IFace = IFace;
 	InitLuaThreaded(IFace, thread_data->id);
 	InitMetaTable(IFace);
+	thread_data->init = true;
 
 	while(thread_data->run)
 	{

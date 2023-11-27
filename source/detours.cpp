@@ -18,6 +18,7 @@ lua_tostring func_lua_tostring;
 TInitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
 CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
+CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
 void* g_pGlobalLuaLibraryFactory;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
@@ -123,6 +124,9 @@ void Symbols_Init()
 		fac_server_loader, g_pGlobalLuaLibraryFactorySym
 	);
 	CheckFunction(g_pGlobalLuaLibraryFactory, "g_pGlobalLuaLibraryFactory");
+
+	func_CLuaGameEnums_InitLibraries = (CLuaGameEnums_InitLibraries)FindFunction(server_loader.GetModule(), CLuaGameEnums_InitLibrariesSym);
+	CheckFunction(func_CLuaGameEnums_InitLibraries, "CLuaGameEnums::InitLibraries");
 
 	/*
 		CLuaGameCallback stuff

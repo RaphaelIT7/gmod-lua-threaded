@@ -43,6 +43,7 @@ struct ILuaThread
 	std::vector<ILuaAction*> actions;
 
 	bool run = true;
+	bool init = false;
 	bool threaded = false;
 	
 	int id = -1;

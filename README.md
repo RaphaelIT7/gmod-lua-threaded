@@ -17,6 +17,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
 - [x] Change ILuaAction to use Enums instead of strings.  
 - [x] Documentation  
+- [ ] Add all Gmod Enums  
 - [ ] Recreate all Gmod libraries  
 - [ ] Look again into Error handling. Maybe show which file had an error?
 

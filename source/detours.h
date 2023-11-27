@@ -76,6 +76,10 @@ typedef void (*CLuaGlobalLibrary_InitLibraries)(void*, ILuaInterface*);
 extern CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
 const Symbol CLuaGlobalLibrary_InitLibrariesSym = Symbol::FromName("_ZN17CLuaGlobalLibrary13InitLibrariesEP13ILuaInterface");
 
+typedef void (*CLuaGameEnums_InitLibraries)(void*, ILuaInterface*);
+extern CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
+const Symbol CLuaGameEnums_InitLibrariesSym = Symbol::FromName("_ZN13CLuaGameEnums13InitLibrariesEP13ILuaInterface");
+
 /*
 	CLuaGameCallback stuff
 */
