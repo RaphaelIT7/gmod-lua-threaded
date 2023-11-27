@@ -133,7 +133,7 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 
 			LUA->Pop(2);
 		}
-		LUA->Pop();
+		LUA->Pop(1);
 
 		val->tbl = tbl;
 	}

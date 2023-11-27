@@ -55,6 +55,8 @@ LUA_FUNCTION(FindMetaTable)
 	int reference = -1;
 	LUA->PushSpecial(SPECIAL_REG);
 		LUA->GetField(-1, meta);
+
+		Msg("Metatable has type %i\n", LUA->GetType(-1));
 		if (LUA->IsType(-1, Type::Table))
 		{
 			reference = LUA->ReferenceCreate();
