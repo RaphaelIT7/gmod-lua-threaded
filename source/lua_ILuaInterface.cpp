@@ -228,7 +228,9 @@ void* g_pGlobalLuaLibraryFactorySig;
 void InitLuaLibraries(ILuaInterface* LUA)
 {
 	Msg("InitLuaLibraries called\n");
+
 	InitGlobal(LUA);
+	InitNet(LUA);
 
 	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
 
@@ -284,7 +286,7 @@ void InitGmod(ILuaInterface* LUA)
 
 	InitLuaLibraries(LUA);
 
-	InitLuaClasses(LUA);
+	InitClasses(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitGmod)
