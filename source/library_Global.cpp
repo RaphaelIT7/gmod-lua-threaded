@@ -33,6 +33,8 @@ LUA_FUNCTION(LVector)
 	int z = LUA->CheckNumber(3);
 
 	LUA->PushVector(Vector(x, y, z));
+
+	return 1;
 }
 
 LUA_FUNCTION(Angle)
@@ -42,12 +44,15 @@ LUA_FUNCTION(Angle)
 	int z = LUA->CheckNumber(3);
 
 	LUA->PushAngle(QAngle(x, y, z));
+
+	return 1;
 }
 
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
 		Add_Func(LUA, include, "include");
+		Add_Func(LUA, require, "require");
 		Add_Func(LUA, LVector, "Vector");
 		Add_Func(LUA, Angle, "Angle");
 
