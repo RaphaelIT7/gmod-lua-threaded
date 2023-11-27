@@ -14,6 +14,7 @@ Tlua_atpanic func_lua_atpanic;
 luaL_loadstring func_luaL_loadstring;
 //luaL_openlibs func_luaL_openlibs;
 lua_tostring func_lua_tostring;
+GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
 
 TInitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
@@ -105,6 +106,9 @@ void Symbols_Init()
 
 	func_lua_tostring = (lua_tostring)FindFunction(lua_shared_loader.GetModule(), lua_tostringSym);
 	CheckFunction(func_lua_tostring, "lua_tostring");
+
+	func_GMOD_LoadBinaryModule = (GMOD_LoadBinaryModule)FindFunction(lua_shared_loader.GetModule(), GMOD_LoadBinaryModuleSym);
+	CheckFunction(func_GMOD_LoadBinaryModule, "GMOD_LoadBinaryModule");
 
 	/*
 		Server suff

@@ -58,6 +58,10 @@ typedef const char* (*lua_tostring)(lua_State*, int, int);
 extern lua_tostring func_lua_tostring;
 const Symbol lua_tostringSym = Symbol::FromName("lua_tolstring");
 
+typedef const char* (*GMOD_LoadBinaryModule)(lua_State*, const char*);
+extern GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
+const Symbol GMOD_LoadBinaryModuleSym = Symbol::FromName("GMOD_LoadBinaryModule");
+
 /*
 	server_srv stuff
 */

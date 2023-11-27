@@ -9,6 +9,23 @@ LUA_FUNCTION(include)
 	return 0;
 }
 
+LUA_FUNCTION(require)
+{
+	const char* file = LUA->CheckString(1);
+
+	bool exists = gpFileSystem->FileExists((((std::string)"lua/bin/") + file).c_str(), "GAME");
+	if (exists)
+	{
+		func_GMOD_LoadBinaryModule(LUA->GetState(), file); // Unfinished
+	} else {
+		ILuaThread* thread = GetValidThread(LUA, NULL);
+
+		RunFile(thread, ("lua/includes/modules/" + ((std::string)LUA->CheckString(1)) + ".lua").c_str());
+	}
+
+	return 0;
+}
+
 LUA_FUNCTION(LVector)
 {
 	int x = LUA->CheckNumber(1);
