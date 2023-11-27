@@ -2896,21 +2896,14 @@ void InitEnums(ILuaInterface* LUA)
 
 		int type = LUA->GetType(-1);
 		ILuaValue* val = new ILuaValue;
-		if (type == Type::Number)
+		FillValue(LUA, val, -1, type);
+
+		if (val->type == -1)
 		{
-			val->type = type;
-			val->number = LUA->GetNumber(-1);
-		} else if (type == Type::Bool)
-		{
-			val->type = type;
-			val->number = LUA->GetBool(-1) ? 1 : 0;
-		} else if (type == Type::String)
-		{
-			val->type = type;
-			val->string = LUA->GetString(-1);
-		} else {
-			Msg("Unhanded Enum Type! Enums: %s\n", gmod_enum.c_str());
+			Msg("Unhandled Enum type! Enum %s\n", gmod_enum.c_str());
 		}
+
+		fullenums[gmod_enum] = val;
 
 		LUA->Pop(1);
 	}
@@ -2924,6 +2917,7 @@ void PushEnums(ILuaInterface* LUA)
 	for (auto& [key, value] : fullenums)
 	{
 		PushValue(LUA, value);
+		LUA->SetField(-2, key.c_str());
 	}
 	LUA->Pop(1);
 }
