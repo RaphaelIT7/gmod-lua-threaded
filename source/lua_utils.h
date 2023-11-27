@@ -15,6 +15,8 @@ enum LuaAction
 	ACT_LoadFunc,
 	ACT_Autorun,
 	ACT_RunFile,
+	ACT_InitEnums,
+	ACT_InitGmod,
 };
 
 struct ILuaValue

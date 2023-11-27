@@ -200,6 +200,11 @@ LUA_FUNCTION(ILuaInterface_RunString)
 	return 0;
 }
 
+void InitClasses(ILuaInterface* LUA)
+{
+	func_InitLuaClasses(LUA);
+}
+
 LUA_FUNCTION(ILuaInterface_InitClasses)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
@@ -213,7 +218,7 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		func_InitLuaClasses(thread->IFace);
+		InitClasses(thread->IFace);
 	}
 
 	return 0;
@@ -224,8 +229,6 @@ void InitLuaLibraries(ILuaInterface* LUA)
 {
 	Msg("InitLuaLibraries called\n");
 	InitGlobal(LUA);
-
-	PushEnums(LUA);
 
 	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
 
@@ -246,6 +249,58 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 		thread->mutex.Unlock();
 	} else {
 		InitLuaLibraries(thread->IFace);
+	}
+
+	return 0;
+}
+
+void InitEnums(ILuaInterface* LUA)
+{
+	PushEnums(LUA);
+}
+
+LUA_FUNCTION(ILuaInterface_InitEnums)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = LuaAction::ACT_InitEnums;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		InitEnums(thread->IFace);
+	}
+
+	return 0;
+}
+
+void InitGmod(ILuaInterface* LUA)
+{
+	InitEnums(LUA);
+
+	InitLuaLibraries(LUA);
+
+	InitLuaClasses(LUA);
+}
+
+LUA_FUNCTION(ILuaInterface_InitGmod)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = LuaAction::ACT_InitGmod;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		InitGmod(thread->IFace);
 	}
 
 	return 0;
@@ -430,7 +485,7 @@ unsigned LuaThread(void* data)
 				RunString(thread_data, action->data);
 			} else if (action->type == LuaAction::ACT_InitClasses)
 			{
-				func_InitLuaClasses(IFace);
+				InitClasses(IFace);
 			} else if (action->type == LuaAction::ACT_InitLibraries)
 			{
 				InitLuaLibraries(IFace);
@@ -443,6 +498,12 @@ unsigned LuaThread(void* data)
 			} else if (action->type == LuaAction::ACT_RunFile)
 			{
 				RunFile(thread_data, action->data);
+			} else if (action->type == LuaAction::ACT_InitEnums)
+			{
+				InitEnums(IFace);
+			} else if (action->type == LuaAction::ACT_InitGmod)
+			{
+				InitGmod(IFace);
 			}
 
 			delete action;
@@ -499,6 +560,12 @@ void InitMetaTable(ILuaInterface* LUA)
 
 	LUA->PushCFunction(ILuaInterface_RunFile);
 	LUA->SetField(-2, "RunFile");
+
+	LUA->PushCFunction(ILuaInterface_InitEnums);
+	LUA->SetField(-2, "InitEnums");
+
+	LUA->PushCFunction(ILuaInterface_InitGmod);
+	LUA->SetField(-2, "InitGmod");
 
 	LUA->Pop(1);
 }
