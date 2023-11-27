@@ -2879,6 +2879,45 @@ void InitEnums(ILuaInterface* LUA)
 		{
 			val->type = type;
 			val->string = LUA->GetString(-1);
+		} else if (type == Type::Table)
+		{
+			val->type = type;
+			std::unordered_map<std::string, ILuaValue*> tbl;
+
+			LUA->PushNil();
+			while (LUA->Next(-2)) {
+				LUA->Push(-2);
+
+				const char* key = LUA->GetString(-1);
+				int val_type = LUA->GetType(-2);
+
+				ILuaValue* new_val = new ILuaValue;
+
+				if (val_type == Type::Number)
+				{
+					val->type = val_type;
+					val->number = LUA->GetNumber(-2);
+				} else if (val_type == Type::Bool)
+				{
+					val->type = val_type;
+					val->number = LUA->GetBool(-2) ? 1 : 0;
+				} else if (val_type == Type::String)
+				{
+					val->type = val_type;
+					val->string = LUA->GetString(-2);
+				}
+
+				if (val->type != -1) {
+					tbl[(std::string)key] = new_val;
+				} else {
+					SafeDelete(new_val);
+				}
+
+				LUA->Pop(2);
+			}
+			LUA->Pop(1);
+
+			val->tbl = tbl;
 		} else {
 			Msg("Unhanded Enum Type! Enums: %s\n", gmod_enum.c_str());
 		}
@@ -2886,7 +2925,7 @@ void InitEnums(ILuaInterface* LUA)
 		if (val->type != -1) {
 			fullenums[gmod_enum] = val;
 		} else {
-			delete val;
+			SafeDelete(val);
 		}
 
 		LUA->Pop(1);
@@ -2913,6 +2952,6 @@ void RemoveEnums()
 		ILuaValue* val = fullenums[gmod_enum];
 
 		fullenums.erase(gmod_enum);
-		delete val;
+		SafeDelete(val);
 	}
 }
