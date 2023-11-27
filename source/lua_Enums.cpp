@@ -2892,11 +2892,15 @@ void InitEnums(ILuaInterface* LUA)
 	LUA->PushSpecial(SPECIAL_GLOB);
 	for (std::string gmod_enum : enums)
 	{
+		Msg("1\n");
 		LUA->GetField(-1, gmod_enum.c_str());
 
+		Msg("2\n");
 		int type = LUA->GetType(-1);
 		ILuaValue* val = new ILuaValue;
+		Msg("3\n");
 		FillValue(LUA, val, -1, type);
+		Msg("4\n");
 
 		if (val->type == -1)
 		{
@@ -2905,7 +2909,9 @@ void InitEnums(ILuaInterface* LUA)
 
 		fullenums[gmod_enum] = val;
 
+		Msg("5\n");
 		LUA->Pop(1);
+		Msg("6\n");
 	}
 
 	LUA->Pop(1);
