@@ -4,3 +4,5 @@
 
 #include "library_Global.h"
 #include "library_net.h"
+
+#include "class_vector.h"

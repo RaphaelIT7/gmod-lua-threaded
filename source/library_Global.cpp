@@ -65,6 +65,7 @@ LUA_FUNCTION(FindMetaTable)
 
 	if (reference != -1) {
 		LUA->ReferencePush(reference);
+		LUA->ReferenceFree(reference);
 	} else {
 		LUA->PushNil();
 	}
