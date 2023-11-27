@@ -5,10 +5,10 @@ static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
 
-void Push_Vector(ILuaInterface* LUA, const Vector* vec)
+void Push_Vector(ILuaBase* LUA, const Vector vec)
 {
 	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushUserdata((void*)vec);
+	LUA->PushUserdata((void*)&vec);
 	LUA->GetTable(-2);
 	if(LUA->IsType(-1, metatype))
 	{
@@ -24,7 +24,7 @@ void Push_Vector(ILuaInterface* LUA, const Vector* vec)
 	LUA->CreateTable();
 	LUA->SetFEnv(-2);
 
-	LUA->PushUserdata((void*)vec);
+	LUA->PushUserdata((void*)&vec);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
 	LUA->Remove(-2);
@@ -127,7 +127,7 @@ LUA_FUNCTION(_Vector)
 	int y = LUA->CheckNumber(2);
 	int z = LUA->CheckNumber(3);
 
-	LUA->PushVector(Vector(x, y, z));
+	Push_Vector(LUA, Vector(x, y, z));
 
 	return 1;
 }
@@ -137,17 +137,15 @@ void InitVectorClass(ILuaInterface* LUA)
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
-	LUA->PushSpecial(SPECIAL_REG);
-		metatype = LUA->CreateMetaTable(metaname);
+	metatype = LUA->CreateMetaTable(metaname);
 
-			Add_Func(LUA, Vector__gc, "__gc");
-			Add_Func(LUA, Vector__tostring, "__tostring");
-			Add_Func(LUA, Vector__eq, "__eq");
-			Add_Func(LUA, Vector__index, "__index");
-			Add_Func(LUA, Vector__newindex, "__newindex");
-			Add_Func(LUA, Vector__gc, "__gc");
-			Add_Func(LUA, Vector_Add, "Add");
+		Add_Func(LUA, Vector__gc, "__gc");
+		Add_Func(LUA, Vector__tostring, "__tostring");
+		Add_Func(LUA, Vector__eq, "__eq");
+		Add_Func(LUA, Vector__index, "__index");
+		Add_Func(LUA, Vector__newindex, "__newindex");
+		Add_Func(LUA, Vector__gc, "__gc");
+		Add_Func(LUA, Vector_Add, "Add");
 
-		LUA->SetField(-2, "Vector");
-	LUA->Pop(2);
+	LUA->Pop(1);
 }
