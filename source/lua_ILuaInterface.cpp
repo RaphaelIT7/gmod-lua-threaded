@@ -256,7 +256,7 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 	return 0;
 }
 
-void InitEnums(ILuaInterface* LUA)
+void InitLuaEnums(ILuaInterface* LUA)
 {
 	PushEnums(LUA);
 }
@@ -282,7 +282,7 @@ LUA_FUNCTION(ILuaInterface_InitEnums)
 
 void InitGmod(ILuaInterface* LUA)
 {
-	InitEnums(LUA);
+	InitLuaEnums(LUA);
 
 	InitLuaLibraries(LUA);
 
