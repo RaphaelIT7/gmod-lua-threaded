@@ -2935,6 +2935,43 @@ void InitEnums(ILuaInterface* LUA)
 		fullenums["SENSORBONE"] = val;
 	}
 
+	/*
+		TEXFILTER table.
+		ToDo: Someday make it better.
+	*/
+	{
+		ILuaValue* val = new ILuaValue;
+		val->type = Type::Table;
+		
+		std::unordered_map<std::string, ILuaValue*> tbl;
+		tbl["NONE"]			= CreateValue(0);
+		tbl["POINT"]		= CreateValue(1);
+		tbl["LINEAR"]		= CreateValue(2);
+		tbl["ANISOTROPIC"]	= CreateValue(3);
+
+		val->tbl = tbl;
+		fullenums["TEXFILTER"] = val;
+	}
+
+	/*
+		SCREENFADE table.
+		ToDo: Someday make it better.
+	*/
+	{
+		ILuaValue* val = new ILuaValue;
+		val->type = Type::Table;
+		
+		std::unordered_map<std::string, ILuaValue*> tbl;
+		tbl["IN"]		= CreateValue(1);
+		tbl["OUT"]		= CreateValue(2);
+		tbl["MODULATE"]	= CreateValue(4);
+		tbl["STAYOUT"]	= CreateValue(8);
+		tbl["PURGE"]	= CreateValue(16);
+
+		val->tbl = tbl;
+		fullenums["SCREENFADE"] = val;
+	}
+
 	LUA->Pop(1);
 }
 
