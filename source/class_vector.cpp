@@ -129,7 +129,7 @@ LUA_FUNCTION(_Vector)
 	int y = LUA->CheckNumber(2);
 	int z = LUA->CheckNumber(3);
 
-	Push_Vector(LUA, &Vector(x, y, z));
+	LUA->PushVector(Vector(x, y, z));
 
 	return 1;
 }
