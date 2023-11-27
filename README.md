@@ -154,6 +154,8 @@ Args:
 
 ### ILuaInterface:Autorun()
 Loads everything like autorun does.  
+NOTE: It currently loves to crash. Just call RunFile with init.lua  
+
 Loads:  
 - `includes/init.lua`
 - `autorun/server/*.lua`
