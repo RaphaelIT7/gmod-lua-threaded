@@ -12,30 +12,48 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, const Vector* vec)
 {
+	int i=0;
+	i++;Msg("%i\n",i);
 	LUA->GetField(INDEX_REGISTRY, table_name);
+	i++;Msg("%i\n",i);
 	LUA->PushUserdata((void*)vec);
+	i++;Msg("%i\n",i);
 	LUA->GetTable(-2);
+	i++;Msg("%i\n",i);
 	if(LUA->IsType(-1, metatype))
 	{
+		i++;Msg("- %i\n",i);
 		LUA->Remove(-2);
+		i++;Msg("- %i\n",i);
 		return;
 	}
+	i++;Msg("%i\n",i);
 
 	LUA->Pop(1);
+	i++;Msg("%i\n",i);
 
 	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
 	udata->vec = vec;
+	i++;Msg("%i\n",i);
 
 	LUA->PushMetaTable(metatype);
+	i++;Msg("%i\n",i);
 	LUA->SetMetaTable(-2);
+	i++;Msg("%i\n",i);
 
 	LUA->CreateTable();
+	i++;Msg("%i\n",i);
 	LUA->SetFEnv(-2);
+	i++;Msg("%i\n",i);
 
 	LUA->PushUserdata((void*)vec);
+	i++;Msg("%i\n",i);
 	LUA->Push(-2);
+	i++;Msg("%i\n",i);
 	LUA->SetTable(-4);
+	i++;Msg("%i\n",i);
 	LUA->Remove(-2);
+	i++;Msg("%i\n",i);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
