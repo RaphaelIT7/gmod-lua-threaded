@@ -2856,6 +2856,15 @@ void PrepareEnums()
 	enums[2844] = "FSASYNC_STATUS_UNSERVICED";
 }
 
+ILuaValue* CreateValue(int value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = Type::Number;
+	val->number = value;
+
+	return val;
+}
+
 void InitEnums(ILuaInterface* LUA)
 {
 	PrepareEnums();
@@ -2879,45 +2888,6 @@ void InitEnums(ILuaInterface* LUA)
 		{
 			val->type = type;
 			val->string = LUA->GetString(-1);
-		} else if (type == Type::Table)
-		{
-			val->type = type;
-			std::unordered_map<std::string, ILuaValue*> tbl;
-
-			LUA->PushNil();
-			while (LUA->Next(-2)) {
-				LUA->Push(-2);
-
-				const char* key = LUA->GetString(-1);
-				int val_type = LUA->GetType(-2);
-
-				ILuaValue* new_val = new ILuaValue;
-
-				if (val_type == Type::Number)
-				{
-					val->type = val_type;
-					val->number = LUA->GetNumber(-2);
-				} else if (val_type == Type::Bool)
-				{
-					val->type = val_type;
-					val->number = LUA->GetBool(-2) ? 1 : 0;
-				} else if (val_type == Type::String)
-				{
-					val->type = val_type;
-					val->string = LUA->GetString(-2);
-				}
-
-				if (val->type != -1) {
-					tbl[(std::string)key] = new_val;
-				} else {
-					SafeDelete(new_val);
-				}
-
-				LUA->Pop(2);
-			}
-			LUA->Pop(1);
-
-			val->tbl = tbl;
 		} else {
 			Msg("Unhanded Enum Type! Enums: %s\n", gmod_enum.c_str());
 		}
@@ -2929,6 +2899,40 @@ void InitEnums(ILuaInterface* LUA)
 		}
 
 		LUA->Pop(1);
+	}
+
+	/*
+		SENSORBONE table.
+		ToDo: Someday make it better.
+	*/
+	{
+		ILuaValue* val = new ILuaValue;
+		val->type = Type::Table;
+		
+		std::unordered_map<std::string, ILuaValue*> tbl;
+		tbl["HIP"]				= CreateValue(0);
+		tbl["SPINE"]			= CreateValue(1);
+		tbl["SHOULDER"]			= CreateValue(2);
+		tbl["HEAD"]				= CreateValue(3);
+		tbl["SHOULDER_LEFT"]	= CreateValue(4);
+		tbl["ELBOW_LEFT"]		= CreateValue(5);
+		tbl["WRIST_LEFT"]		= CreateValue(6);
+		tbl["HAND_LEFT"]		= CreateValue(7);
+		tbl["SHOULDER_RIGHT"]	= CreateValue(8);
+		tbl["ELBOW_RIGHT"]		= CreateValue(9);
+		tbl["WRIST_RIGHT"]		= CreateValue(10);
+		tbl["HAND_RIGHT"]		= CreateValue(11);
+		tbl["HIP_LEFT"]			= CreateValue(12);
+		tbl["KNEE_LEFT"]		= CreateValue(13);
+		tbl["ANKLE_LEFT"]		= CreateValue(14);
+		tbl["FOOT_LEFT"]		= CreateValue(15);
+		tbl["HIP_RIGHT"]		= CreateValue(16);
+		tbl["KNEE_RIGHT"]		= CreateValue(17);
+		tbl["ANKLE_RIGHT"]		= CreateValue(18);
+		tbl["FOOT_RIGHT"]		= CreateValue(19);
+
+		val->tbl = tbl;
+		fullenums["SENSORBONE"] = val;
 	}
 
 	LUA->Pop(1);
