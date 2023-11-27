@@ -157,6 +157,9 @@ void HandleError(ILuaInterface* LUA, int result)
 
 void RunString(ILuaThread* thread, const char* str)
 {
+	Msg("Code: %s\n", str);
+	ThreadSleep(100);
+
 	ILuaInterface* LUA = thread->IFace;
 	if (setjmp(thread->jumpBuffer) == 0)
     {
