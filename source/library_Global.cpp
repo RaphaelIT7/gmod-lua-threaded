@@ -48,6 +48,28 @@ LUA_FUNCTION(Angle)
 	return 1;
 }
 
+LUA_FUNCTION(FindMetaTable)
+{
+	const char* meta = LUA->CheckString(1);
+
+	int reference = -1;
+	LUA->PushSpecial(SPECIAL_REG);
+		LUA->GetField(-1, meta);
+		if (LUA->IsType(-1, Type::Table))
+		{
+			reference = LUA->ReferenceCreate();
+		}
+	LUA->Pop(2);
+
+	if (reference != -1) {
+		LUA->ReferencePush(reference);
+	} else {
+		LUA->PushNil();
+	}
+
+	return 1;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
