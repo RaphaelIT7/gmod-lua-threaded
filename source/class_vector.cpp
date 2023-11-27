@@ -12,6 +12,9 @@ LUA_FUNCTION(Vector_Add)
 
 void InitVectorClass(ILuaInterface* LUA)
 {
+	LUA->CreateTable();
+	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, "Vector");
+
 	LUA->PushSpecial(SPECIAL_REG);
 		LUA->CreateMetaTable("Vector");
 
