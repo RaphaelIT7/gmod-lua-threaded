@@ -5,6 +5,11 @@ static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
 
+struct LUA_Vector
+{
+	const Vector* vec;
+};
+
 void Push_Vector(ILuaBase* LUA, const Vector* vec)
 {
 	LUA->GetField(INDEX_REGISTRY, table_name);
@@ -18,7 +23,8 @@ void Push_Vector(ILuaBase* LUA, const Vector* vec)
 
 	LUA->Pop(1);
 
-	Vector* uvec = LUA->NewUserType<Vector>(metatype);
+	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
+	udata->vec = vec;
 
 	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
@@ -38,28 +44,28 @@ void Vector_CheckType(ILuaBase* LUA, int index)
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-Vector *Vector_GetUserdata(ILuaBase *LUA, int index)
+LUA_Vector *Vector_GetUserdata(ILuaBase *LUA, int index)
 {
-	return LUA->GetUserType<Vector>(index, metatype);
+	return LUA->GetUserType<LUA_Vector>(index, metatype);
 }
 
-Vector* Vector_Get(ILuaBase* LUA, int index)
+const Vector* Vector_Get(ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
-	Vector *vec = Vector_GetUserdata(LUA, index);
+	LUA_Vector *vec = Vector_GetUserdata(LUA, index);
 	if(vec == nullptr)
 		LUA->ArgError(index, invalid_error);
 
-	return vec;
+	return vec->vec;
 }
 
 void Vector_Destroy(ILuaBase *LUA, int index)
 {
-	Vector *vec = Vector_GetUserdata(LUA, index);
+	const Vector *vec = Vector_Get(LUA, index);
 
 	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushUserdata(vec);
+	LUA->PushUserdata((void*)vec);
 	LUA->PushNil();
 	LUA->SetTable(-3);
 	LUA->Pop(1);
