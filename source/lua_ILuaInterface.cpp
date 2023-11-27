@@ -225,9 +225,9 @@ void InitLuaLibraries(ILuaInterface* LUA)
 	Msg("InitLuaLibraries called\n");
 	InitGlobal(LUA);
 
-	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
-
 	PushEnums(LUA);
+
+	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
 
 	func_InitLuaLibraries(LUA);
 }
