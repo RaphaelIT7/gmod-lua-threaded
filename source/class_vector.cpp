@@ -18,7 +18,7 @@ void Push_Vector(ILuaBase* LUA, const Vector* vec)
 
 	LUA->Pop(1);
 
-	Vector *vec = LUA->NewUserType<Vector>(metatype);
+	Vector* uvec = LUA->NewUserType<Vector>(metatype);
 
 	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
@@ -129,7 +129,8 @@ LUA_FUNCTION(_Vector)
 	int y = LUA->CheckNumber(2);
 	int z = LUA->CheckNumber(3);
 
-	LUA->PushVector(Vector(x, y, z));
+	Vector vec = Vector(x, y, z);
+	LUA->PushVector(vec);
 
 	return 1;
 }
