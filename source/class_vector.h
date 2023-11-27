@@ -3,3 +3,5 @@
 using namespace GarrysMod::Lua;
 
 extern void InitVectorClass(ILuaInterface*);
+
+extern int _Vector(lua_State*);

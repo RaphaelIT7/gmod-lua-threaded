@@ -35,8 +35,7 @@ GMOD_MODULE_OPEN()
 
 GMOD_MODULE_CLOSE()
 {
-	LUA->PushNil();
-	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, metaname);
+	DestroyMetaTable((ILuaInterface*)LUA);
 
 	for (auto& [id, thread]: interfaces) {
 		if (thread->threaded) {

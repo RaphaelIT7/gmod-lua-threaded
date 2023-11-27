@@ -8,7 +8,7 @@ LUA_FUNCTION(LuaThread_GetAllInterfaces)
 	LUA->CreateTable();
 
 	for (auto& [id, thread]: interfaces) {
-		Push(LUA, thread->IFace, id);
+		ILuaInterface_Push(LUA, thread->IFace, id);
 		LUA->SetField(-2, std::to_string(id).c_str());
 	}
 
@@ -22,7 +22,7 @@ LUA_FUNCTION(LuaThread_GetInterface)
 	ILuaThread* thread = interfaces[id];
 	if (!thread) { return 0; }
 
-	Push(LUA, thread->IFace, id);
+	ILuaInterface_Push(LUA, thread->IFace, id);
 
 	return 1;
 }
@@ -55,8 +55,8 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 LUA_FUNCTION(LuaThread_CloseInterface)
 {
-	CheckType(LUA, 1);
-	LUA_ILuaInterface* obj = GetUserdata(LUA, 1);
+	ILuaInterface_CheckType(LUA, 1);
+	LUA_ILuaInterface* obj = ILuaInterface_GetUserdata(LUA, 1);
 
 	double id = obj->ID;
 	ILuaThread* thread = GetValidThread(LUA, id);

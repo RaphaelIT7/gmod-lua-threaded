@@ -1,30 +1,35 @@
 #include <GarrysMod/Lua/Interface.h>
 #include "lua_threaded.h"
 
+static int32_t metatype = GarrysMod::Lua::Type::NONE;
+static const char metaname[] = "ILuaInterface";
+static const char invalid_error[] = "invalid ILuaInterface";
+static const char table_name[] = "ILuaInterface_object";
+
 GMOD_Info* GMOD;
-void CheckType(ILuaBase* LUA, int index)
+void ILuaInterface_CheckType(ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, metatype))
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-LUA_ILuaInterface *GetUserdata(ILuaBase *LUA, int index)
+LUA_ILuaInterface *ILuaInterface_GetUserdata(ILuaBase *LUA, int index)
 {
 	return LUA->GetUserType<LUA_ILuaInterface>(index, metatype);
 }
 
-ILuaInterface* Get(ILuaBase* LUA, int index)
+ILuaInterface* ILuaInterface_Get(ILuaBase* LUA, int index)
 {
-	CheckType(LUA, index);
+	ILuaInterface_CheckType(LUA, index);
 
-	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
+	LUA_ILuaInterface *udata = ILuaInterface_GetUserdata(LUA, index);
 	if(udata == nullptr)
 		LUA->ArgError(index, invalid_error);
 
 	return udata->IFace;
 }
 
-void Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
+void ILuaInterface_Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
 {
 	if(Interface == nullptr)
 	{
@@ -59,9 +64,9 @@ void Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
 	LUA->Remove(-2);
 }
 
-void Destroy(ILuaBase *LUA, int index)
+void ILuaInterface_Destroy(ILuaBase *LUA, int index)
 {
-	LUA_ILuaInterface *udata = GetUserdata(LUA, index);
+	LUA_ILuaInterface *udata = ILuaInterface_GetUserdata(LUA, index);
 	if (udata == nullptr)
 		return;
 
@@ -80,7 +85,7 @@ ILuaThread* GetValidThread(ILuaBase* LUA, double index)
 {
 	if (ThreadInMainThread())
 	{
-		LUA_ILuaInterface* IData = GetUserdata(LUA, index);
+		LUA_ILuaInterface* IData = ILuaInterface_GetUserdata(LUA, index);
 
 		ILuaThread* thread = FindThread(IData->ID);
 		if (!thread)
@@ -104,19 +109,19 @@ LUA_FUNCTION_STATIC(gc)
 	if (!LUA->IsType(1, metatype))
 		return 0;
 
-	Destroy(LUA, 1);
+	ILuaInterface_Destroy(LUA, 1);
 	return 0;
 }
 
 LUA_FUNCTION_STATIC(tostring)
 {
-	LUA->PushFormattedString("%s: %p", metaname, Get(LUA, 1));
+	LUA->PushFormattedString("%s: %p", metaname, ILuaInterface_Get(LUA, 1));
 	return 1;
 }
 
 LUA_FUNCTION_STATIC(eq)
 {
-	LUA->PushBool(Get(LUA, 1) == Get(LUA, 2));
+	LUA->PushBool(ILuaInterface_Get(LUA, 1) == ILuaInterface_Get(LUA, 2));
 	return 1;
 }
 
@@ -532,44 +537,26 @@ void InitMetaTable(ILuaInterface* LUA)
 
 	metatype = LUA->CreateMetaTable(metaname);
 
-	LUA->PushCFunction(gc);
-	LUA->SetField(-2, "__gc");
+	Add_Func(LUA, gc, "__gc");
+	Add_Func(LUA, tostring, "__tostring");
+	Add_Func(LUA, eq, "__eq");
+	Add_Func(LUA, index, "__index");
+	Add_Func(LUA, newindex, "__newindex");
 
-	LUA->PushCFunction(tostring);
-	LUA->SetField(-2, "__tostring");
-
-	LUA->PushCFunction(eq);
-	LUA->SetField(-2, "__eq");
-
-	LUA->PushCFunction(index);
-	LUA->SetField(-2, "__index");
-
-	LUA->PushCFunction(newindex);
-	LUA->SetField(-2, "__newindex");
-
-	LUA->PushCFunction(ILuaInterface_RunString);
-	LUA->SetField(-2, "RunString");
-
-	LUA->PushCFunction(ILuaInterface_InitClasses);
-	LUA->SetField(-2, "InitClasses");
-
-	LUA->PushCFunction(ILuaInterface_InitLibraries);
-	LUA->SetField(-2, "InitLibraries");
-
-	LUA->PushCFunction(ILuaInterface_LoadFunction);
-	LUA->SetField(-2, "LoadFunction");
-
-	LUA->PushCFunction(ILuaInterface_Autorun);
-	LUA->SetField(-2, "Autorun");
-
-	LUA->PushCFunction(ILuaInterface_RunFile);
-	LUA->SetField(-2, "RunFile");
-
-	LUA->PushCFunction(ILuaInterface_InitEnums);
-	LUA->SetField(-2, "InitEnums");
-
-	LUA->PushCFunction(ILuaInterface_InitGmod);
-	LUA->SetField(-2, "InitGmod");
+	Add_Func(LUA, ILuaInterface_RunString, "RunString");
+	Add_Func(LUA, ILuaInterface_InitClasses, "InitClasses");
+	Add_Func(LUA, ILuaInterface_InitLibraries, "InitLibraries");
+	Add_Func(LUA, ILuaInterface_LoadFunction, "LoadFunction");
+	Add_Func(LUA, ILuaInterface_Autorun, "Autorun");
+	Add_Func(LUA, ILuaInterface_RunFile, "RunFile");
+	Add_Func(LUA, ILuaInterface_InitEnums, "InitEnums");
+	Add_Func(LUA, ILuaInterface_InitGmod, "InitGmod");
 
 	LUA->Pop(1);
+}
+
+void DestroyMetaTable(ILuaInterface* LUA)
+{
+	LUA->PushNil();
+	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, metaname);
 }

@@ -1,5 +1,114 @@
 #include "lua_threaded.h"
 
+static int32_t metatype = GarrysMod::Lua::Type::Vector;
+static const char metaname[] = "Vector";
+static const char invalid_error[] = "invalid Vector";
+static const char table_name[] = "Vector_object";
+
+void Push_Vector(ILuaInterface* LUA, const Vector* vec)
+{
+	LUA->GetField(INDEX_REGISTRY, table_name);
+	LUA->PushUserdata((void*)vec);
+	LUA->GetTable(-2);
+	if(LUA->IsType(-1, metatype))
+	{
+		LUA->Remove(-2);
+		return;
+	}
+
+	LUA->Pop(1);
+
+	LUA->PushMetaTable(metatype);
+	LUA->SetMetaTable(-2);
+
+	LUA->CreateTable();
+	LUA->SetFEnv(-2);
+
+	LUA->PushUserdata((void*)vec);
+	LUA->Push(-2);
+	LUA->SetTable(-4);
+	LUA->Remove(-2);
+}
+
+void Vector_CheckType(ILuaBase* LUA, int index)
+{
+	if(!LUA->IsType(index, metatype))
+		luaL_typerror(LUA->GetState(), index, metaname);
+}
+
+Vector *Vector_GetUserdata(ILuaBase *LUA, int index)
+{
+	return LUA->GetUserType<Vector>(index, metatype);
+}
+
+Vector* Vector_Get(ILuaBase* LUA, int index)
+{
+	Vector_CheckType(LUA, index);
+
+	Vector *vec = Vector_GetUserdata(LUA, index);
+	if(vec == nullptr)
+		LUA->ArgError(index, invalid_error);
+
+	return vec;
+}
+
+void Vector_Destroy(ILuaBase *LUA, int index)
+{
+	Vector *vec = Vector_GetUserdata(LUA, index);
+
+	LUA->GetField(INDEX_REGISTRY, table_name);
+	LUA->PushUserdata(vec);
+	LUA->PushNil();
+	LUA->SetTable(-3);
+	LUA->Pop(1);
+	
+	LUA->SetUserType(index, nullptr);
+}
+
+LUA_FUNCTION_STATIC(Vector__gc)
+{
+	if (!LUA->IsType(1, metatype))
+		return 0;
+
+	Vector_Destroy(LUA, 1);
+	return 0;
+}
+
+LUA_FUNCTION_STATIC(Vector__tostring)
+{
+	LUA->PushFormattedString("%s: %p", metaname, Vector_Get(LUA, 1));
+	return 1;
+}
+
+LUA_FUNCTION_STATIC(Vector__eq)
+{
+	LUA->PushBool(Vector_Get(LUA, 1) == Vector_Get(LUA, 2));
+	return 1;
+}
+
+LUA_FUNCTION_STATIC(Vector__index)
+{
+	LUA->GetMetaTable(1);
+	LUA->Push(2);
+	LUA->RawGet(-2);
+	if(!LUA->IsType(-1, GarrysMod::Lua::Type::NIL))
+		return 1;
+
+	LUA->GetFEnv(1);
+	LUA->Push(2);
+	LUA->RawGet(-2);
+	return 1;
+}
+
+LUA_FUNCTION_STATIC(Vector__newindex)
+{
+	LUA->GetFEnv(1);
+	LUA->Push(2);
+	LUA->Push(3);
+	LUA->RawSet(-3);
+	return 0;
+}
+
 LUA_FUNCTION(Vector_Add)
 {
 	LUA->CheckType(1, Type::Vector);
@@ -8,16 +117,35 @@ LUA_FUNCTION(Vector_Add)
 	Vector vec2 = LUA->GetVector(2);
 
 	vec1.Init(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
+
+	return 0;
+}
+
+LUA_FUNCTION(_Vector)
+{
+	int x = LUA->CheckNumber(1);
+	int y = LUA->CheckNumber(2);
+	int z = LUA->CheckNumber(3);
+
+	LUA->PushVector(Vector(x, y, z));
+
+	return 1;
 }
 
 void InitVectorClass(ILuaInterface* LUA)
 {
 	LUA->CreateTable();
-	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, "Vector");
+	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
 	LUA->PushSpecial(SPECIAL_REG);
-		LUA->CreateMetaTable("Vector");
+		metatype = LUA->CreateMetaTable(metaname);
 
+			Add_Func(LUA, Vector__gc, "__gc");
+			Add_Func(LUA, Vector__tostring, "__tostring");
+			Add_Func(LUA, Vector__eq, "__eq");
+			Add_Func(LUA, Vector__index, "__index");
+			Add_Func(LUA, Vector__newindex, "__newindex");
+			Add_Func(LUA, Vector__gc, "__gc");
 			Add_Func(LUA, Vector_Add, "Add");
 
 		LUA->SetField(-2, "Vector");
