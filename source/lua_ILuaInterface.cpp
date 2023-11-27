@@ -227,7 +227,7 @@ void InitLuaLibraries(ILuaInterface* LUA)
 
 	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
 
-	func_CLuaGameEnums_InitLibraries(nullptr, LUA); // Does this work? Probably not.
+	PushEnums(LUA);
 
 	func_InitLuaLibraries(LUA);
 }

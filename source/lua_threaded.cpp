@@ -26,6 +26,8 @@ GMOD_MODULE_OPEN()
 
 	InitMetaTable((ILuaInterface*)LUA);
 
+	InitEnums((ILuaInterface*)LUA);
+
 	Msg("LuaThreaded Loaded\n");
 
 	return 0;
@@ -49,6 +51,8 @@ GMOD_MODULE_CLOSE()
 		PushValue(LUA, val);
 		LUA->SetField(-2, key.c_str());
 	}
+
+	RemoveEnums();
 
 	return 0;
 }
