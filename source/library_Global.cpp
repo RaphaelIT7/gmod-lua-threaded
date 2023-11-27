@@ -77,6 +77,7 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, require, "require");
 		Add_Func(LUA, LVector, "Vector");
 		Add_Func(LUA, Angle, "Angle");
+		Add_Func(LUA, FindMetaTable, "FindMetaTable");
 
 	LUA->Pop(1);
 }
