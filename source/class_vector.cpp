@@ -15,16 +15,25 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
 	udata->vec = vec;
 
+	Msg("1, %i\n", LUA->Top());
 	LUA->PushMetaTable(metatype);
+	Msg("2, %i\n", LUA->Top());
 	LUA->SetMetaTable(-2);
+	Msg("3, %i\n", LUA->Top());
 
 	LUA->CreateTable();
+	Msg("4, %i\n", LUA->Top());
 	LUA->SetFEnv(-2);
 
+	Msg("5, %i\n", LUA->Top());
 	LUA->PushUserdata(udata);
+	Msg("6, %i\n", LUA->Top());
 	LUA->Push(-2);
+	Msg("7, %i\n", LUA->Top());
 	LUA->SetTable(-4);
+	Msg("8, %i\n", LUA->Top());
 	LUA->Remove(-2);
+	Msg("9, %i\n", LUA->Top());
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
