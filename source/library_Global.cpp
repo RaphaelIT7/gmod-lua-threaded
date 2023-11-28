@@ -136,6 +136,7 @@ LUA_FUNCTION(AddConsoleCommand)
 	}
 
 	luaconvars->CreateConCommand(name, helpText, flags, LuaConCommand, LuaConCommandAutocomplete); // LuaConCommandAutocomplete doesn't have the values gmod uses. Idk but this could cause problems.
+	Msg("Added concommand %s\n", name);
 
 	return 0;
 }
