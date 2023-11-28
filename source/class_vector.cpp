@@ -9,6 +9,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	LUA->PushVector(vec);
 	LUA->PushMetaTable(Type::Vector);
+	LUA->SetMetaTable(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
