@@ -13,16 +13,6 @@ struct LUA_Vector
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	Msg("0, %i\n", LUA->Top());
-	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushUserdata(&vec);
-	LUA->GetTable(-2);
-	if(LUA->IsType(-1, metatype))
-	{
-		LUA->Remove(-2);
-		return;
-	}
-
-	LUA->Pop(1);
 
 	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
 	udata->vec = vec;
@@ -43,9 +33,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA->Push(-2);
 	Msg("7, %i\n", LUA->Top());
 	//ThreadSleep(100); // Crashes next line. So wait for Msg to show.
-	LUA->SetTable(-4);
-	Msg("8, %i\n", LUA->Top());
-	LUA->Remove(-2);
+	LUA->Remove(-1);
 	Msg("9, %i\n", LUA->Top());
 }
 
