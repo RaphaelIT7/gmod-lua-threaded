@@ -8,8 +8,17 @@ static const char table_name[] = "Vector_object";
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	LUA->PushVector(vec);
-	LUA->PushMetaTable(Type::Vector);
+
+	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
+
+	LUA->CreateTable();
+	LUA->SetFEnv(-2);
+
+	LUA->PushVector(vec);
+	LUA->Push(-2);
+	LUA->SetTable(-4);
+	LUA->Remove(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
