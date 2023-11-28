@@ -1,4 +1,5 @@
 #include <GarrysMod/Lua/Interface.h>
+#include <GarrysMod/Lua/LuaObject.h>
 #include "lua_threaded.h"
 
 static int32_t metatype = GarrysMod::Lua::Type::NONE;
@@ -470,6 +471,54 @@ LUA_FUNCTION(ILuaInterface_LoadFunction)
 	return 0;
 }
 
+void RunCommand(ILuaInterface* LUA, const CCommand& cmd, void* ply)
+{
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "concommand");
+		if (LUA->IsType(-1, Type::Table)) {
+			LUA->GetField(-1, "Run");
+				if (LUA->IsType(-1, Type::Function)) {
+					/*
+						concommand.Run:
+						1. Player ply
+						2. string cmd
+						3. any arguments
+						4. string argumentstring
+					*/
+
+					ILuaObject* obj = LUA->CreateObject();
+					obj->SetEntity((BaseEntity*)ply);
+					obj->Push();
+
+					LUA->PushString(cmd.Arg(0));
+
+					if (cmd.ArgC() == 1)
+					{
+						LUA->PushNil();
+					} else if (cmd.ArgC() == 2) {
+						LUA->PushString(cmd.Arg(1));
+					} else {
+						LUA->CreateTable();
+
+						for(int i=1;i!=cmd.ArgC();i++) {
+							LUA->PushString(cmd.Arg(i));
+							LUA->SetField(-2, std::to_string(i).c_str());
+						}
+					}
+
+					LUA->PushString(cmd.ArgS());
+				} else {
+					Msg("concommand.Run is not a function!\n");
+				}
+
+				LUA->Pop(1);
+		} else {
+			Msg("concommand is not a table!\n");
+		}
+
+	LUA->Pop(2); // Global, concommand, concommand.run
+}
+
 unsigned LuaThread(void* data)
 {
 	ILuaThread* thread_data = (ILuaThread*)data;
@@ -509,6 +558,9 @@ unsigned LuaThread(void* data)
 			} else if (action->type == LuaAction::ACT_InitGmod)
 			{
 				InitGmod(IFace);
+			} else if (action->type == LuaAction::ACT_RunCommand)
+			{
+				RunCommand(IFace, action->cmd, action->ply);
 			}
 
 			delete action;

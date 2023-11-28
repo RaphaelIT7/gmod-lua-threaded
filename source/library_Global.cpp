@@ -62,6 +62,84 @@ LUA_FUNCTION(FindMetaTable)
 	return 1;
 }
 
+std::unordered_map<std::string, ILuaThread*> commands;
+void LuaConCommand(const CCommand& cmd)
+{
+	// How tf do I now get the ILuaInterface that created the command. Create a list and add all commands from a state?
+
+	auto it = commands.find(cmd.Arg(1));
+	if (it != commands.end())
+	{
+		ILuaThread* thread = it->second;
+		if (thread->threaded)
+		{
+			ILuaAction* action = new ILuaAction;
+			action->type = LuaAction::ACT_RunCommand;
+			action->cmd = cmd;
+			action->ply = func_UTIL_GetCommandClient();
+
+			thread->mutex.Lock();
+			thread->actions.push_back(action);
+			thread->mutex.Unlock();
+		} else {
+			RunCommand(thread->IFace, cmd, func_UTIL_GetCommandClient()); // UTIL_GetCommandClient returns void* because I don't want to define CBasePlayer.
+		}
+	} else {
+		Msg("Failed to find State for command %s!\n", cmd.Arg(0));
+	}
+}
+
+/*
+	ToDo: Look someday again to these values. They seem to be raised in Gmod.
+	I won't implement this for now.
+*/
+int LuaConCommandAutocomplete(const char *partial, char commands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ])
+{
+	return 0;
+}
+
+ILuaConVars* luaconvars;
+LUA_FUNCTION(AddConsoleCommand)
+{
+	const char* name = LUA->CheckString(1);
+	const char* helpText = LUA->CheckString(2);
+	int flags = LUA->CheckNumber(3);
+
+	bool blocked = func_ConCommand_IsBlocked(name);
+
+	if (!blocked) 
+	{
+		blocked = (V_stricmp(name, "lua_cookieclear") == 0);
+	}
+
+	if (blocked) 
+	{
+		//Verify: LUA->ThrowError("AddConsoleCommand: Command name is blocked! (%s)");
+		Msg("AddConsoleCommand: Command name is blocked! (%s)", name);
+	}
+
+	/*
+		Experimental.
+		Getting ILuaConVars and calling CreateConCommand.
+
+		lua_shared contains this line:
+		EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CLuaConVars, ILuaConVars, "LUACONVARS001", g_CLuaConVars);
+	*/
+	if (!luaconvars) {
+		SourceSDK::FactoryLoader luashared_loader("lua_shared");
+		luaconvars = luashared_loader.GetInterface<ILuaConVars>("LUACONVARS001");
+
+		if (!luaconvars) {
+			Msg("Failed to get ILuaConVars!\n");
+			ThreadSleep(100);
+		}
+	}
+
+	luaconvars->CreateConCommand(name, helpText, flags, LuaConCommand, LuaConCommandAutocomplete); // LuaConCommandAutocomplete doesn't have the values gmod uses. Idk but this could cause problems.
+
+	return 0;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);

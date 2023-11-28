@@ -26,10 +26,6 @@ const std::vector<Symbol> CloseLuaInterfaceSym = {
 	Symbol::FromSignature("\x55\x8B\xEC\x53\x56\x8B\xF1\x57\x8B\x7D\x08\xC7\x46\x10"),
 };
 
-/*typedef lua_State* (*luaL_newstate)();
-extern luaL_newstate func_luaL_newstate;
-const Symbol luaL_newstateSym = Symbol::FromName("luaL_newstate");*/
-
 typedef int (*TLuaPanic)(lua_State*);
 extern TLuaPanic func_LuaPanic;
 const Symbol LuaPanicSym = Symbol::FromName("_ZL8LuaPanicP9lua_State");
@@ -42,17 +38,9 @@ typedef int (*Tlua_pcall)(lua_State*, int, int, int);
 extern Tlua_pcall func_lua_pcall;
 const Symbol lua_pcallSym = Symbol::FromName("lua_pcall");
 
-/*typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
-extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
-const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");*/
-
 typedef int (*luaL_loadstring)(lua_State*, const char*);
 extern luaL_loadstring func_luaL_loadstring;
 const Symbol luaL_loadstringSym = Symbol::FromName("luaL_loadstring");
-
-/*typedef void (*luaL_openlibs)(lua_State*);
-extern luaL_openlibs func_luaL_openlibs;
-const Symbol luaL_openlibsSym = Symbol::FromName("luaL_openlibs");*/
 
 typedef const char* (*lua_tostring)(lua_State*, int, int);
 extern lua_tostring func_lua_tostring;
@@ -83,6 +71,14 @@ const Symbol CLuaGlobalLibrary_InitLibrariesSym = Symbol::FromName("_ZN17CLuaGlo
 typedef void (*CLuaGameEnums_InitLibraries)(void*, ILuaInterface*);
 extern CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
 const Symbol CLuaGameEnums_InitLibrariesSym = Symbol::FromName("_ZN13CLuaGameEnums13InitLibrariesEP13ILuaInterface");
+
+typedef bool (*ConCommand_IsBlocked)(const char*);
+extern ConCommand_IsBlocked func_ConCommand_IsBlocked;
+const Symbol ConCommand_IsBlockedSym = Symbol::FromName("_Z20ConCommand_IsBlockedPKc");
+
+typedef void* (*UTIL_GetCommandClient)();
+extern UTIL_GetCommandClient func_UTIL_GetCommandClient;
+const Symbol UTIL_GetCommandClientSym = Symbol::FromName("_Z21UTIL_GetCommandClientv");
 
 /*
 	CLuaGameCallback stuff

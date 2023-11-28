@@ -126,6 +126,22 @@ LUA_FUNCTION(LuaThread_SetValue)
 	return 0;
 }
 
+LUA_FUNCTION(LuaThread_GetValue)
+{
+	std::string key = LUA->CheckString(1);
+
+	auto it = shared_table.find(key);
+	if (it != shared_table.end())
+	{
+		ILuaValue* val = it->second;
+		PushValue(LUA, val);
+	} else {
+		LUA->PushNil();
+	}
+
+    return 1;
+}
+
 int LuaThread_Msg(lua_State* L)
 {
 	const char* msg = func_lua_tostring(L, 1, NULL);
@@ -149,6 +165,7 @@ void InitLuaThreaded(ILuaInterface* LUA, int id)
 			Add_Func(LUA, LuaThread_Msg, "Msg");
 			Add_Func(LUA, LuaThread_GetTable, "GetTable");
 			Add_Func(LUA, LuaThread_SetValue, "SetValue");
+			Add_Func(LUA, LuaThread_GetValue, "GetValue");
 
 			LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop(2);

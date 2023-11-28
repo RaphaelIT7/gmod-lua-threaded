@@ -6,13 +6,10 @@
 
 CreateLuaInterface func_CreateLuaInterface;
 CloseLuaInterface func_CloseLuaInterface;
-//luaL_newstate func_luaL_newstate;
 TLuaPanic func_LuaPanic;
 Tlua_pcall func_lua_pcall;
-//TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 Tlua_atpanic func_lua_atpanic;
 luaL_loadstring func_luaL_loadstring;
-//luaL_openlibs func_luaL_openlibs;
 lua_tostring func_lua_tostring;
 GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
 
@@ -21,6 +18,8 @@ InitLuaClasses func_InitLuaClasses;
 CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
 CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
 void* g_pGlobalLuaLibraryFactory;
+ConCommand_IsBlocked func_ConCommand_IsBlocked;
+UTIL_GetCommandClient func_UTIL_GetCommandClient;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
@@ -131,6 +130,12 @@ void Symbols_Init()
 
 	func_CLuaGameEnums_InitLibraries = (CLuaGameEnums_InitLibraries)FindFunction(server_loader.GetModule(), CLuaGameEnums_InitLibrariesSym);
 	CheckFunction(func_CLuaGameEnums_InitLibraries, "CLuaGameEnums::InitLibraries");
+
+	func_ConCommand_IsBlocked = (ConCommand_IsBlocked)FindFunction(server_loader.GetModule(), ConCommand_IsBlockedSym);
+	CheckFunction(func_ConCommand_IsBlocked, "ConCommand_IsBlocked");
+
+	func_UTIL_GetCommandClient = (UTIL_GetCommandClient)FindFunction(server_loader.GetModule(), UTIL_GetCommandClientSym);
+	CheckFunction(func_UTIL_GetCommandClient, "UTIL_GetCommandClient");
 
 	/*
 		CLuaGameCallback stuff

@@ -1,5 +1,6 @@
 #include <GarrysMod/Lua/Interface.h>
 #include <unordered_map>
+#include "ILuaConVars.h"
 #include "detours.h"
 #include <setjmp.h>
 #include <vector>
@@ -17,6 +18,7 @@ enum LuaAction
 	ACT_RunFile,
 	ACT_InitEnums,
 	ACT_InitGmod,
+	ACT_RunCommand,
 };
 
 struct ILuaValue
@@ -34,6 +36,9 @@ struct ILuaAction
 {
 	LuaAction type;
 	const char* data;
+
+	CCommand cmd;
+	void* ply;
 };
 
 struct ILuaThread

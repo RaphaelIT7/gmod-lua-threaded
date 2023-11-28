@@ -17,7 +17,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
 - [x] Change ILuaAction to use Enums instead of strings.  
 - [x] Documentation  
-- [ ] Add all Gmod Enums  
+- [x] Add all Gmod Enums  
 - [ ] Recreate all Gmod libraries  
 - [ ] Look again into Error handling. Maybe show which file had an error?
 
@@ -125,6 +125,9 @@ NOTE: You need to call this function to get an updated version!
 ### LuaThreaded.SetValue(string key, any value)
 Sets a Value inside the shared table.  
 
+### LuaThreaded.GetValue(string key)
+Returns only the specified value from the shared table.  
+
 Args:  
 1. The Key inside the Table  
 2. The Value to set. Allowed Types: Number, Bool, String, Vector, Angle and Table  
@@ -143,6 +146,14 @@ This function may be removed in the future!
 ### ILuaInterface:InitLibraries()  
 Initializes all Libraries.  
 This function may be removed in the future!  
+
+### ILuaInterface:InitEnums()  
+Initializes all Enums.  
+This function may be removed in the future!  
+
+### ILuaInterface:InitGmod()  
+Initializes everything for Gmod.  
+Internally calls InitClasses, InitLibraries and InitEnums.  
 
 ### ILuaInterface:LoadFunction(string sig)  
 Loads a function into the Interface.  
@@ -178,7 +189,6 @@ Files:
 - `CLuaGameCallback.h`
 - `CLuaGameCallback.cpp`
 
-
 ## detours
 Contains all signatures and functions we need from Gmod.  
 
@@ -200,10 +210,42 @@ Files:
 - `lua_LuaThread.h`
 - `lua_LuaThread.cpp`
 
+## lua_Enums
+Contains our LuaThread table and all its functions.  
+
+Files:  
+- `lua_Enums.h`
+- `lua_Enums.cpp`
+
+## library_Global
+Contains all implemented Global functions.  
+Status: Unfinished  
+
+Files:  
+- `library_Global.h`
+- `library_Global.cpp`
+
+## library_net
+Contains all implemented net functions.  
+Status: Unfinished  
+
+Files:  
+- `library_net.h`
+- `library_net.cpp`
+
+## class_vector
+Contains all implemented Vector functions.  
+Status: Unfinished + Broken  
+
+Files:  
+- `class_vector.h`
+- `class_vector.cpp`
+
 ## lua_utils
 Contains important functions PushValue, FillValue and so on.  
 
 Files:  
+- `ILuaConVars.h` (Needed for library_Global)  
 - `lua_utils.h`
 - `lua_utils.cpp`
 

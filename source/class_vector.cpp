@@ -125,7 +125,7 @@ LUA_FUNCTION(_Vector)
 {
 	int x = LUA->CheckNumber(1);
 	int y = LUA->CheckNumber(2);
-	int z = LUA->CheckNumber(3);
+	int z = LUA->CheckNumber(3); // We should use doubles. Fix Push_Vector and change it.
 
 	Vector vec = Vector(x, y, z);
 	//Push_Vector(LUA, vec);
