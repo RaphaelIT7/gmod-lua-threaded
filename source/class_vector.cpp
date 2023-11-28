@@ -10,10 +10,10 @@ struct LUA_Vector
 	const Vector* vec;
 };
 
-void Push_Vector(ILuaBase* LUA, const Vector vec)
+void Push_Vector(ILuaBase* LUA, const Vector* vec)
 {
 	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushVector(vec);
+	LUA->PushUserdata((void*)vec);
 	LUA->GetTable(-2);
 	if(LUA->IsType(-1, metatype))
 	{
@@ -23,8 +23,8 @@ void Push_Vector(ILuaBase* LUA, const Vector vec)
 
 	LUA->Pop(1);
 
-	//LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
-	//udata->vec = vec;
+	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
+	udata->vec = vec;
 
 	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
@@ -32,7 +32,7 @@ void Push_Vector(ILuaBase* LUA, const Vector vec)
 	LUA->CreateTable();
 	LUA->SetFEnv(-2);
 
-	LUA->PushVector(vec);
+	LUA->PushUserdata((void*)vec);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
 	LUA->Remove(-2);
@@ -136,7 +136,7 @@ LUA_FUNCTION(_Vector)
 	int z = LUA->CheckNumber(3);
 
 	Vector vec = Vector(x, y, z);
-	Push_Vector(LUA, vec);
+	Push_Vector(LUA, &vec);
 
 	return 1;
 }
