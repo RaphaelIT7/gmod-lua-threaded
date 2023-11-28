@@ -42,7 +42,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	Msg("6, %i\n", LUA->Top());
 	LUA->Push(-2);
 	Msg("7, %i\n", LUA->Top());
-	ThreadSleep(100); // Crashes next line. So wait for Msg to show.
+	//ThreadSleep(100); // Crashes next line. So wait for Msg to show.
 	LUA->SetTable(-4);
 	Msg("8, %i\n", LUA->Top());
 	LUA->Remove(-2);
