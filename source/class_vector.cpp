@@ -7,13 +7,13 @@ static const char table_name[] = "Vector_object";
 
 struct LUA_Vector
 {
-	const Vector* vec;
+	Vector* vec;
 };
 
-void Push_Vector(ILuaBase* LUA, const Vector* vec)
+void Push_Vector(ILuaBase* LUA, Vector* vec)
 {
 	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushUserdata((void*)vec);
+	LUA->PushUserdata(vec);
 	LUA->GetTable(-2);
 	if(LUA->IsType(-1, metatype))
 	{
@@ -32,7 +32,7 @@ void Push_Vector(ILuaBase* LUA, const Vector* vec)
 	LUA->CreateTable();
 	LUA->SetFEnv(-2);
 
-	LUA->PushUserdata((void*)vec);
+	LUA->PushUserdata(vec);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
 	LUA->Remove(-2);
@@ -49,7 +49,7 @@ LUA_Vector *Vector_GetUserdata(ILuaBase *LUA, int index)
 	return LUA->GetUserType<LUA_Vector>(index, metatype);
 }
 
-const Vector* Vector_Get(ILuaBase* LUA, int index)
+Vector* Vector_Get(ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
@@ -62,7 +62,7 @@ const Vector* Vector_Get(ILuaBase* LUA, int index)
 
 void Vector_Destroy(ILuaBase *LUA, int index)
 {
-	const Vector *vec = Vector_Get(LUA, index);
+	Vector *vec = Vector_Get(LUA, index);
 
 	LUA->GetField(INDEX_REGISTRY, table_name);
 	LUA->PushUserdata((void*)vec);
