@@ -340,29 +340,25 @@ void RunFile(ILuaThread* LUA, const char* file)
 
 		delete[] code;
 	} else {
-		Msg("Failed to find %s!\n", file);
-	}
+		Msg("Failed to find Path!. Next try. New path: %s\n", (old_path + file).c_str());
 
-	Msg("New path: %s\n", (old_path + file).c_str());
+		fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
+		if(fh)
+		{
+			int file_len = gpFileSystem->Size(fh);
+			char* code = new char[file_len + 1];
 
-	//ThreadSleep(100);
+			gpFileSystem->Read((void*)code,file_len,fh);
+			code[file_len] = 0;
 
-	fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
-	if(fh)
-	{
-		int file_len = gpFileSystem->Size(fh);
-		char* code = new char[file_len + 1];
+			gpFileSystem->Close(fh);
 
-		gpFileSystem->Read((void*)code,file_len,fh);
-		code[file_len] = 0;
+			RunString(LUA, code);
 
-		gpFileSystem->Close(fh);
-
-		RunString(LUA, code);
-
-		delete[] code;
-	} else {
-		Msg("Failed to find %s! Try 2.\n", file);
+			delete[] code;
+		} else {
+			Msg("Failed to find %s! Try 2.\n", file);
+		}
 	}
 
 	LUA->current_path = old_path;
