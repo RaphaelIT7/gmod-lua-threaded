@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-static int32_t metatype = GarrysMod::Lua::Type::Vector;
+static int32_t metatype = GarrysMod::Lua::Type::None;
 static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
