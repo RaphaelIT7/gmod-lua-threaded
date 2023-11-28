@@ -2990,6 +2990,6 @@ void RemoveEnums()
 		ILuaValue* val = fullenums[gmod_enum];
 
 		fullenums.erase(gmod_enum);
-		SafeDelete(val);
+		//SafeDelete(val);
 	}
 }

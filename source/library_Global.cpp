@@ -106,7 +106,6 @@ LUA_FUNCTION(AddConsoleCommand)
 	int flags = LUA->CheckNumber(3);
 
 	bool blocked = func_ConCommand_IsBlocked(name);
-
 	if (!blocked) 
 	{
 		blocked = (V_stricmp(name, "lua_cookieclear") == 0);
