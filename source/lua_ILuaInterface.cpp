@@ -31,6 +31,7 @@ ILuaInterface* ILuaInterface_Get(ILuaBase* LUA, int index)
 
 void ILuaInterface_Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
 {
+	Msg("0, %i\n", LUA->Top());
 	if(Interface == nullptr)
 	{
 		LUA->PushNil();
@@ -48,16 +49,20 @@ void ILuaInterface_Push(ILuaBase* LUA, ILuaInterface* Interface, int ID)
 
 	LUA->Pop(1);
 
+	Msg("1, %i\n", LUA->Top());
 	LUA_ILuaInterface *udata = LUA->NewUserType<LUA_ILuaInterface>(metatype);
 	udata->IFace = Interface;
 	udata->ID = ID;
 
+	Msg("2, %i\n", LUA->Top());
 	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
 
+	Msg("3, %i\n", LUA->Top());
 	LUA->CreateTable();
 	LUA->SetFEnv(-2);
 
+	Msg("4, %i\n", LUA->Top());
 	LUA->PushUserdata(Interface);
 	LUA->Push(-2);
 	LUA->SetTable(-4);

@@ -12,6 +12,7 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
+	Msg("0, %i\n", LUA->Top());
 	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
 	udata->vec = vec;
 

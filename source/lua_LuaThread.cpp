@@ -50,6 +50,8 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 		thread->IFace = CreateInterface();
 	}
 
+	ThreadSleep(100); // Remove it later.
+
 	return 0;
 }
 
