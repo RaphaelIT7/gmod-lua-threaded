@@ -24,7 +24,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA->SetFEnv(-2);
 
 
-	LUA->PushUserdata(udata);
+	LUA->PushUserdata(&vec);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
 	LUA->Remove(-2);
@@ -128,8 +128,8 @@ LUA_FUNCTION(_Vector)
 	int z = LUA->CheckNumber(3);
 
 	Vector vec = Vector(x, y, z);
-	Push_Vector(LUA, vec);
-	//LUA->PushVector(vec);
+	//Push_Vector(LUA, vec);
+	LUA->PushVector(vec);
 
 	return 1;
 }
