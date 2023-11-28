@@ -146,7 +146,7 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, include, "include");
 		Add_Func(LUA, require, "require");
 		Add_Func(LUA, FindMetaTable, "FindMetaTable");
-
+		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 
 		Add_Func(LUA, _Vector, "Vector");
 		Add_Func(LUA, Angle, "Angle");
