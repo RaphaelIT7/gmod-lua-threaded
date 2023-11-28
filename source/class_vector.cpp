@@ -5,9 +5,15 @@ static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
 
+struct LUA_Vector
+{
+	Vector vec;
+};
+
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
-	LUA->PushVector(vec);
+	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
+	udata->vec = vec;
 
 	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
@@ -15,7 +21,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA->CreateTable();
 	LUA->SetFEnv(-2);
 
-	LUA->PushVector(vec);
+	LUA->PushUserdata(udata);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
 	LUA->Remove(-2);
