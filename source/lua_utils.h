@@ -1,4 +1,5 @@
 #include <GarrysMod/Lua/Interface.h>
+#include "GameEventListener.h"
 #include <unordered_map>
 #include "ILuaConVars.h"
 #include "detours.h"
@@ -19,6 +20,7 @@ enum LuaAction
 	ACT_InitEnums,
 	ACT_InitGmod,
 	ACT_RunCommand,
+	ACT_Gameevent,
 };
 
 struct ILuaValue
@@ -37,8 +39,12 @@ struct ILuaAction
 	LuaAction type;
 	const char* data;
 
+	// ConCommand
 	CCommand cmd;
 	void* ply;
+
+	// Gameevent
+	ILuaValue* val;
 };
 
 struct ILuaThread
@@ -58,6 +64,8 @@ struct ILuaThread
 	std::string current_path;
 
 	jmp_buf jumpBuffer;
+
+	IGameEventListener2* listener;
 };
 
 struct GMOD_Info

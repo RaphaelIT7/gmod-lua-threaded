@@ -233,16 +233,15 @@ LUA_FUNCTION(ILuaInterface_InitClasses)
 }
 
 void* g_pGlobalLuaLibraryFactorySig;
-void InitLuaLibraries(ILuaInterface* LUA)
+void InitLuaLibraries(ILuaThread* thread)
 {
 	Msg("InitLuaLibraries called\n");
 
+	ILuaInterface* LUA = thread->IFace;
+
 	InitGlobal(LUA);
 	InitNet(LUA);
-
-	func_CLuaGlobalLibrary_InitLibraries(g_pGlobalLuaLibraryFactory, LUA);
-
-	func_InitLuaLibraries(LUA);
+	InitGameevent(thread);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
@@ -258,7 +257,7 @@ LUA_FUNCTION(ILuaInterface_InitLibraries)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		InitLuaLibraries(thread->IFace);
+		InitLuaLibraries(thread);
 	}
 
 	return 0;
@@ -288,13 +287,13 @@ LUA_FUNCTION(ILuaInterface_InitEnums)
 	return 0;
 }
 
-void InitGmod(ILuaInterface* LUA)
+void InitGmod(ILuaThread* thread)
 {
-	InitLuaEnums(LUA);
+	InitLuaEnums(thread->IFace);
 
-	InitLuaLibraries(LUA);
+	InitLuaLibraries(thread);
 
-	InitClasses(LUA);
+	InitClasses(thread->IFace);
 }
 
 LUA_FUNCTION(ILuaInterface_InitGmod)
@@ -310,7 +309,7 @@ LUA_FUNCTION(ILuaInterface_InitGmod)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		InitGmod(thread->IFace);
+		InitGmod(thread);
 	}
 
 	return 0;
@@ -542,7 +541,7 @@ unsigned LuaThread(void* data)
 				InitClasses(IFace);
 			} else if (action->type == LuaAction::ACT_InitLibraries)
 			{
-				InitLuaLibraries(IFace);
+				InitLuaLibraries(thread_data);
 			} else if (action->type == LuaAction::ACT_LoadFunc)
 			{
 				LoadFunction(IFace, action->data);
@@ -557,10 +556,13 @@ unsigned LuaThread(void* data)
 				InitEnums(IFace);
 			} else if (action->type == LuaAction::ACT_InitGmod)
 			{
-				InitGmod(IFace);
+				InitGmod(thread_data);
 			} else if (action->type == LuaAction::ACT_RunCommand)
 			{
 				RunCommand(IFace, action->cmd, action->ply);
+			} else if (action->type == LuaAction::ACT_Gameevent)
+			{
+				RunGameevent(IFace, action->data, action->val);
 			}
 
 			delete action;
