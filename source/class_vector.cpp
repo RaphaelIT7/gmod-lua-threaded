@@ -67,7 +67,8 @@ LUA_FUNCTION_STATIC(Vector__gc)
 
 LUA_FUNCTION_STATIC(Vector__tostring)
 {
-	LUA->PushFormattedString("%s: %p", metaname, Vector_Get(LUA, 1));
+	Vector vec = Vector_Get(LUA, 1);
+	LUA->PushFormattedString("%f %f %f", vec[0], vec[1], vec[2]);
 	return 1;
 }
 
