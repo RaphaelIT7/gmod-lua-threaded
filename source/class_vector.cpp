@@ -123,7 +123,9 @@ LUA_FUNCTION_STATIC(Vector__add)
 	Vector vec1 = LUA->GetVector(1);
 	Vector vec2 = LUA->GetVector(2);
 
-	Vector new_vec = Vector(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
+	Vector new_vec = Vector();
+	VectorAdd(vec1, vec2, new_vec);
+
 	Push_Vector(LUA, new_vec);
 
 	return 1;
@@ -149,7 +151,7 @@ LUA_FUNCTION(Vector_Add)
 	Vector vec1 = LUA->GetVector(1);
 	Vector vec2 = LUA->GetVector(2);
 
-	vec1 = vec1 + vec2;
+	vec1 + vec2;
 
 	return 0;
 }
