@@ -93,13 +93,13 @@ LUA_FUNCTION_STATIC(Vector__index)
 	if (key != NULL) 
 	{
 		Vector vec1 = Vector_Get(LUA, 1);
-		if (strcmp(key, "x") || strcmp(key, "1")) {
+		if (strcmp(key, "x") == 0 || strcmp(key, "1") == 0) {
 			LUA->PushNumber(vec1.x);
 			return 1;
-		} else if (strcmp(key, "y") || strcmp(key, "2")) {
+		} else if (strcmp(key, "y") == 0 || strcmp(key, "2") == 0) {
 			LUA->PushNumber(vec1.y);
 			return 1;
-		} else if (strcmp(key, "z") || strcmp(key, "3")) {
+		} else if (strcmp(key, "z") == 0 || strcmp(key, "3") == 0) {
 			LUA->PushNumber(vec1.z);
 			return 1;
 		}
@@ -128,12 +128,12 @@ LUA_FUNCTION_STATIC(Vector__newindex)
 		return 0;
 
 	Vector vec1 = Vector_Get(LUA, 1);
-	if (strcmp(key, "x") || strcmp(key, "1")) {
-		vec1.x = std::stoi(key);
-	} else if (strcmp(key, "y") || strcmp(key, "2")) {
-		vec1.y = std::stoi(key);
-	} else if (strcmp(key, "z") || strcmp(key, "3")) {
-		vec1.z = std::stoi(key);
+	if (strcmp(key, "x") == 0 || strcmp(key, "1") == 0) {
+		vec1.x = std::stoi(LUA->GetString(3));
+	} else if (strcmp(key, "y") == 0 || strcmp(key, "2") == 0) {
+		vec1.y = std::stoi(LUA->GetString(3));
+	} else if (strcmp(key, "z") == 0 || strcmp(key, "3") == 0) {
+		vec1.z = std::stoi(LUA->GetString(3));
 	}
 
 	return 0;
