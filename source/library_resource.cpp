@@ -69,6 +69,6 @@ void InitResource(ILuaInterface* LUA)
 			Add_Func(LUA, resource_AddSingleFile, "AddSingleFile");
 			Add_Func(LUA, resource_AddWorkshop, "AddWorkshop");
 
-			LUA->SetField(-2, "resource");
-	LUA->Pop(2);
+		LUA->SetField(-2, "resource");
+	LUA->Pop();
 }

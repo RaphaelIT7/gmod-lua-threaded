@@ -167,6 +167,6 @@ void InitLuaThreaded(ILuaInterface* LUA, int id)
 			Add_Func(LUA, LuaThread_SetValue, "SetValue");
 			Add_Func(LUA, LuaThread_GetValue, "GetValue");
 
-			LUA->SetField(-2, "LuaThreaded");
-	LUA->Pop(2);
+		LUA->SetField(-2, "LuaThreaded");
+	LUA->Pop();
 }

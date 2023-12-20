@@ -169,6 +169,6 @@ void InitPhysEnv(ILuaInterface* LUA)
 			Add_Func(LUA, physenv_SetGravity, "SetGravity");
 			Add_Func(LUA, physenv_SetPerformanceSettings, "SetPerformanceSettings");
 
-			LUA->SetField(-2, "physenv");
-	LUA->Pop(2);
+		LUA->SetField(-2, "physenv");
+	LUA->Pop();
 }

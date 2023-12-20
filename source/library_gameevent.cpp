@@ -213,8 +213,8 @@ void InitGameevent(ILuaThread* thread)
 		LUA->CreateTable();
 			Add_Func(LUA, gameevent_Listen, "Listen");
 
-			LUA->SetField(-2, "gameevent");
-	LUA->Pop(2);
+		LUA->SetField(-2, "gameevent");
+	LUA->Pop();
 
 	thread->listener = new GameEventListener;
 
