@@ -23,10 +23,17 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
 - [x] physenv (Mostly implemented)  
+- - [ ] physenv.physenv_AddSurfaceData  
+- - [ ] physenv.GetLastSimulationTime  
 - [x] gameevent (untested!)  
 - [x] resource (untested!)  
 
 ## ToDo/Testing
+#### Current Issues
+- Pushing a Vector using Push_Vector causes a Stack leak? (0> 4.6563407517458e-313 (string)). Is our metatable broken?  
+- resource.AddFile & resource.AddSingleFile don't seem to work.  
+- Idk how gmod implemented (physenv.GetLastSimulationTime)
+
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
 - [x] Change ILuaAction to use Enums instead of strings.  
 - [x] Documentation  

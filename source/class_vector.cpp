@@ -12,16 +12,13 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
-	LUA->PushVector(vec);
-	//LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
-	//udata->vec = vec;
+	//LUA->PushVector(vec);
 
-	//LUA->PushMetaTable(metatype);
-	//LUA->SetMetaTable(-2);
-	if (LUA->IsType(-1, Type::String))
-		Msg("Lua top: %s\n", LUA->GetString(-1));
+	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	udata->vec = vec;
 
-	LUA->Pop(); // Pop nothing to fix stack?!?
+	LUA->CreateMetaTableType("Vector", metatype);
+	LUA->SetMetaTable(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
@@ -133,10 +130,7 @@ void InitVectorClass(ILuaInterface* LUA)
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
-	Msg("MetaType for Vector: %i\n", metatype);
-	LUA->CreateMetaTableType(metaname, metatype); // I should probably use CreateMetaTableType.
-	Msg("New MetaType for Vector: %i\n", metatype);
-
+	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Vector__gc, "__gc");
 		Add_Func(LUA, Vector__tostring, "__tostring");
 		Add_Func(LUA, Vector__eq, "__eq");
