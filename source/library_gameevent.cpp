@@ -1,6 +1,5 @@
 #include "lua_threaded.h"
 
-SourceSDK::FactoryLoader engine_loader("engine");
 IGameEventManager2* eventmanager = nullptr;
 
 ILuaValue* GetBool(IGameEvent* event, const char* pKey)
@@ -220,6 +219,7 @@ void InitGameevent(ILuaThread* thread)
 	thread->listener = new GameEventListener;
 
 	if (eventmanager == nullptr) {
+		SourceSDK::FactoryLoader engine_loader("engine");
 		eventmanager = (IGameEventManager2*)engine_loader.GetFactory()(INTERFACEVERSION_GAMEEVENTSMANAGER2, nullptr);
 		if (eventmanager == nullptr)
 			LUA->ThrowError("unable to initialize IGameEventManager2");

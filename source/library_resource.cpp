@@ -1,7 +1,6 @@
 #include "networkstringtabledefs.h"
 #include "lua_threaded.h"
 
-SourceSDK::FactoryLoader engine_loader("engine");
 SourceSDK::ModuleLoader server_loader("server");
 
 typedef void (*AddResource)(const char*, bool);
@@ -42,13 +41,13 @@ LUA_FUNCTION(resource_AddWorkshop)
 
 	INetworkStringTable* g_StringTablesDownloadables = networkstringtables->FindTable("downloadables");
 
-	const char* entry_name = (((std::string)workshopId) + ".gma").c_str();
-	int idx = g_StringTablesDownloadables->FindStringIndex(entry_name);
+	std::string entry_name = ((std::string)workshopId) + ".gma";
+	int idx = g_StringTablesDownloadables->FindStringIndex(entry_name.c_str());
 
 	if (idx != INVALID_STRING_INDEX)
 		return 0;
 
-	g_StringTablesDownloadables->AddString(entry_name);
+	g_StringTablesDownloadables->AddString(true, entry_name.c_str());
 
 	return 0;
 }
@@ -56,6 +55,7 @@ LUA_FUNCTION(resource_AddWorkshop)
 void InitResource(ILuaInterface* LUA)
 {
 	if (networkstringtables == nullptr) {
+		SourceSDK::FactoryLoader engine_loader("engine");
 		networkstringtables = (INetworkStringTableContainer*)engine_loader.GetFactory()(INTERFACENAME_NETWORKSTRINGTABLESERVER, nullptr);
 		if (networkstringtables == nullptr)
 			LUA->ThrowError("unable to initialize INetworkStringTableContainer");
