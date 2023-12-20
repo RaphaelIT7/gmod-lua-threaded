@@ -26,7 +26,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA->PushUserdata(&vec);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
-	LUA->Remove(-2);
+	//LUA->Remove(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
