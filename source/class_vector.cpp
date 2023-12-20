@@ -1,5 +1,5 @@
-#include <GarrysMod/Lua/LuaObject.h>
 #include "lua_threaded.h"
+#include <GarrysMod/Lua/LuaObject.h>
 
 static int32_t metatype = GarrysMod::Lua::Type::Vector;
 static const char metaname[] = "Vector";
