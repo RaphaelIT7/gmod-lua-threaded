@@ -3,7 +3,7 @@
 
 /*
 	It should be noted that CreateMetaTableType and CreateMetaTable don't act the same. 
-	CreateMetaTableType is marked as deprecated but it shouldn't be if you want to create a MetaTable for a specific TypeID like Type::Vector.
+	CreateMetaTableType is marked as deprecated, but it shouldn't be if you want to create a MetaTable for a specific TypeID like Type::Vector.
 */
 #ifndef GARRYSMOD_LUA_INTERFACE_H
 #define GARRYSMOD_LUA_INTERFACE_H

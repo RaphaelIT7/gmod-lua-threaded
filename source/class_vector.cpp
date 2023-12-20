@@ -12,10 +12,10 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
-	LUA->PushVector(vec);
+	//LUA->PushVector(vec);
 
-	//LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
-	//udata->vec = vec;
+	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	udata->vec = vec;
 
 	LUA->CreateMetaTableType("Vector", metatype);
 	LUA->SetMetaTable(-2);
@@ -27,16 +27,16 @@ void Vector_CheckType(ILuaBase* LUA, int index)
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-Vector Vector_GetUserdata(ILuaBase *LUA, int index)
+LUA_Vector* Vector_GetUserdata(ILuaBase *LUA, int index)
 {
-	return LUA->GetVector(index);
+	return (LUA_Vector*)LUA->GetUserdata(index);
 }
 
 Vector Vector_Get(ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
-	Vector vec = Vector_GetUserdata(LUA, index);
+	Vector vec = Vector_GetUserdata(LUA, index)->vec;
 	if(vec == nullptr)
 		LUA->ArgError(index, invalid_error);
 
@@ -45,10 +45,10 @@ Vector Vector_Get(ILuaBase* LUA, int index)
 
 void Vector_Destroy(ILuaBase *LUA, int index)
 {
-	Vector vec = Vector_GetUserdata(LUA, index);
+	LUA_Vector* vec = Vector_GetUserdata(LUA, index);
 
 	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushVector(vec);
+	LUA->PushUserdata(vec);
 	LUA->PushNil();
 	LUA->SetTable(-3);
 	LUA->Pop(1);
