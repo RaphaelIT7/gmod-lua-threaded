@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-static int32_t metatype = GarrysMod::Lua::Type::None;
+static int32_t metatype = GarrysMod::Lua::Type::Vector;
 static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
@@ -14,8 +14,8 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	LUA->PushVector(vec);
 
-	LUA->PushMetaTable(metatype);
-	LUA->SetMetaTable(-2);
+	//LUA->PushMetaTable(metatype);
+	//LUA->SetMetaTable(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
@@ -127,7 +127,10 @@ void InitVectorClass(ILuaInterface* LUA)
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
+	Msg("MetaType for Vector: %i\n", metatype);
 	metatype = LUA->CreateMetaTable(metaname);
+	Msg("New MetaType for Vector: %i\n", metatype);
+
 		Add_Func(LUA, Vector__gc, "__gc");
 		Add_Func(LUA, Vector__tostring, "__tostring");
 		Add_Func(LUA, Vector__eq, "__eq");

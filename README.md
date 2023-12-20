@@ -22,8 +22,9 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
-- [x] physenv (broken!)  
+- [x] physenv (Mostly implemented)  
 - [x] gameevent (untested!)  
+- [x] resource (untested!)  
 
 ## ToDo/Testing
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
@@ -68,7 +69,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] player  
 - - [ ] player_manager  
 - - [ ] properties  
-- - [ ] resource  
 - - [ ] saverestore  
 - - [ ] scripted_ents  
 - - [ ] sound  
