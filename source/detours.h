@@ -136,6 +136,9 @@ extern IFileSystem* gpFileSystem;
 extern void Symbols_Init();
 extern void* FindSymbol(std::string);
 
+extern void* GetFunction(SourceSDK::ModuleLoader, const char*, Symbol);
+extern void* GetFunction(SourceSDK::ModuleLoader, const char*, std::vector<Symbol>);
+
 static SymbolFinder symbol_finder;
 template<class T>
 static inline T* ResolveSymbol(

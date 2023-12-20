@@ -1,7 +1,7 @@
 #include "lua_threaded.h"
 
-static int32_t metatype = GarrysMod::Lua::Type::Vector;
-static const char metaname[] = "Vector";
+static int32_t metatype = GarrysMod::Lua::Type::None;
+static const char metaname[] = "Vector2";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
 
@@ -112,9 +112,9 @@ LUA_FUNCTION(Vector_Add)
 
 LUA_FUNCTION(_Vector)
 {
-	int x = LUA->CheckNumber(1);
-	int y = LUA->CheckNumber(2);
-	int z = LUA->CheckNumber(3); // We should use doubles. Fix Push_Vector and change it.
+	double x = LUA->CheckNumber(1);
+	double y = LUA->CheckNumber(2);
+	double z = LUA->CheckNumber(3);
 
 	Vector vec = Vector(x, y, z);
 	Push_Vector(LUA, vec);

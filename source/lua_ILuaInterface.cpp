@@ -243,6 +243,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitNet(LUA);
 	InitGameevent(thread);
 	//InitPhysEnv(LUA);
+	InitResource(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
