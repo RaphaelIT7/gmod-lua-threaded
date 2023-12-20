@@ -89,6 +89,22 @@ LUA_FUNCTION_STATIC(Vector__tostring)
 
 LUA_FUNCTION_STATIC(Vector__index)
 {
+	const char* key = LUA->GetString(2);
+	if (key != NULL) 
+	{
+		Vector vec1 = Vector_Get(LUA, 1);
+		if (strcmp(key, "x") || strcmp(key, "1")) {
+			LUA->PushNumber(vec1.x);
+			return 1;
+		} else if (strcmp(key, "y") || strcmp(key, "2")) {
+			LUA->PushNumber(vec1.y);
+			return 1;
+		} else if (strcmp(key, "z") || strcmp(key, "3")) {
+			LUA->PushNumber(vec1.z);
+			return 1;
+		}
+	}
+
 	LUA->GetMetaTable(1);
 	LUA->Push(2);
 	LUA->RawGet(-2);
@@ -107,6 +123,19 @@ LUA_FUNCTION_STATIC(Vector__newindex)
 	LUA->Push(2);
 	LUA->Push(3);
 	LUA->RawSet(-3);
+	const char* key = LUA->GetString(2);
+	if (key == NULL)
+		return 0;
+
+	Vector vec1 = Vector_Get(LUA, 1);
+	if (strcmp(key, "x") || strcmp(key, "1")) {
+		vec1.x = std::stoi(key);
+	} else if (strcmp(key, "y") || strcmp(key, "2")) {
+		vec1.y = std::stoi(key);
+	} else if (strcmp(key, "z") || strcmp(key, "3")) {
+		vec1.z = std::stoi(key);
+	}
+
 	return 0;
 }
 
@@ -241,6 +270,6 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector__mul, "__mul");
 		Add_Func(LUA, Vector__div, "__div");
 
-		Add_Func(LUA, Vector_Add, "Add");
+		Add_Func(LUA, Vector_Add, "Add"); // ToDo: Broken for some reason
 	LUA->Pop(1);
 }
