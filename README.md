@@ -13,6 +13,18 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] Shared Table  
 - [x] Better Error handling(It loved to crash on any Lua error.)  
 
+### Libraries
+- [x] bit  
+- [x] coroutine  
+- [x] os  
+- [x] package  
+- [x] jit  
+
+#### Unfinished/Untested
+- [x] debug (Missing functions!)  
+- [x] physenv (untested!)  
+- [x] gameevent (untested!)  
+
 ## ToDo/Testing
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
 - [x] Change ILuaAction to use Enums instead of strings.  
@@ -27,15 +39,12 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] ai_schedule  
 - - [ ] ai_task  
 - - [ ] baseclass  
-- - [x] bit - Implemented by Lua  
 - - [ ] cleanup  
 - - [ ] concommand  
 - - [ ] constraint  
 - - [ ] construct  
 - - [ ] cookie  
-- - [x] coroutine - Implemented by Lua  
 - - [ ] cvars  
-- - [x] debug (Verify)  
 - - [ ] debugoverlay  
 - - [ ] drive?  
 - - [ ] duplicator  
@@ -44,23 +53,18 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] ents  
 - - [ ] file  
 - - [ ] game  
-- - [ ] gameevent(Implemented but untested!)  
 - - [ ] gamemode  
 - - [ ] gmod  
 - - [ ] gmsave  
 - - [ ] hammer?  
 - - [ ] hook  
 - - [ ] http  
-- - [x] jit (Verify)  
 - - [ ] list  
 - - [ ] math  
 - - [ ] motionsensor  
 - - [ ] navmesh  
 - - [ ] net  
 - - [ ] numpad  
-- - [x] os (Verify)  
-- - [x] package (Verify)  
-- - [ ] physenv  
 - - [ ] player  
 - - [ ] player_manager  
 - - [ ] properties  

@@ -3,6 +3,7 @@
 #include "lua_Enums.h"
 
 #include "library_gameevent.h"
+#include "library_physenv.h"
 #include "library_Global.h"
 #include "library_net.h"
 

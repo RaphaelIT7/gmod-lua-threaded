@@ -23,7 +23,6 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA->CreateTable();
 	LUA->SetFEnv(-2);
 
-
 	LUA->PushUserdata(&vec);
 	LUA->Push(-2);
 	LUA->SetTable(-4);
@@ -36,16 +35,16 @@ void Vector_CheckType(ILuaBase* LUA, int index)
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-Vector *Vector_GetUserdata(ILuaBase *LUA, int index)
+LUA_Vector* Vector_GetUserdata(ILuaBase *LUA, int index)
 {
-	return LUA->GetUserType<Vector>(index, metatype);
+	return LUA->GetUserType<LUA_Vector>(index, metatype);
 }
 
-Vector* Vector_Get(ILuaBase* LUA, int index)
+Vector Vector_Get(ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
-	Vector *vec = Vector_GetUserdata(LUA, index);
+	Vector vec = Vector_GetUserdata(LUA, index)->vec;
 	if(vec == nullptr)
 		LUA->ArgError(index, invalid_error);
 
@@ -54,7 +53,7 @@ Vector* Vector_Get(ILuaBase* LUA, int index)
 
 void Vector_Destroy(ILuaBase *LUA, int index)
 {
-	Vector *vec = Vector_Get(LUA, index);
+	LUA_Vector* vec = Vector_GetUserdata(LUA, index);
 
 	LUA->GetField(INDEX_REGISTRY, table_name);
 	LUA->PushUserdata((void*)vec);
@@ -128,8 +127,8 @@ LUA_FUNCTION(_Vector)
 	int z = LUA->CheckNumber(3); // We should use doubles. Fix Push_Vector and change it.
 
 	Vector vec = Vector(x, y, z);
-	//Push_Vector(LUA, vec);
-	LUA->PushVector(vec);
+	Push_Vector(LUA, vec);
+	//LUA->PushVector(vec);
 
 	return 1;
 }
@@ -140,7 +139,6 @@ void InitVectorClass(ILuaInterface* LUA)
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
 	metatype = LUA->CreateMetaTable(metaname);
-
 		Add_Func(LUA, Vector__gc, "__gc");
 		Add_Func(LUA, Vector__tostring, "__tostring");
 		Add_Func(LUA, Vector__eq, "__eq");

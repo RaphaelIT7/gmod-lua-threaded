@@ -176,7 +176,7 @@ void RunString(ILuaThread* thread, const char* str)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
+		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // ToDo: Find out why it sometimes crashes :< (lj_BC_TGETS)
 		HandleError(LUA, result);
 	}
     else
@@ -242,6 +242,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitGlobal(LUA);
 	InitNet(LUA);
 	InitGameevent(thread);
+	InitPhysEnv(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)

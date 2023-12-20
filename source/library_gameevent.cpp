@@ -181,7 +181,7 @@ public:
 	}
 };
 
-LUA_FUNCTION(gameevent_Listen)
+LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFunction and see how Gmod does it.
 {
 	const char* name = LUA->CheckString(1);
 	ILuaThread* thread = GetValidThread(LUA, 1);
@@ -192,7 +192,7 @@ LUA_FUNCTION(gameevent_Listen)
 	return 0;
 }
 
-void RunGameevent(ILuaInterface* LUA, const char* name, ILuaValue* tbl)
+void RunGameevent(ILuaInterface* LUA, const char* name, ILuaValue* tbl) // ToDo: Check if hook and hook.Run exist before trying to use it
 {
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
