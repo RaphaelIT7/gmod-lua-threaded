@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-static int32_t metatype = GarrysMod::Lua::Type::None;
+static int32_t metatype = GarrysMod::Lua::Type::Vector;
 static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
@@ -144,7 +144,6 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector__eq, "__eq");
 		Add_Func(LUA, Vector__index, "__index");
 		Add_Func(LUA, Vector__newindex, "__newindex");
-		Add_Func(LUA, Vector__gc, "__gc");
 		Add_Func(LUA, Vector_Add, "Add");
 
 	LUA->Pop(1);
