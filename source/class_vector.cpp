@@ -68,7 +68,10 @@ LUA_FUNCTION_STATIC(Vector__gc)
 LUA_FUNCTION_STATIC(Vector__tostring)
 {
 	Vector vec = Vector_Get(LUA, 1);
-	LUA->PushFormattedString("%f %f %f", vec[0], vec[1], vec[2]);
+	char szBuf[64] = {};
+	V_snprintf(szBuf, sizeof(szBuf),"%f %f %f", vec[0], vec[1], vec[2]);
+	LUA->PushString(szBuf);
+	//LUA->PushFormattedString("%f %f %f", vec[0], vec[1], vec[2]);
 	return 1;
 }
 
