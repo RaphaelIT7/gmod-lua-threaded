@@ -15,7 +15,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	//LUA->PushVector(vec);
 
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	/*ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILuaObject* vec_obj = ILUA->CreateObject();
 	vec_obj->SetUserData(&vec);
 
@@ -24,14 +24,14 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 
 	ILUA->PushLuaObject(vec_obj);
 
-	LUA->Remove(-2); // 1 Is pushed from somewhere?!?
+	LUA->Remove(-2);*/ // 1 Is pushed from somewhere?!?
 
 
-	//LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
-	//udata->vec = vec;
+	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	udata->vec = vec;
 
-	//LUA->CreateMetaTableType("Vector", metatype);
-	//LUA->SetMetaTable(-2);
+	LUA->CreateMetaTableType("Vector", metatype);
+	LUA->SetMetaTable(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
@@ -116,6 +116,20 @@ LUA_FUNCTION_STATIC(Vector__eq)
 	return 1;
 }
 
+LUA_FUNCTION_STATIC(Vector__add)
+{
+	LUA->CheckType(1, Type::Vector);
+	LUA->CheckType(2, Type::Vector);
+	Vector vec1 = LUA->GetVector(1);
+	Vector vec2 = LUA->GetVector(2);
+
+	Vector new_vec = Vector(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
+	Push_Vector(LUA, new_vec);
+
+	return 1;
+}
+
+
 LUA_FUNCTION(Vector_Add)
 {
 	LUA->CheckType(1, Type::Vector);
@@ -123,7 +137,7 @@ LUA_FUNCTION(Vector_Add)
 	Vector vec1 = LUA->GetVector(1);
 	Vector vec2 = LUA->GetVector(2);
 
-	vec1.Init(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
+	vec1 = vec1 + vec2;
 
 	return 0;
 }
