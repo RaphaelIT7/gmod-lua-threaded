@@ -27,7 +27,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	LUA->Remove(-2);*/ // 1 and a string Is pushed from somewhere?!?
 
 
-	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	LUA_Vector* udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
 	udata->vec = vec;
 
 	LUA->CreateMetaTableType("Vector", metatype);
@@ -45,11 +45,11 @@ LUA_Vector* Vector_GetUserdata(ILuaBase *LUA, int index)
 	return (LUA_Vector*)LUA->GetUserdata(index);
 }
 
-Vector Vector_Get(ILuaBase* LUA, int index)
+Vector& Vector_Get(ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
-	Vector vec = Vector_GetUserdata(LUA, index)->vec;
+	Vector& vec = Vector_GetUserdata(LUA, index)->vec;
 	if(vec == nullptr)
 		LUA->ArgError(index, invalid_error);
 
@@ -80,7 +80,7 @@ LUA_FUNCTION_STATIC(Vector__gc)
 
 LUA_FUNCTION_STATIC(Vector__tostring)
 {
-	Vector vec = Vector_Get(LUA, 1);
+	Vector& vec = Vector_Get(LUA, 1);
 	char szBuf[64] = {};
 	V_snprintf(szBuf, sizeof(szBuf),"%f %f %f", vec[0], vec[1], vec[2]);
 	LUA->PushString(szBuf);
@@ -92,7 +92,7 @@ LUA_FUNCTION_STATIC(Vector__index)
 	const char* key = LUA->GetString(2);
 	if (key != NULL) 
 	{
-		Vector vec1 = Vector_Get(LUA, 1);
+		Vector& vec1 = Vector_Get(LUA, 1);
 		if (strcmp(key, "x") == 0 || strcmp(key, "1") == 0) {
 			LUA->PushNumber(vec1.x);
 			return 1;
@@ -127,7 +127,7 @@ LUA_FUNCTION_STATIC(Vector__newindex)
 	if (key == NULL)
 		return 0;
 
-	Vector vec1 = Vector_Get(LUA, 1);
+	Vector& vec1 = Vector_Get(LUA, 1);
 	if (strcmp(key, "x") == 0 || strcmp(key, "1") == 0) {
 		vec1.x = std::stoi(LUA->GetString(3));
 	} else if (strcmp(key, "y") == 0 || strcmp(key, "2") == 0) {
@@ -149,8 +149,8 @@ LUA_FUNCTION_STATIC(Vector__add)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = Vector_Get(LUA, 1);
-	Vector vec2 = Vector_Get(LUA, 2);
+	Vector& vec1 = Vector_Get(LUA, 1);
+	Vector& vec2 = Vector_Get(LUA, 2);
 
 	Vector new_vec = Vector(vec1 + vec2);
 
@@ -163,8 +163,8 @@ LUA_FUNCTION_STATIC(Vector__sub)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = Vector_Get(LUA, 1);
-	Vector vec2 = Vector_Get(LUA, 2);
+	Vector& vec1 = Vector_Get(LUA, 1);
+	Vector& vec2 = Vector_Get(LUA, 2);
 
 	Vector new_vec = Vector(vec1 - vec2);
 	Push_Vector(LUA, new_vec);
@@ -176,7 +176,7 @@ LUA_FUNCTION_STATIC(Vector__unm)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = Vector_Get(LUA, 1);
+	Vector& vec1 = Vector_Get(LUA, 1);
 
 	Vector new_vec = Vector(-vec1);
 	Push_Vector(LUA, new_vec);
@@ -196,7 +196,7 @@ LUA_FUNCTION_STATIC(Vector__mul)
 		Push_Vector(LUA, new_vec);
 	} else {
 		Vector_CheckType(LUA, 2);
-		Vector vec2 = Vector_Get(LUA, 2);
+		Vector& vec2 = Vector_Get(LUA, 2);
 
 		Vector new_vec = Vector(vec1 * vec2);
 		Push_Vector(LUA, new_vec);
@@ -208,7 +208,7 @@ LUA_FUNCTION_STATIC(Vector__mul)
 LUA_FUNCTION_STATIC(Vector__div)
 {
 	Vector_CheckType(LUA, 1);
-	Vector vec1 = Vector_Get(LUA, 1);
+	Vector& vec1 = Vector_Get(LUA, 1);
 
 	if (LUA->IsType(2, Type::Number)) {
 		int num = LUA->GetNumber(2);
@@ -217,7 +217,7 @@ LUA_FUNCTION_STATIC(Vector__div)
 		Push_Vector(LUA, new_vec);
 	} else {
 		Vector_CheckType(LUA, 2);
-		Vector vec2 = Vector_Get(LUA, 2);
+		Vector& vec2 = Vector_Get(LUA, 2);
 
 		Vector new_vec = Vector(vec1 / vec2);
 		Push_Vector(LUA, new_vec);
@@ -230,8 +230,8 @@ LUA_FUNCTION(Vector_Add)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = Vector_Get(LUA, 1);
-	Vector vec2 = Vector_Get(LUA, 2);
+	Vector& vec1 = Vector_Get(LUA, 1);
+	Vector& vec2 = Vector_Get(LUA, 2);
 
 	vec1.x = vec1.x + vec2.x;
 	vec1.y = vec1.y + vec2.y;
