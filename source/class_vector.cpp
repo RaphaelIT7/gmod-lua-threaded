@@ -12,10 +12,10 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
-	//LUA->PushVector(vec);
+	LUA->PushVector(vec);
 
-	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
-	udata->vec = vec;
+	//LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	//udata->vec = vec;
 
 	LUA->CreateMetaTableType("Vector", metatype);
 	LUA->SetMetaTable(-2);
