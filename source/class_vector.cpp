@@ -150,7 +150,7 @@ LUA_FUNCTION(Vector_Add)
 	Vector vec1 = Vector_Get(LUA, 1);
 	Vector vec2 = Vector_Get(LUA, 2);
 
-	vec1 = vec1 + vec2;
+	VectorCopy(vec1 + vec2, vec1);
 
 	return 0;
 }
