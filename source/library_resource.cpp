@@ -65,8 +65,8 @@ void InitResource(ILuaInterface* LUA)
 
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
-			Add_Func(LUA, resource_AddFile, "AddFile");
-			Add_Func(LUA, resource_AddSingleFile, "AddSingleFile");
+			Add_Func(LUA, resource_AddFile, "AddFile"); // ToDo: Doesn't seem to work? Maybe add it manually
+			Add_Func(LUA, resource_AddSingleFile, "AddSingleFile"); // ToDo: Same as above
 			Add_Func(LUA, resource_AddWorkshop, "AddWorkshop");
 
 		LUA->SetField(-2, "resource");

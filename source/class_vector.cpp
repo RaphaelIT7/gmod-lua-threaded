@@ -18,6 +18,10 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 
 	//LUA->PushMetaTable(metatype);
 	//LUA->SetMetaTable(-2);
+	if (LUA->IsType(-1, Type::String))
+		Msg("Lua top: %s\n", LUA->GetString(-1));
+
+	LUA->Pop(); // Pop nothing to fix stack?!?
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
