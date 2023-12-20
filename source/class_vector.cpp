@@ -120,11 +120,10 @@ LUA_FUNCTION_STATIC(Vector__add)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = LUA->GetVector(1);
-	Vector vec2 = LUA->GetVector(2);
+	Vector vec1 = Vector_Get(LUA, 1);
+	Vector vec2 = Vector_Get(LUA, 2);
 
-	Vector new_vec = Vector();
-	VectorAdd(vec1, vec2, new_vec);
+	Vector new_vec = Vector(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
 
 	Push_Vector(LUA, new_vec);
 
@@ -135,8 +134,8 @@ LUA_FUNCTION_STATIC(Vector__div)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = LUA->GetVector(1);
-	Vector vec2 = LUA->GetVector(2);
+	Vector vec1 = Vector_Get(LUA, 1);
+	Vector vec2 = Vector_Get(LUA, 2);
 
 	Vector new_vec = Vector(vec1.x / vec2.x, vec1.y / vec2.y, vec1.z / vec2.z);
 	Push_Vector(LUA, new_vec);
@@ -148,8 +147,8 @@ LUA_FUNCTION(Vector_Add)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
-	Vector vec1 = LUA->GetVector(1);
-	Vector vec2 = LUA->GetVector(2);
+	Vector vec1 = Vector_Get(LUA, 1);
+	Vector vec2 = Vector_Get(LUA, 2);
 
 	vec1 + vec2;
 
