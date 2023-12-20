@@ -13,6 +13,8 @@ struct LUA_Vector
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	LUA->PushVector(vec);
+	//LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
+	//udata->vec = vec;
 
 	//LUA->PushMetaTable(metatype);
 	//LUA->SetMetaTable(-2);
@@ -128,7 +130,7 @@ void InitVectorClass(ILuaInterface* LUA)
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
 	Msg("MetaType for Vector: %i\n", metatype);
-	metatype = LUA->CreateMetaTable(metaname);
+	LUA->CreateMetaTableType(metaname, metatype); // I should probably use CreateMetaTableType.
 	Msg("New MetaType for Vector: %i\n", metatype);
 
 		Add_Func(LUA, Vector__gc, "__gc");

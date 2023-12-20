@@ -1,3 +1,5 @@
+#include "lua_utils.h"
+
 #include "lua_ILuaInterface.h"
 #include "lua_LuaThread.h"
 #include "lua_Enums.h"
