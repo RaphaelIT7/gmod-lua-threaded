@@ -12,17 +12,6 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
-	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushUserdata(&vec);
-	LUA->GetTable(-2);
-	if(LUA->IsType(-1, metatype))
-	{
-		LUA->Remove(-2);
-		return;
-	}
-
-	LUA->Pop(1);
-
 	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
 	udata->vec = vec;
 

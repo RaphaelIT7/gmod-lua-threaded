@@ -22,7 +22,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
-- [x] physenv (untested!)  
+- [x] physenv (broken!)  
 - [x] gameevent (untested!)  
 
 ## ToDo/Testing

@@ -156,6 +156,8 @@ void InitPhysEnv(ILuaInterface* LUA)
 			LUA->ThrowError("unable to get IPhysicsEnvironment");
 	}
 
+	// ToDo: Find out why does this break stuff :<
+
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, physenv_AddSurfaceData, "AddSurfaceData");
