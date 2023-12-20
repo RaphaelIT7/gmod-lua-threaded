@@ -70,6 +70,23 @@ void* FindSymbol(std::string name)
 	return func;
 }
 
+void* GetFunction(SourceSDK::ModuleLoader loader, const char* name, Symbol sym)
+{
+	void* func = FindFunction(loader.GetModule(), sym);
+	CheckFunction(func_CreateLuaInterface, name);
+
+	return func;
+}
+
+void* GetFunction(SourceSDK::ModuleLoader loader, const char* name, std::vector<Symbol> sym)
+{
+	void* func = FindFunction(loader.GetModule(), sym);
+	CheckFunction(func_CreateLuaInterface, name);
+
+	return func;
+}
+
+
 void Symbols_Init() 
 {
 	gpFileSystem = InterfacePointers::FileSystemServer();
