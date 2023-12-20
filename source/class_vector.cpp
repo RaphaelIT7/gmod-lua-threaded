@@ -23,7 +23,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 
 void Vector_CheckType(ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, metatype))
+	if(!LUA->IsType(index, Type::UserData))
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 

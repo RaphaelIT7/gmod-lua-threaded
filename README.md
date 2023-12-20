@@ -30,7 +30,6 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 
 ## ToDo/Testing
 #### Current Issues
-- Pushing a Vector using Push_Vector causes a Stack leak? (0> 4.6563407517458e-313 (string)). Is our metatable broken?  
 - resource.AddFile & resource.AddSingleFile don't seem to work.  
 - Idk how gmod implemented (physenv.GetLastSimulationTime)
 
