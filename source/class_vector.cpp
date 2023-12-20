@@ -1,7 +1,7 @@
 #include "lua_threaded.h"
 
 static int32_t metatype = GarrysMod::Lua::Type::None;
-static const char metaname[] = "Vector2";
+static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
 
@@ -12,8 +12,7 @@ struct LUA_Vector
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
 {
-	LUA_Vector *udata = LUA->NewUserType<LUA_Vector>(metatype);
-	udata->vec = vec;
+	LUA->PushVector(vec);
 
 	LUA->PushMetaTable(metatype);
 	LUA->SetMetaTable(-2);
@@ -25,16 +24,16 @@ void Vector_CheckType(ILuaBase* LUA, int index)
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-LUA_Vector* Vector_GetUserdata(ILuaBase *LUA, int index)
+Vector Vector_GetUserdata(ILuaBase *LUA, int index)
 {
-	return LUA->GetUserType<LUA_Vector>(index, metatype);
+	return LUA->GetVector(index);
 }
 
 Vector Vector_Get(ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
-	Vector vec = Vector_GetUserdata(LUA, index)->vec;
+	Vector vec = Vector_GetUserdata(LUA, index);
 	if(vec == nullptr)
 		LUA->ArgError(index, invalid_error);
 
@@ -43,10 +42,10 @@ Vector Vector_Get(ILuaBase* LUA, int index)
 
 void Vector_Destroy(ILuaBase *LUA, int index)
 {
-	LUA_Vector* vec = Vector_GetUserdata(LUA, index);
+	Vector vec = Vector_GetUserdata(LUA, index);
 
 	LUA->GetField(INDEX_REGISTRY, table_name);
-	LUA->PushUserdata((void*)vec);
+	LUA->PushVector(vec);
 	LUA->PushNil();
 	LUA->SetTable(-3);
 	LUA->Pop(1);
