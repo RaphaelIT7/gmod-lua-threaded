@@ -130,15 +130,69 @@ LUA_FUNCTION_STATIC(Vector__add)
 	return 1;
 }
 
-LUA_FUNCTION_STATIC(Vector__div)
+LUA_FUNCTION_STATIC(Vector__sub)
 {
 	Vector_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
 	Vector vec1 = Vector_Get(LUA, 1);
 	Vector vec2 = Vector_Get(LUA, 2);
 
-	Vector new_vec = Vector(vec1 / vec2);
+	Vector new_vec = Vector(vec1 - vec2);
 	Push_Vector(LUA, new_vec);
+
+	return 1;
+}
+
+LUA_FUNCTION_STATIC(Vector__unm)
+{
+	Vector_CheckType(LUA, 1);
+	Vector_CheckType(LUA, 2);
+	Vector vec1 = Vector_Get(LUA, 1);
+
+	Vector new_vec = Vector(-vec1);
+	Push_Vector(LUA, new_vec);
+
+	return 1;
+}
+
+LUA_FUNCTION_STATIC(Vector__mul)
+{
+	Vector_CheckType(LUA, 1);
+	Vector vec1 = Vector_Get(LUA, 1);
+
+	if (LUA->IsType(2, Type::Number)) {
+		int num = LUA->GetNumber(2);
+
+		Vector new_vec = Vector(vec1 * num);
+		Push_Vector(LUA, new_vec);
+	} else {
+		Vector_CheckType(LUA, 2);
+		Vector vec2 = Vector_Get(LUA, 2);
+
+		Vector new_vec = Vector(vec1 * vec2);
+		Push_Vector(LUA, new_vec);
+	}
+
+	return 1;
+}
+
+LUA_FUNCTION_STATIC(Vector__div)
+{
+	Vector_CheckType(LUA, 1);
+	Vector vec1 = Vector_Get(LUA, 1);
+
+	if (LUA->IsType(2, Type::Number)) {
+		int num = LUA->GetNumber(2);
+
+		Vector new_vec = Vector(vec1 / num);
+		Push_Vector(LUA, new_vec);
+	} else {
+		Vector_CheckType(LUA, 2);
+		Vector vec2 = Vector_Get(LUA, 2);
+
+		Vector new_vec = Vector(vec1 / vec2);
+		Push_Vector(LUA, new_vec);
+	}
 
 	return 1;
 }
@@ -150,7 +204,9 @@ LUA_FUNCTION(Vector_Add)
 	Vector vec1 = Vector_Get(LUA, 1);
 	Vector vec2 = Vector_Get(LUA, 2);
 
-	VectorCopy(vec1 + vec2, vec1);
+	vec1.x = vec1.x + vec2.x;
+	vec1.y = vec1.y + vec2.y;
+	vec1.z = vec1.z + vec2.z;
 
 	return 0;
 }
@@ -180,6 +236,9 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector__tostring, "__tostring");
 		Add_Func(LUA, Vector__eq, "__eq");
 		Add_Func(LUA, Vector__add, "__add");
+		Add_Func(LUA, Vector__sub, "__sub");
+		Add_Func(LUA, Vector__unm, "__unm");
+		Add_Func(LUA, Vector__mul, "__mul");
 		Add_Func(LUA, Vector__div, "__div");
 
 		Add_Func(LUA, Vector_Add, "Add");
