@@ -22,7 +22,9 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	ILuaObject* meta_obj = ILUA->GetMetaTableObject("Vector", metatype);
 	vec_obj->SetMetaTable(meta_obj);
 
-	//ILUA->PushLuaObject(vec_obj);
+	ILUA->PushLuaObject(vec_obj);
+
+	LUA->Remove(-2); // 1 Is pushed from somewhere?!?
 
 
 	//LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
@@ -85,12 +87,6 @@ LUA_FUNCTION_STATIC(Vector__tostring)
 	return 1;
 }
 
-LUA_FUNCTION_STATIC(Vector__eq)
-{
-	LUA->PushBool(Vector_Get(LUA, 1) == Vector_Get(LUA, 2));
-	return 1;
-}
-
 LUA_FUNCTION_STATIC(Vector__index)
 {
 	LUA->GetMetaTable(1);
@@ -112,6 +108,12 @@ LUA_FUNCTION_STATIC(Vector__newindex)
 	LUA->Push(3);
 	LUA->RawSet(-3);
 	return 0;
+}
+
+LUA_FUNCTION_STATIC(Vector__eq)
+{
+	LUA->PushBool(Vector_Get(LUA, 1) == Vector_Get(LUA, 2));
+	return 1;
 }
 
 LUA_FUNCTION(Vector_Add)
@@ -146,10 +148,10 @@ void InitVectorClass(ILuaInterface* LUA)
 
 	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Vector__gc, "__gc");
-		Add_Func(LUA, Vector__tostring, "__tostring");
-		Add_Func(LUA, Vector__eq, "__eq");
 		Add_Func(LUA, Vector__index, "__index");
 		Add_Func(LUA, Vector__newindex, "__newindex");
+		Add_Func(LUA, Vector__tostring, "__tostring");
+		Add_Func(LUA, Vector__eq, "__eq");
 
 		Add_Func(LUA, Vector_Add, "Add");
 	LUA->Pop(1);
