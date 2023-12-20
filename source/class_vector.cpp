@@ -1,3 +1,4 @@
+#include <GarrysMod/Lua/LuaObject.h>
 #include "lua_threaded.h"
 
 static int32_t metatype = GarrysMod::Lua::Type::Vector;
@@ -14,11 +15,21 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	//LUA->PushVector(vec);
 
-	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
-	udata->vec = vec;
+	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	ILuaObject* vec_obj = ILUA->CreateObject();
+	vec_obj->SetUserData(&vec);
 
-	LUA->CreateMetaTableType("Vector", metatype);
-	LUA->SetMetaTable(-2);
+	ILuaObject* meta_obj = ILUA->GetMetaTableObject("Vector", metatype);
+	vec_obj->SetMetaTable(meta_obj);
+
+	ILUA->PushLuaObject(vec_obj);
+
+
+	//LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	//udata->vec = vec;
+
+	//LUA->CreateMetaTableType("Vector", metatype);
+	//LUA->SetMetaTable(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
@@ -71,7 +82,6 @@ LUA_FUNCTION_STATIC(Vector__tostring)
 	char szBuf[64] = {};
 	V_snprintf(szBuf, sizeof(szBuf),"%f %f %f", vec[0], vec[1], vec[2]);
 	LUA->PushString(szBuf);
-	//LUA->PushFormattedString("%f %f %f", vec[0], vec[1], vec[2]);
 	return 1;
 }
 

@@ -23,7 +23,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
 - [x] physenv (Mostly implemented)  
-- - [ ] physenv.physenv_AddSurfaceData  
+- - [ ] physenv.AddSurfaceData  
 - - [ ] physenv.GetLastSimulationTime  
 - [x] gameevent (untested!)  
 - [x] resource (untested!)  
