@@ -587,21 +587,20 @@ void InitMetaTable(ILuaInterface* LUA)
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
 	metatype = LUA->CreateMetaTable(metaname);
+		Add_Func(LUA, gc, "__gc");
+		Add_Func(LUA, tostring, "__tostring");
+		Add_Func(LUA, eq, "__eq");
+		Add_Func(LUA, index, "__index");
+		Add_Func(LUA, newindex, "__newindex");
 
-	Add_Func(LUA, gc, "__gc");
-	Add_Func(LUA, tostring, "__tostring");
-	Add_Func(LUA, eq, "__eq");
-	Add_Func(LUA, index, "__index");
-	Add_Func(LUA, newindex, "__newindex");
-
-	Add_Func(LUA, ILuaInterface_RunString, "RunString");
-	Add_Func(LUA, ILuaInterface_InitClasses, "InitClasses");
-	Add_Func(LUA, ILuaInterface_InitLibraries, "InitLibraries");
-	Add_Func(LUA, ILuaInterface_LoadFunction, "LoadFunction");
-	Add_Func(LUA, ILuaInterface_Autorun, "Autorun");
-	Add_Func(LUA, ILuaInterface_RunFile, "RunFile");
-	Add_Func(LUA, ILuaInterface_InitEnums, "InitEnums");
-	Add_Func(LUA, ILuaInterface_InitGmod, "InitGmod");
+		Add_Func(LUA, ILuaInterface_RunString, "RunString");
+		Add_Func(LUA, ILuaInterface_InitClasses, "InitClasses");
+		Add_Func(LUA, ILuaInterface_InitLibraries, "InitLibraries");
+		Add_Func(LUA, ILuaInterface_LoadFunction, "LoadFunction");
+		Add_Func(LUA, ILuaInterface_Autorun, "Autorun");
+		Add_Func(LUA, ILuaInterface_RunFile, "RunFile");
+		Add_Func(LUA, ILuaInterface_InitEnums, "InitEnums");
+		Add_Func(LUA, ILuaInterface_InitGmod, "InitGmod");
 
 	LUA->Pop(1);
 }

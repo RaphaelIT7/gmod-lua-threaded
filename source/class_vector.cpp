@@ -144,7 +144,7 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector__eq, "__eq");
 		Add_Func(LUA, Vector__index, "__index");
 		Add_Func(LUA, Vector__newindex, "__newindex");
-		Add_Func(LUA, Vector_Add, "Add");
 
+		Add_Func(LUA, Vector_Add, "Add");
 	LUA->Pop(1);
 }

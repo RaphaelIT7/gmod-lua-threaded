@@ -148,12 +148,12 @@ void InitPhysEnv(ILuaInterface* LUA)
 	if (physenv == nullptr) {
 		phys = (IPhysics*)physics_loader.GetFactory()(VPHYSICS_INTERFACE_VERSION, nullptr);
 		if (phys == nullptr)
-			LUA->ThrowError("unable to initialize IPhysics");
+			Msg("unable to initialize IPhysics");
 
 
 		physenv = phys->GetActiveEnvironmentByIndex(0);
 		if (physenv == NULL)
-			LUA->ThrowError("unable to get IPhysicsEnvironment");
+			Msg("unable to get IPhysicsEnvironment");
 	}
 
 	LUA->PushSpecial(SPECIAL_GLOB);
