@@ -22,7 +22,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 	ILuaObject* meta_obj = ILUA->GetMetaTableObject("Vector", metatype);
 	vec_obj->SetMetaTable(meta_obj);
 
-	ILUA->PushLuaObject(vec_obj);
+	//ILUA->PushLuaObject(vec_obj);
 
 
 	//LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
