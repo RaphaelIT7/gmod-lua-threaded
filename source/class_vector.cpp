@@ -15,7 +15,7 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	//LUA->PushVector(vec);
 
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	/*ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILuaObject* vec_obj = ILUA->CreateObject();
 	vec_obj->SetUserData(&vec);
 
@@ -24,15 +24,14 @@ void Push_Vector(ILuaBase* LUA, Vector vec)
 
 	ILUA->PushLuaObject(vec_obj);
 
-	LUA->Remove(-2);
-	LUA->Remove(-2); // 1 and a string Is pushed from somewhere?!?
+	LUA->Remove(-2);*/ // 1 and a string Is pushed from somewhere?!?
 
 
-	/*LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	LUA_Vector *udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
 	udata->vec = vec;
 
 	LUA->CreateMetaTableType("Vector", metatype);
-	LUA->SetMetaTable(-2);*/
+	LUA->SetMetaTable(-2);
 }
 
 void Vector_CheckType(ILuaBase* LUA, int index)
@@ -130,6 +129,18 @@ LUA_FUNCTION_STATIC(Vector__add)
 	return 1;
 }
 
+LUA_FUNCTION_STATIC(Vector__div)
+{
+	Vector_CheckType(LUA, 1);
+	Vector_CheckType(LUA, 2);
+	Vector vec1 = LUA->GetVector(1);
+	Vector vec2 = LUA->GetVector(2);
+
+	Vector new_vec = Vector(vec1.x / vec2.x, vec1.y / vec2.y, vec1.z / vec2.z);
+	Push_Vector(LUA, new_vec);
+
+	return 1;
+}
 
 LUA_FUNCTION(Vector_Add)
 {
@@ -167,6 +178,8 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector__newindex, "__newindex");
 		Add_Func(LUA, Vector__tostring, "__tostring");
 		Add_Func(LUA, Vector__eq, "__eq");
+		Add_Func(LUA, Vector__add, "__add");
+		Add_Func(LUA, Vector__div, "__div");
 
 		Add_Func(LUA, Vector_Add, "Add");
 	LUA->Pop(1);
