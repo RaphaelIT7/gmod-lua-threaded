@@ -209,6 +209,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 void InitClasses(ILuaInterface* LUA)
 {
 	InitVectorClass(LUA);
+	InitAngleClass(LUA);
 
 	//func_InitLuaClasses(LUA);
 }

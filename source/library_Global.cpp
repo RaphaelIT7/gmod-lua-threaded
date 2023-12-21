@@ -26,17 +26,6 @@ LUA_FUNCTION(require)
 	return 0;
 }
 
-LUA_FUNCTION(Angle)
-{
-	int x = LUA->CheckNumber(1);
-	int y = LUA->CheckNumber(2);
-	int z = LUA->CheckNumber(3);
-
-	LUA->PushAngle(QAngle(x, y, z));
-
-	return 1;
-}
-
 LUA_FUNCTION(FindMetaTable)
 {
 	const char* meta = LUA->CheckString(1);
@@ -148,7 +137,11 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, FindMetaTable, "FindMetaTable");
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 
-		Add_Func(LUA, _Vector, "Vector");
-		Add_Func(LUA, Angle, "Angle");
+		Add_Func(LUA, Global_Vector, "Vector");
+		Add_Func(LUA, Global_LerpVector, "LerpVector");
+		Add_Func(LUA, Global_OrderVectors, "OrderVectors");
+
+		Add_Func(LUA, Global_Angle, "Angle");
+		Add_Func(LUA, Global_LerpAngle, "LerpAngle");
 	LUA->Pop(1);
 }

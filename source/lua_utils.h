@@ -176,6 +176,11 @@ struct GMOD_Info
 	const char* versionstr;
 	const char* branch;
 };
+
+inline float Lerp(float delta, float from, float to)
+{
+    return from + (to - from) * delta;
+}
 #endif
 
 extern GMOD_Info* GMOD;

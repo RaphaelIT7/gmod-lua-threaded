@@ -28,6 +28,10 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] gameevent (untested!)  
 - [x] resource (untested!)  
 
+### Classes
+- [x] Angle (untested)
+- [x] Vector (untested)
+
 ## ToDo/Testing
 #### Current Issues
 - resource.AddFile & resource.AddSingleFile don't seem to work.  
