@@ -9,6 +9,7 @@
 #include "library_physenv.h"
 #include "library_Global.h"
 #include "library_net.h"
+#include "library_sql.h"
 
 #include "class_vector.h"
 #include "class_angle.h"
