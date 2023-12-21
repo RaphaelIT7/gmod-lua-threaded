@@ -339,7 +339,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 		delete[] code;
 	} else {
 		Msg("Failed to find Path!. Next try. New path: %s\n", (old_path + file).c_str());
-		LUA->current_path = old_path + file;
+		LUA->current_path = ToPath(old_path + file);
 		fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
 		if(fh)
 		{
