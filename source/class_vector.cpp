@@ -10,7 +10,7 @@ struct LUA_Vector
 	Vector vec;
 };
 
-void Push_Vector(ILuaBase* LUA, Vector& vec)
+void Push_Vector(ILuaBase* LUA, Vector vec)
 {
 	//LUA->PushVector(vec);
 

@@ -9,7 +9,7 @@ struct LUA_Angle
 	QAngle ang;
 };
 
-void Push_Angle(ILuaBase* LUA, QAngle& ang)
+void Push_Angle(ILuaBase* LUA, QAngle ang)
 {
 	LUA_Angle* udata = (LUA_Angle*)LUA->NewUserdata(sizeof(LUA_Angle));
 	udata->ang = ang;
