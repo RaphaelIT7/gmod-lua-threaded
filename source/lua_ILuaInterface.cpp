@@ -149,39 +149,39 @@ LUA_FUNCTION_STATIC(newindex)
 	return 0;
 }
 
-void HandleError(ILuaInterface* LUA, int result)
+void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
-		Msg("[ERROR] ILuaInterface:RunString: %s\n", err);
+		Msg("[ERROR] ILuaInterface:RunString: %s (%s)\n", err, pFile);
 		return;
 	}
 }
 
-void RunString(ILuaThread* thread, const char* str)
+void RunString(ILuaThread* thread, const char* str, const char* pFile)
 {
 	ILuaInterface* LUA = thread->IFace;
 	if (setjmp(thread->jumpBuffer) == 0)
     {
 		int result = func_luaL_loadstring(LUA->GetState(), str);
-		HandleError(LUA, result);
+		HandleError(LUA, result, pFile);
 	}
     else
     {
-		HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
+		HandleError(LUA, -1, pFile); // Could crash if the Lua Panic wan't created by pcall or loadstring.
     }
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
 		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // ToDo: Find out why it sometimes crashes :< (lj_BC_TGETS)
-		HandleError(LUA, result);
+		HandleError(LUA, result, pFile);
 	}
     else
     {
-		HandleError(LUA, -1); // Could crash if the Lua Panic wan't created by pcall or loadstring.
+		HandleError(LUA, -1, pFile); // Could crash if the Lua Panic wan't created by pcall or loadstring.
     }
 }
 
@@ -200,7 +200,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
 	} else {
-		RunString(thread, str);
+		RunString(thread, str, "RunString");
 	}
 
 	return 0;
@@ -334,7 +334,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 
 		gpFileSystem->Close(fh);
 
-		RunString(LUA, code);
+		RunString(LUA, code, file);
 
 		delete[] code;
 	} else {
@@ -351,7 +351,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 
 			gpFileSystem->Close(fh);
 
-			RunString(LUA, code);
+			RunString(LUA, code, file);
 
 			delete[] code;
 		} else {
@@ -538,7 +538,7 @@ unsigned LuaThread(void* data)
 		{
 			if (action->type == LuaAction::ACT_RunString)
 			{
-				RunString(thread_data, action->data);
+				RunString(thread_data, action->data, "RunString");
 			} else if (action->type == LuaAction::ACT_InitClasses)
 			{
 				InitClasses(IFace);
