@@ -7,8 +7,9 @@ typedef void (*AddResource)(const char*, bool);
 AddResource func_AddResource;
 const Symbol AddResourceSym = Symbol::FromName("_ZL11AddResourcePKcb");
 
-INetworkStringTableContainer* networkstringtables;
+#define ressource_workaround
 
+INetworkStringTableContainer* networkstringtables;
 LUA_FUNCTION(resource_AddFile) // ToDo
 {
 	const char* file = LUA->CheckString(1);
@@ -17,7 +18,18 @@ LUA_FUNCTION(resource_AddFile) // ToDo
 	V_strncpy(cFile, file, sizeof(file));
 	V_FixSlashes(cFile, '/');
 
+#ifdef ressource_workaround
+	INetworkStringTable* g_StringTablesDownloadables = networkstringtables->FindTable("downloadables");
+
+	int idx = g_StringTablesDownloadables->FindStringIndex(cFile);
+
+	if (idx != INVALID_STRING_INDEX)
+		return 0;
+
+	g_StringTablesDownloadables->AddString(true, cFile); // ToDo: Add files like .mdl .dx90, dx80 etc
+#else
 	func_AddResource(cFile, true);
+#endif
 
 	return 0;
 }
@@ -30,7 +42,18 @@ LUA_FUNCTION(resource_AddSingleFile)
 	V_strncpy(cFile, file, sizeof(file));
 	V_FixSlashes(cFile, '/');
 
+#ifdef ressource_workaround
+	INetworkStringTable* g_StringTablesDownloadables = networkstringtables->FindTable("downloadables");
+
+	int idx = g_StringTablesDownloadables->FindStringIndex(cFile);
+
+	if (idx != INVALID_STRING_INDEX)
+		return 0;
+
+	g_StringTablesDownloadables->AddString(true, cFile);
+#else
 	func_AddResource(cFile, false);
+#endif
 
 	return 0;
 }
