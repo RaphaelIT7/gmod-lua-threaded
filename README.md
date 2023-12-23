@@ -32,16 +32,20 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] Angle (untested)
 - [x] Vector (untested)
 
-## ToDo/Testing
-#### Current Issues
+## Current Issues
 - resource.AddFile & resource.AddSingleFile don't seem to work.  
-- Idk how gmod implemented (physenv.GetLastSimulationTime)
+- Idk how gmod implemented (physenv.GetLastSimulationTime)  
+- Look into ILuaInterface:PushVector being broken.  
+
+## ToDo/Testing
 
 - [x] Created ILuaInterface should load all Gmod scripts/allow one to do so  
 - [x] Change ILuaAction to use Enums instead of strings.  
 - [x] Documentation  
 - [x] Add all Gmod Enums  
 - [ ] Recreate all Gmod libraries  
+- - [ ] Implement sql.Query. (Fixes sql and cookie library)  
+- [ ] Add a new way to send data across threads. Maybe something like net messages but for threads?  
 - [ ] Look again into Error handling. Maybe show which file had an error?
 
 I listed all Libraries below that are serverside. Regardless if they are implemented in lua or in c++.  
