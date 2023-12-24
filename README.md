@@ -184,6 +184,7 @@ Args:
 ### ILuaInterface:Autorun()
 Loads everything like autorun does.  
 NOTE: It currently loves to crash. Just call RunFile with init.lua  
+Update: It seems like it became stable. Could be because I stopped breaking the stack.  
 
 Loads:  
 - `includes/init.lua`
