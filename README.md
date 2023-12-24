@@ -27,6 +27,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - - [ ] physenv.GetLastSimulationTime  
 - [x] gameevent (untested!)  
 - [x] resource (untested!)  
+- [x] system (untested!) 
 
 ### Classes
 - [x] Angle (untested)
@@ -88,7 +89,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] sound  
 - - [ ] sql  
 - - [ ] string  
-- - [ ] system  
 - - [ ] table  
 - - [ ] team  
 - - [ ] timer  

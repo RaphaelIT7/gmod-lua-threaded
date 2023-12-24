@@ -246,6 +246,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitPhysEnv(LUA);
 	InitResource(LUA);
 	InitSql(LUA);
+	InitSystem(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)

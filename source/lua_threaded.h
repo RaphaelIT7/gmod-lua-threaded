@@ -8,6 +8,7 @@
 #include "library_resource.h"
 #include "library_physenv.h"
 #include "library_Global.h"
+#include "library_system.h"
 #include "library_net.h"
 #include "library_sql.h"
 
