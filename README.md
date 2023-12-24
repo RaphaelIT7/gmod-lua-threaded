@@ -28,6 +28,12 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] gameevent (untested!)  
 - [x] resource (untested!)  
 - [x] system (untested!) 
+- [x] engine (Mostly implemented)
+- - [ ] engine.GetAddons
+- - [ ] engine.GetUserContent
+- - [ ] engine.GetGames
+- - [ ] engine.GetGamemodes
+- - [ ] engine.ActiveGamemode
 
 ### Classes
 - [x] Angle (untested)

@@ -9,6 +9,7 @@
 #include "library_physenv.h"
 #include "library_Global.h"
 #include "library_system.h"
+#include "library_engine.h"
 #include "library_net.h"
 #include "library_sql.h"
 
