@@ -2,6 +2,21 @@
 #include <lua_ILuaInterface.h>
 #include "CLuaGameCallback.h"
 
+#ifdef SYSTEM_WINDOWS
+#include <GarrysMod/Lua/LuaShared.h>
+
+static SourceSDK::FactoryLoader luashared_loader("lua_shared");
+GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
+	GarrysMod::Lua::ILuaShared* LuaShared = (GarrysMod::Lua::ILuaShared*)luashared_loader.GetFactory()(GMOD_LUASHARED_INTERFACE, nullptr);
+	if (LuaShared == nullptr) {
+		Msg("failed to get ILuaShared!\n");
+		return nullptr;
+	}
+
+	return LuaShared->CreateLuaInterface(GarrysMod::Lua::State::SERVER, true);
+}
+#endif
+
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
 
@@ -167,14 +182,18 @@ LUA_FUNCTION(LuaPanic)
 
 ILuaInterface* CreateInterface()
 {
+#ifdef SYSTEM_WINDOWS
+	ILuaInterface* IFace = Win_CreateInterface();
+#else
 	ILuaInterface* IFace = func_CreateLuaInterface(true);
-
-	IFace->Init(new CLuaGameCallback(), true); //We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
 	//lua_State* state = func_luaL_newstate();
 
 	func_lua_atpanic(IFace->GetState(), LuaPanic);
-	
+#endif
+
+	IFace->Init(new CLuaGameCallback(), true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 
 	//IFace->SetState(state); // Set the State
@@ -183,7 +202,7 @@ ILuaInterface* CreateInterface()
 
 
 	// Push VERSION, VERSIONSTR, BRANCH, SERVER and CLIENT. Gmod does this inside CLuaManager::Startup();
-	IFace->PushSpecial(SPECIAL_GLOB);
+	IFace->PushSpecial(SPECIAL_GLOB); // (Windows) ToDo: Why do u crash here :<
 		IFace->PushNumber(GMOD->version);
 		IFace->SetField(-2, "VERSION");
 
