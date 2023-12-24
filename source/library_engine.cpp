@@ -3,6 +3,8 @@
 #include <icommandline.h>
 #include <eiface.h>
 
+class IPlayerInfo;
+class edict_t;
 static const char playerinfomanager_name[] = "PlayerInfoManager002";
 class IPlayerInfoManager
 {
