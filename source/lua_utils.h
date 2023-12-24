@@ -172,9 +172,9 @@ struct ILuaThread
 
 struct GMOD_Info
 {
-	int version;
-	const char* versionstr;
-	const char* branch;
+	int version = 0;
+	const char* versionstr = "????????";
+	const char* branch = "Unknown";
 };
 
 inline float Lerp(float delta, float from, float to)
