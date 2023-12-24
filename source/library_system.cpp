@@ -114,6 +114,6 @@ void InitSystem(ILuaInterface* LUA)
 			Add_Func(LUA, system_SteamTime, "SteamTime");
 			Add_Func(LUA, system_GetCountry, "GetCountry");
 			
-		LUA->SetField(-2, "sql");
+		LUA->SetField(-2, "system");
 	LUA->Pop();
 }
