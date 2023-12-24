@@ -1,8 +1,15 @@
 #include <GarrysMod/InterfacePointers.hpp>
-#include <game/server/iplayerinfo.h>
 #include "lua_threaded.h"
 #include <icommandline.h>
 #include <eiface.h>
+
+static const char playerinfomanager_name[] = "PlayerInfoManager002";
+class IPlayerInfoManager
+{
+public:
+	virtual IPlayerInfo *GetPlayerInfo( edict_t *pEdict ) = 0;
+	virtual CGlobalVars *GetGlobalVars( ) = 0;
+};
 
 CGlobalVars* GlobalVars()
 {
@@ -11,7 +18,7 @@ CGlobalVars* GlobalVars()
 	{
 		SourceSDK::FactoryLoader server_loader("server");
 		auto player_info_manager = server_loader.GetInterface<IPlayerInfoManager>(
-			INTERFACEVERSION_PLAYERINFOMANAGER
+			playerinfomanager_name
 		);
 		if (player_info_manager != nullptr)
 			iface_pointer = player_info_manager->GetGlobalVars();
