@@ -315,7 +315,7 @@ void TimerThink(ILuaThread* thread)
 			LUA->ReferencePush(timer->function);
 			LUA->PCall(0, 0, 0);
 
-			if (timer->repetitions == 1)
+			if (timer->repetitions == 1 || timer->simple)
 			{
 				timer->markdelete = true;
 			} else {
