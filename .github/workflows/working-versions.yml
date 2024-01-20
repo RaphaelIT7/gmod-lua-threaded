@@ -1,0 +1,12 @@
+name: Build Project
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
+    with:
+      PROJECT_NAME: "lua_threaded"
+      BUILD_WINDOWS: "false"
+      ARTIFACT_EXPIRE: "30"
