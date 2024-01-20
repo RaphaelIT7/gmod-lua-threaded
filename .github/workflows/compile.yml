@@ -2,6 +2,9 @@ name: Build Project
 
 on:
   push:
+    paths:
+      - 'source/**'
+      - 'premake5.lua'
 
 jobs:
   build:
