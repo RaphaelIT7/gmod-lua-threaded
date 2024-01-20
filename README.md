@@ -6,6 +6,9 @@ A side project I work on to learn more about Lua, and It's API for my [gmod-lua-
 This project aims to provide all necessary functions to run Lua on different threads.  
 The Goal is to be able to create a ILuaInterface with all of Gmod's libraries, functions and classes.  
 
+You can download the latest version(which extist for only 1 day) from the last run workflow which you can find [here](https://github.com/RaphaelIT7/gmod-lua-threaded/actions/workflows/compile.yml)  
+Or you can download the last working version(which extist for 1 month) which was tested from [here](https://github.com/RaphaelIT7/gmod-lua-threaded/actions/workflows/working-versions.yml)  
+
 NOTE:  
 This only works on Linux because on Windows creating a ILuaInterface on another thread currently crashes the game.  
 
