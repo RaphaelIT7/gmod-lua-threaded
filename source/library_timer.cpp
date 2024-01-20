@@ -291,25 +291,33 @@ void TimerThink(ILuaThread* thread)
 {
 	double time = GetTime();
 	ILuaInterface* LUA = thread->IFace;
+	Msg("1\n");
 	for (ILuaTimer* timer : thread->timers)
 	{
+		Msg("1.1\n");
 		if (!timer->active) { continue; }
 		
 		timer->next_run = timer->next_run_time - time;
 
+		Msg("1.2 Time: %f %f %f %f\n", timer->next_run, timer->next_run_time, time, timer->delay);
 		if (timer->next_run <= 0)
 		{
+			Msg("1.2.1 Function called\n");
 			timer->next_run_time = time + timer->delay;
-			timer->repetitions = timer->repetitions - 1;
+			if (timer->repetitions > 0) {
+				timer->repetitions = timer->repetitions - 1;
+				if (timer->repetitions == 0)
+				{
+					Msg("1.3.1 Marked for Delete\n");
+					timer->markdelete = true;
+				}
+			}
+
 			LUA->ReferencePush(timer->function);
 			LUA->PCall(0, 0, 0);
 		}
-
-		if (timer->repetitions <= 0)
-		{
-			timer->markdelete = true;
-		}
 	}
 
+	Msg("2\n");
 	RemoveTimers(thread);
 }
