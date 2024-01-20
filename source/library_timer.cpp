@@ -24,12 +24,6 @@ void RemoveTimers(ILuaThread* thread)
 	std::vector<ILuaTimer*> timers;
 	for (ILuaTimer* timer : thread->timers)
 	{
-		if (timer->simple)
-		{
-			timers.push_back(timer);
-			continue;
-		}
-
 		if (timer->markdelete)
 		{
 			delete timer;
@@ -315,7 +309,7 @@ void TimerThink(ILuaThread* thread)
 			LUA->ReferencePush(timer->function);
 			LUA->PCall(0, 0, 0);
 
-			if (timer->repetitions == 1 || timer->simple)
+			if (timer->repetitions == 1)
 			{
 				timer->markdelete = true;
 			} else {
