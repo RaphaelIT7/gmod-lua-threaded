@@ -1,4 +1,4 @@
-name: Build Project
+name: Last working & tested version
 
 on:
   workflow_dispatch:
