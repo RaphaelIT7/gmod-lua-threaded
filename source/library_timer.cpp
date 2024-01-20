@@ -82,7 +82,12 @@ LUA_FUNCTION(timer_Create)
 	double repetitions = LUA->CheckNumber(3);
 	LUA->CheckType(4, Type::Function);
 
-	ILuaTimer* timer = new ILuaTimer;
+	ILuaTimer* timer = FindTimer(thread, name); // Reuse existing timer
+	if (!timer)
+	{
+		timer = new ILuaTimer;
+	}
+
 	LUA->Push(4);
 	timer->function = LUA->ReferenceCreate();
 	LUA->Pop();
@@ -148,7 +153,11 @@ LUA_FUNCTION(timer_RepsLeft)
 
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
-		LUA->PushNumber(timer->repetitions);
+		if (timer->repetitions > 0) {
+			LUA->PushNumber(timer->repetitions);
+		} else {
+			LUA->PushNumber(0);
+		}
 	} else {
 		LUA->PushNumber(0);
 	}
@@ -302,16 +311,16 @@ void TimerThink(ILuaThread* thread)
 		if (timer->next_run <= 0)
 		{
 			timer->next_run_time = time + timer->delay;
-			if (timer->repetitions > 0) {
-				timer->repetitions = timer->repetitions - 1;
-				if (timer->repetitions == 0)
-				{
-					timer->markdelete = true;
-				}
-			}
 
 			LUA->ReferencePush(timer->function);
 			LUA->PCall(0, 0, 0);
+
+			if (timer->repetitions == 1)
+			{
+				timer->markdelete = true;
+			} else {
+				timer->repetitions--;
+			}
 		}
 	}
 
