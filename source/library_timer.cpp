@@ -134,7 +134,7 @@ LUA_FUNCTION(timer_Remove)
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
 		timer->markdelete = true;
-		RemoveTimer(thread);
+		RemoveTimers(thread);
 	}
 
 	return 0;
