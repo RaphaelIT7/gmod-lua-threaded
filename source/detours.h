@@ -15,7 +15,9 @@ extern CreateLuaInterface func_CreateLuaInterface;
 const std::vector<Symbol> CreateLuaInterfaceSym = {
 	Symbol::FromName("_Z18CreateLuaInterfaceb"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\x56\x57\x8B\x7D\x08\x8B\xF1\x3B\xF7\x74\x38\xE8\x0D"),
+#endif
 };
 
 typedef void (*CloseLuaInterface)(ILuaInterface*);
@@ -23,7 +25,9 @@ extern CloseLuaInterface func_CloseLuaInterface;
 const std::vector<Symbol> CloseLuaInterfaceSym = {
 	Symbol::FromName("_Z17CloseLuaInterfaceP13ILuaInterface"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\x53\x56\x8B\xF1\x57\x8B\x7D\x08\xC7\x46\x10"),
+#endif
 };
 
 typedef int (*TLuaPanic)(lua_State*);
@@ -88,7 +92,9 @@ extern CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 const std::vector<Symbol> CLuaGameCallback_CreateLuaObjectSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback15CreateLuaObjectEv"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x56\x8B\xF1\x57\x8B\x16\x8B\x7A\x08\x80\x7F\x0D\x00\x74\x22\x8B"), // ToDo: Verify it.
+#endif
 };
 
 typedef void (*CLuaGameCallback_DestroyLuaObject)(void*, ILuaObject*);
@@ -96,7 +102,9 @@ extern CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
 const std::vector<Symbol> CLuaGameCallback_DestroyLuaObjectSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback16DestroyLuaObjectEP10ILuaObject"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\x56\x8B\x75\x08\x85\xF6\x74\x12\x8B\xCE\xE8\x5E\x17"),
+#endif
 };
 
 typedef void (*CLuaGameCallback_ErrorPrint)(void*, const char*, bool);
@@ -104,7 +112,9 @@ extern CLuaGameCallback_ErrorPrint func_CLuaGameCallback_ErrorPrint;
 const std::vector<Symbol> CLuaGameCallback_ErrorPrintSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback10ErrorPrintEPKcb"),
 	
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\xA1\x7C\xE7\x9E\x10\x8B\x50\x48\x8D\x48\x48\x85\xD2"), // Windows 32x
+#endif
 };
 
 typedef void (*CLuaGameCallback_LuaError)(void*, void*);
@@ -112,7 +122,9 @@ extern CLuaGameCallback_LuaError func_CLuaGameCallback_LuaError;
 const std::vector<Symbol> CLuaGameCallback_LuaErrorSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback8LuaErrorEP9CLuaError"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\x81\xEC\xB8\x01\x00\x00\x53\x8B\x5D\x08\x8D\x45\xFE"),
+#endif
 };
 
 typedef void (*CLuaGameCallback_Msg)(void*, const char*, bool);
@@ -120,7 +132,9 @@ extern CLuaGameCallback_Msg func_CLuaGameCallback_Msg;
 const std::vector<Symbol> CLuaGameCallback_MsgSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback3MsgEPKcb"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\x8B\x01\xC7\x45\x0C\x60\x67\x93\x10\x5D\xFF\x60\x10"),
+#endif
 };
 
 typedef void (*CLuaGameCallback_MsgColour)(void*, const char*, const Color&);
@@ -128,7 +142,9 @@ extern CLuaGameCallback_MsgColour func_CLuaGameCallback_MsgColour;
 const std::vector<Symbol> CLuaGameCallback_MsgColourSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback9MsgColourEPKcRK5Color"),
 
+#ifdef SYSTEM_WINDOWS
 	Symbol::FromSignature("\x55\x8B\xEC\xFF\x75\x08\x68\x30\xE6\x70\x10\xFF\x75\x0C\x6A\x00"),
+#endif
 };
 
 extern IFileSystem* gpFileSystem;

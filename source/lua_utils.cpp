@@ -186,13 +186,20 @@ ILuaInterface* CreateInterface()
 	ILuaInterface* IFace = Win_CreateInterface();
 #else
 	ILuaInterface* IFace = func_CreateLuaInterface(true);
-
-	//lua_State* state = func_luaL_newstate();
-
-	func_lua_atpanic(IFace->GetState(), LuaPanic);
 #endif
 
 	IFace->Init(new CLuaGameCallback(), true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+
+#ifndef SYSTEM_WINDOWS
+	//lua_State* state = func_luaL_newstate();
+
+	if (IFace->GetState() == nullptr)
+	{
+		Msg("Invalid Lua state?!?\n");
+	}
+
+	func_lua_atpanic(IFace->GetState(), LuaPanic);
+#endif
 
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
 
