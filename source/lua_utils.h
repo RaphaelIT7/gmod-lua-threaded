@@ -159,6 +159,7 @@ struct ILuaTimer
 	bool simple = false; // true if it's a timer.Simple
 	double next_run = 0;
 	double next_run_time = 0;
+	bool markdelete = false;
 };
 
 struct ILuaThread

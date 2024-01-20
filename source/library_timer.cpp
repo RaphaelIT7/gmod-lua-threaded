@@ -19,7 +19,7 @@ ILuaTimer* FindTimer(ILuaThread* thread, const char* name)
 	return nullptr;
 }
 
-void RemoveTimer(ILuaThread* thread, ILuaTimer* del_timer)
+void RemoveTimers(ILuaThread* thread)
 {
 	std::vector<ILuaTimer*> timers;
 	for (ILuaTimer* timer : thread->timers)
@@ -30,14 +30,15 @@ void RemoveTimer(ILuaThread* thread, ILuaTimer* del_timer)
 			continue;
 		}
 
-		if (strcmp(del_timer->identifier, timer->identifier) != 0)
+		if (timer->markdelete)
 		{
+			delete timer;
+		} else {
 			timers.push_back(timer);
 		}
 	}
 
 	thread->timers = timers;
-	delete del_timer;
 }
 
 LUA_FUNCTION(timer_Adjust)
@@ -132,7 +133,8 @@ LUA_FUNCTION(timer_Remove)
 
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
-		RemoveTimer(thread, timer);
+		timer->markdelete = true;
+		RemoveTimer(thread);
 	}
 
 	return 0;
@@ -287,5 +289,27 @@ void InitTimer(ILuaInterface* LUA)
 
 void TimerThink(ILuaThread* thread)
 {
+	double time = GetTime();
+	ILuaInterface* LUA = thread->IFace;
+	for (ILuaTimer* timer : thread->timers)
+	{
+		if (!timer->active) { continue; }
+		
+		timer->next_run = timer->next_run_time - time;
 
+		if (timer->next_run <= 0)
+		{
+			timer->next_run_time = time + timer->delay;
+			timer->repetitions = timer->repetitions - 1;
+			LUA->ReferencePush(timer->function);
+			LUA->PCall(0, 0, 0);
+		}
+
+		if (timer->repetitions <= 0)
+		{
+			timer->markdelete = true;
+		}
+	}
+
+	RemoveTimers(thread);
 }
