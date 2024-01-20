@@ -283,7 +283,7 @@ void InitTimer(ILuaInterface* LUA)
 			Add_Func(LUA, timer_Toggle, "Toggle");
 			Add_Func(LUA, timer_UnPause, "UnPause");
 
-		LUA->SetField(-1, "timer");
+		LUA->SetField(-2, "timer");
 	LUA->Pop();
 }
 
