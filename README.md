@@ -19,6 +19,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] os  
 - [x] package  
 - [x] jit  
+- [x] timer  
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
@@ -34,7 +35,6 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - - [ ] engine.GetGames
 - - [ ] engine.GetGamemodes
 - - [ ] engine.ActiveGamemode
-- [x] timer (untested!)  
 
 ### Classes
 - [x] Angle (untested)

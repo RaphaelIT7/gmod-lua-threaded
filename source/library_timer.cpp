@@ -229,7 +229,7 @@ LUA_FUNCTION(timer_TimeLeft)
 
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
-		LUA->PushNumber(timer->next_run - GetTime());
+		LUA->PushNumber(timer->next_run);
 	} else {
 		LUA->PushNumber(0);
 	}
@@ -245,6 +245,7 @@ LUA_FUNCTION(timer_Toggle)
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
 		timer->active = !timer->active;
+		timer->next_run_time = GetTime() + timer->next_run;
 		LUA->PushBool(timer->active);
 	} else {
 		LUA->PushBool(false);
@@ -261,6 +262,7 @@ LUA_FUNCTION(timer_UnPause)
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
 		timer->active = true;
+		timer->next_run_time = GetTime() + timer->next_run;
 		LUA->PushBool(true);
 	} else {
 		LUA->PushBool(false);
