@@ -149,6 +149,18 @@ struct ILuaAction
 	ILuaValue* val;
 };
 
+struct ILuaTimer
+{
+	int function;
+	const char* identifier;
+	double delay = 0;
+	double repetitions = 0;
+	bool active = true;
+	bool simple = false; // true if it's a timer.Simple
+	double next_run = 0;
+	double next_run_time = 0;
+};
+
 struct ILuaThread
 {
 	ILuaInterface* IFace;
@@ -163,11 +175,15 @@ struct ILuaThread
 	
 	int id = -1;
 
+	// Error Handling
 	std::string current_path;
+	jmp_buf jumpBuffer; 
 
-	jmp_buf jumpBuffer;
+	// gameevent library
+	IGameEventListener2* listener; 
 
-	IGameEventListener2* listener;
+	// timer library
+	std::vector<ILuaTimer*> timers;
 };
 
 struct GMOD_Info

@@ -576,6 +576,8 @@ unsigned LuaThread(void* data)
 
 		thread_data->actions.clear();
 
+		TimerThink(thread_data); // Check & Run all Timers. Done in Gmod by GarrysMod::Lua::Libraries::Timer::Cycle
+
 		thread_data->mutex.Unlock();
 
 		ThreadSleep(1); // Sleep 1 ms
