@@ -10,6 +10,7 @@
 #include "library_Global.h"
 #include "library_system.h"
 #include "library_engine.h"
+#include "library_hammer.h"
 #include "library_timer.h"
 #include "library_net.h"
 #include "library_sql.h"

@@ -2,6 +2,7 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 #include <GarrysMod/FactoryLoader.hpp>
 #include <scanning/symbolfinder.hpp>
+#include <editor_sendcommand.h>
 #include <filesystem.h>
 #include <vector>
 
@@ -83,6 +84,12 @@ const Symbol ConCommand_IsBlockedSym = Symbol::FromName("_Z20ConCommand_IsBlocke
 typedef void* (*UTIL_GetCommandClient)();
 extern UTIL_GetCommandClient func_UTIL_GetCommandClient;
 const Symbol UTIL_GetCommandClientSym = Symbol::FromName("_Z21UTIL_GetCommandClientv");
+
+typedef EditorSendResult_t (*Editor_SendCommand)(const char*, bool);
+extern Editor_SendCommand func_Editor_SendCommand;
+const std::vector<Symbol> Editor_SendCommandSym = {
+	Symbol::FromName("_Z18Editor_SendCommandPKcb"),
+};
 
 /*
 	CLuaGameCallback stuff

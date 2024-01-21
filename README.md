@@ -23,6 +23,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] package  
 - [x] jit  
 - [x] timer  
+- [x] hammer (useful for Windows later)  
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
@@ -82,7 +83,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] gamemode  
 - - [ ] gmod  
 - - [ ] gmsave  
-- - [ ] hammer?  
 - - [ ] hook  
 - - [ ] http  
 - - [ ] list  
