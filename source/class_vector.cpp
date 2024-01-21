@@ -385,10 +385,10 @@ LUA_FUNCTION(Vector_Rotate)
 	Vector_CheckType(LUA, 1);
 	Angle_CheckType(LUA, 2);
 	Vector& vec = Vector_Get(LUA, 1);
-	QAngle& ang = Angle_Get(LUA, 2);
+	LUA_Angle* ang = Angle_Get(LUA, 2);
 
 	matrix3x4_t matrix;
-	AngleMatrix(ang, matrix);
+	AngleMatrix(QAngle(ang->x, ang->y, ang->z), matrix);
 
 	Vector out = Vector();
 	VectorRotate(vec, matrix, out);
