@@ -67,7 +67,7 @@ LUA_FUNCTION_STATIC(Angle__tostring)
 {
 	LUA_Angle* ang = Angle_Get(LUA, 1);
 	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%.3f %.3f %.3f", ang[0], ang[1], ang[2]);
+	V_snprintf(szBuf, sizeof(szBuf),"%.3f %.3f %.3f", ang->x, ang->y, ang->z);
 	LUA->PushString(szBuf);
 	return 1;
 }
@@ -284,7 +284,7 @@ LUA_FUNCTION(Angle_RotateAroundAxis) // Verify this. Probably shit.
 	Angle_CheckType(LUA, 1);
 	Vector_CheckType(LUA, 2);
     LUA_Angle* ang = Angle_Get(LUA, 1);
-    Vector& vec = Vector_Get(LUA, 2);
+    LUA_Vector* vec = Vector_Get(LUA, 2);
     double number = LUA->CheckNumber(3);
 
     double radians = DEG2RAD(number);
@@ -293,7 +293,7 @@ LUA_FUNCTION(Angle_RotateAroundAxis) // Verify this. Probably shit.
     AngleMatrix(QAngle(ang->x, ang->y, ang->z), matrix);
 
     Vector rotated;
-    VectorIRotate(&vec.x, matrix, &rotated.x);
+    VectorIRotate(&vec->x, matrix, &rotated.x);
 
     Quaternion rotation;
     AxisAngleQuaternion(rotated, radians, rotation);

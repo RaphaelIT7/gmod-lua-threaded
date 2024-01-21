@@ -92,8 +92,8 @@ LUA_FUNCTION(physenv_SetGravity)
 	if (!physenv)
 		return 0;
 
-	Vector gravity = Vector_Get(LUA, 1);
-	physenv->SetGravity(gravity);
+	LUA_Vector* gravity = Vector_Get(LUA, 1);
+	physenv->SetGravity(Vector(gravity->x, gravity->y, gravity->z));
 
 	return 0;
 }
