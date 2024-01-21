@@ -85,8 +85,8 @@ typedef void* (*UTIL_GetCommandClient)();
 extern UTIL_GetCommandClient func_UTIL_GetCommandClient;
 const Symbol UTIL_GetCommandClientSym = Symbol::FromName("_Z21UTIL_GetCommandClientv");
 
-typedef EditorSendResult_t (*Editor_SendCommand)(const char*, bool);
-extern Editor_SendCommand func_Editor_SendCommand;
+typedef EditorSendResult_t (*TEditor_SendCommand)(const char*, bool);
+extern TEditor_SendCommand func_Editor_SendCommand;
 const std::vector<Symbol> Editor_SendCommandSym = {
 	Symbol::FromName("_Z18Editor_SendCommandPKcb"),
 };

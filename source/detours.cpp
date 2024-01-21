@@ -20,7 +20,7 @@ CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
 void* g_pGlobalLuaLibraryFactory;
 ConCommand_IsBlocked func_ConCommand_IsBlocked;
 UTIL_GetCommandClient func_UTIL_GetCommandClient;
-Editor_SendCommand func_Editor_SendCommand;
+TEditor_SendCommand func_Editor_SendCommand;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
@@ -155,7 +155,7 @@ void Symbols_Init()
 	func_UTIL_GetCommandClient = (UTIL_GetCommandClient)FindFunction(server_loader.GetModule(), UTIL_GetCommandClientSym);
 	CheckFunction(func_UTIL_GetCommandClient, "UTIL_GetCommandClient");
 
-	func_Editor_SendCommand = (Editor_SendCommand)FindFunction(server_loader.GetModule(), Editor_SendCommandSym);
+	func_Editor_SendCommand = (TEditor_SendCommand)FindFunction(server_loader.GetModule(), Editor_SendCommandSym);
 	CheckFunction(func_Editor_SendCommand, "Editor_SendCommand");
 
 	/*
