@@ -92,7 +92,14 @@ LUA_FUNCTION(AddConsoleCommand)
 {
 	const char* name = LUA->CheckString(1);
 	const char* helpText = LUA->CheckString(2);
-	int flags = LUA->CheckNumber(3);
+	int flags = 0;
+	if (LUA->IsType(3, Type::Number)) {
+		flags = LUA->CheckNumber(3);
+	} else if (LUA->IsType(3, Type::Table)) {
+		flags = 131072; // Seems to always be FCVAR_DONTRECORD
+	} else {
+		LUA->ArgError(3, ((std::string)"number expected, got " + LUA->GetTypeName(LUA->GetType(3))).c_str()); // ToDo: Make it better someday.
+	}
 
 	bool blocked = func_ConCommand_IsBlocked(name);
 	if (!blocked) 
