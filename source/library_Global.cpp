@@ -129,6 +129,13 @@ LUA_FUNCTION(AddConsoleCommand)
 	return 0;
 }
 
+LUA_FUNCTION(AddCSLuaFile) // Implemented so that Gmod won't complain. ToDo: How should I get the current file it's called from?!? IDK
+{
+	ConDMsg("Don't call AddCSLuaFile from another Thread!\n");
+
+	return 0;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -136,6 +143,7 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, require, "require");
 		Add_Func(LUA, FindMetaTable, "FindMetaTable");
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
+		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
 
 		Add_Func(LUA, Global_Vector, "Vector");
 		Add_Func(LUA, Global_LerpVector, "LerpVector");
