@@ -12,11 +12,11 @@ void Push_Vector(ILuaBase* LUA, float x, float y, float z)
 	udata->y = y;
 	udata->z = z;
 
-	LUA->CreateMetaTableType(metaname, metatype);
-	LUA->SetMetaTable(-2);
-
 	ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILUA->SetType(Type::Vector);
+
+	LUA->CreateMetaTableType(metaname, metatype);
+	LUA->SetMetaTable(-2);
 }
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
