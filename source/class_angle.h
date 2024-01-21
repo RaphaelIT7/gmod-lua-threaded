@@ -14,5 +14,6 @@ extern int Global_Angle(lua_State*);
 extern int Global_LerpAngle(lua_State*);
 
 extern void Push_Angle(ILuaBase* LUA, QAngle ang);
+extern bool IsAngle(ILuaBase* LUA, int index);
 extern LUA_Angle* Angle_Get(ILuaBase* LUA, int index);
 extern void Angle_CheckType(ILuaBase* LUA, int index);

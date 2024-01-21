@@ -30,6 +30,29 @@ void Vector_CheckType(ILuaBase* LUA, int index)
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
+bool IsVector(ILuaBase* LUA, int index)
+{
+	if (LUA->IsType(index, Type::UserData))
+	{
+		LUA->GetMetaTable(index);
+		LUA->GetField(-1, "MetaName");
+		if (LUA->IsType(-1, Type::String))
+		{
+			if (strcmp(LUA->GetString(-1), metaname))
+			{
+				LUA->Pop(2);
+				return true;
+			} else {
+				LUA->Pop(2);
+			}
+		} else {
+			LUA->Pop(2);
+		}
+	}
+
+	return false;
+}
+
 LUA_Vector* Vector_GetUserdata(ILuaBase *LUA, int index)
 {
 	return (LUA_Vector*)LUA->GetUserdata(index);
