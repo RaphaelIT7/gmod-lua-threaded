@@ -115,6 +115,14 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 
 # API
 
+Example usage:  
+```lua
+require("lua_threaded")
+iFace = LuaThreaded.CreateInterface() -- Creates an Interface.
+iFace:InitGmod() -- Adds all Libraries and Classes
+iFace:Autorun() -- Runs all Autorun scripts.
+```
+
 ## LuaThreaded
 ### LuaThreaded.GetAllInterfaces()
 Returns a table containing all Interfaces created.  
@@ -131,6 +139,9 @@ Creates a new Interface.
 
 Args:  
 1. If the Created Interface should run on the main thread or not.  
+
+Rets:
+1. The newly created Interface.
 
 ### LuaThreaded.CloseInterface(ILuaInterface interface)
 Closes the given Interface.  

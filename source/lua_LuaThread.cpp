@@ -46,13 +46,16 @@ LUA_FUNCTION(LuaThread_CreateInterface)
 
 	if (thread->threaded) {
 		CreateSimpleThread(LuaThread, thread);
+		while(!thread->init) { // Wait until it initialized
+			ThreadSleep(1);
+		}
 	} else {
 		thread->IFace = CreateInterface();
 	}
 
-	ThreadSleep(100); // Remove it later.
+	ILuaInterface_Push(LUA, thread->IFace, interfaces_count);
 
-	return 0;
+	return 1;
 }
 
 LUA_FUNCTION(LuaThread_CloseInterface)
