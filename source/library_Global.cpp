@@ -34,7 +34,6 @@ LUA_FUNCTION(FindMetaTable)
 	LUA->PushSpecial(SPECIAL_REG);
 		LUA->GetField(-1, meta);
 
-		Msg("Metatable has type %i\n", LUA->GetType(-1));
 		if (LUA->IsType(-1, Type::Table))
 		{
 			reference = LUA->ReferenceCreate();
@@ -143,6 +142,76 @@ LUA_FUNCTION(AddCSLuaFile) // Implemented so that Gmod won't complain. ToDo: How
 	return 0;
 }
 
+LUA_FUNCTION(isangle)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Angle));
+
+	return 1;
+}
+
+LUA_FUNCTION(isbool)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Bool));
+
+	return 1;
+}
+
+LUA_FUNCTION(isfunction)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Function));
+
+	return 1;
+}
+
+LUA_FUNCTION(isentity)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Entity));
+
+	return 1;
+}
+
+LUA_FUNCTION(ismatrix)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Matrix));
+
+	return 1;
+}
+
+LUA_FUNCTION(isnumber)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Number));
+
+	return 1;
+}
+
+LUA_FUNCTION(ispanel)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Panel));
+
+	return 1;
+}
+
+LUA_FUNCTION(isstring)
+{
+	LUA->PushBool(LUA->IsType(1, Type::String));
+
+	return 1;
+}
+
+LUA_FUNCTION(istable)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Table));
+
+	return 1;
+}
+
+LUA_FUNCTION(isvector)
+{
+	LUA->PushBool(LUA->IsType(1, Type::Vector));
+
+	return 1;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -151,6 +220,17 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, FindMetaTable, "FindMetaTable");
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
+
+		Add_Func(LUA, isangle, "isangle");
+		Add_Func(LUA, isbool, "isbool");
+		Add_Func(LUA, isfunction, "isfunction");
+		Add_Func(LUA, isentity, "isentity");
+		Add_Func(LUA, ismatrix, "ismatrix");
+		Add_Func(LUA, isnumber, "isnumber");
+		Add_Func(LUA, ispanel, "ispanel");
+		Add_Func(LUA, isstring, "isstring");
+		Add_Func(LUA, istable, "istable");
+		Add_Func(LUA, isvector, "isvector");
 
 		Add_Func(LUA, Global_Vector, "Vector");
 		Add_Func(LUA, Global_LerpVector, "LerpVector");
