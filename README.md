@@ -35,10 +35,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] system (untested!)  
 - [x] engine (Mostly implemented)  
 - - [ ] engine.GetAddons
-- - [ ] engine.GetUserContent
-- - [ ] engine.GetGames
-- - [ ] engine.GetGamemodes
-- - [ ] engine.ActiveGamemode
+- - [-] engine.GetUserContent (Request it if anyone needs it)  
 
 ### Classes
 - [x] Angle (untested)

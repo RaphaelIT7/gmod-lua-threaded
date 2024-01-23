@@ -31,29 +31,134 @@ CGlobalVars* GlobalVars()
 
 CGlobalVars* gpGlobal;
 IVEngineServer* engine;
+IFileSystem* filesystem;
 LUA_FUNCTION(engine_GetAddons)
 {
-	return 0;
+	std::list<IAddonSystem::Information> addons = filesystem->Addons()->GetList(); // Maybe switch to use ->GetSubList()?
+
+	LUA->CreateTable();
+	int i = 0;
+	for (IAddonSystem::Information addon : addons)
+	{
+		++i;
+		LUA->CreateTable();
+
+		LUA->PushBool(true); // ToDo: How can I check this? (Look into it while creating custom filesystem_stdio.dll)
+		LUA->SetField(-2, "downloaded");
+
+		LUA->PushNumber(addon.placeholder6); // Maybe placeholder6 contains the models count?
+		LUA->SetField(-2, "models");
+
+		LUA->PushString(addon.title.c_str());
+		LUA->SetField(-2, "title");
+
+		LUA->PushString(addon.file.c_str());
+		LUA->SetField(-2, "file");
+
+		LUA->PushBool(true); // ToDo: Same todo as for downloaded
+		LUA->SetField(-2, "mounted");
+
+		LUA->PushNumber(addon.wsid);
+		LUA->SetField(-2, "wsid");
+
+		LUA->PushNumber(addon.placeholder4); // Maybe placerholder4 is the size?
+		LUA->SetField(-2, "size");
+
+		LUA->PushNumber(addon.time_updated);
+		LUA->SetField(-2, "updated");
+
+		LUA->PushString(addon.tags.c_str());
+		LUA->SetField(-2, "tags");
+
+		LUA->PushNumber(addon.time_updated);
+		LUA->SetField(-2, "timeadded");
+
+		LUA->SetField(-2, std::to_string(i).c_str());
+	}
+
+	return 1;
 }
 
-LUA_FUNCTION(engine_GetUserContent)
+LUA_FUNCTION(engine_GetUserContent) // Deprecated. If anyone wants to use it, tell me. Until then, I won't bother implementing it.
 {
-	return 0;
+	LUA->CreateTable();
+
+	return 1;
 }
 
 LUA_FUNCTION(engine_GetGames)
 {
-	return 0;
+	std::list<IGameDepotSystem::Information> games = filesystem->Games()->GetList();
+
+	LUA->CreateTable();
+	int i = 0;
+	for (IGameDepotSystem::Information game : games)
+	{
+		++i;
+		LUA->CreateTable();
+
+		LUA->PushNumber(game.depot);
+		LUA->SetField(-2, "depot");
+
+		LUA->PushString(game.title.c_str());
+		LUA->SetField(-2, "title");
+
+		LUA->PushBool(game.owned);
+		LUA->SetField(-2, "owned");
+
+		LUA->PushString(game.folder.c_str());
+		LUA->SetField(-2, "folder");
+
+		LUA->PushBool(game.mounted);
+		LUA->SetField(-2, "mounted");
+
+		LUA->PushBool(game.installed);
+		LUA->SetField(-2, "installed");
+
+		LUA->SetField(-2, std::to_string(i).c_str());
+	}
+
+	return 1;
 }
 
 LUA_FUNCTION(engine_GetGamemodes)
 {
-	return 0;
+	std::list<IGamemodeSystem::Information> gamemodes = filesystem->Gamemodes()->GetList();
+
+	LUA->CreateTable();
+	int i = 0;
+	for (IGamemodeSystem::Information gamemode : gamemodes)
+	{
+		++i;
+		LUA->CreateTable();
+
+		LUA->PushString(gamemode.title.c_str());
+		LUA->SetField(-2, "title");
+
+		LUA->PushNumber(gamemode.workshopid);
+		LUA->SetField(-2, "workshopid");
+
+		LUA->PushBool(gamemode.menusystem);
+		LUA->SetField(-2, "menusystem");
+
+		LUA->PushString(gamemode.maps.c_str());
+		LUA->SetField(-2, "maps");
+
+		LUA->PushString(gamemode.name.c_str());
+		LUA->SetField(-2, "name");
+
+		LUA->SetField(-2, std::to_string(i).c_str());
+	}
+
+	return 1;
 }
 
 LUA_FUNCTION(engine_ActiveGamemode)
 {
-	return 0;
+	IGamemodeSystem::Information info = filesystem->Gamemodes()->Active();
+	LUA->PushString(info.name.c_str());
+
+	return 1;
 }
 
 LUA_FUNCTION(engine_TickInterval)
@@ -102,6 +207,11 @@ void InitEngine(ILuaInterface* LUA)
 	if (engine == nullptr)
 	{
 		engine = InterfacePointers::VEngineServer();
+	}
+
+	if (filesystem == nullptr)
+	{
+		filesystem = InterfacePointers::FileSystem();
 	}
 
 	if (gpGlobal == nullptr)
