@@ -1,7 +1,7 @@
 #include <GarrysMod/InterfacePointers.hpp>
 #include "lua_threaded.h"
 
-IFileSystem* filesystem;
+IFileSystem* filesystem2;
 LUA_FUNCTION(file_AsyncRead) // ToDo
 {
 	
@@ -9,21 +9,21 @@ LUA_FUNCTION(file_AsyncRead) // ToDo
 
 LUA_FUNCTION(file_CreateDir)
 {
-	filesystem->CreateDirHierarchy(LUA->CheckString(1), "DATA");
+	filesystem2->CreateDirHierarchy(LUA->CheckString(1), "DATA");
 
 	return 0;
 }
 
 LUA_FUNCTION(file_Delete)
 {
-	filesystem->RemoveFile(LUA->CheckString(1), "DATA");
+	filesystem2->RemoveFile(LUA->CheckString(1), "DATA");
 
 	return 0;
 }
 
 LUA_FUNCTION(file_Exists)
 {
-	LUA->PushBool(filesystem->FileExists(LUA->CheckString(1), LUA->CheckString(2)));
+	LUA->PushBool(filesystem2->FileExists(LUA->CheckString(1), LUA->CheckString(2)));
 
 	return 1;
 }
@@ -38,18 +38,18 @@ LUA_FUNCTION(file_Find)
 	const char* sorting = LUA->CheckString(3); // ToDo: Implement it later
 
 	FileFindHandle_t findHandle;
-	const char *pFilename = filesystem->FindFirstEx(filepath, path, &findHandle);
+	const char *pFilename = filesystem2->FindFirstEx(filepath, path, &findHandle);
 	while (pFilename)
 	{
-		if (filesystem->IsDirectory(((std::string)filepath + pFilename).c_str(), path)) {
+		if (filesystem2->IsDirectory(((std::string)filepath + pFilename).c_str(), path)) {
 			folders.push_back(pFilename);
 		} else {
 			files.push_back(pFilename);
 		}
 
-		pFilename = filesystem->FindNext(findHandle);
+		pFilename = filesystem2->FindNext(findHandle);
 	}
-	filesystem->FindClose(findHandle);
+	filesystem2->FindClose(findHandle);
 
 	if (files.size() > 0) {
 		LUA->CreateTable();
@@ -84,7 +84,7 @@ LUA_FUNCTION(file_Find)
 
 LUA_FUNCTION(file_IsDir)
 {
-	LUA->PushBool(filesystem->IsDirectory(LUA->CheckString(1), LUA->CheckString(2)));
+	LUA->PushBool(filesystem2->IsDirectory(LUA->CheckString(1), LUA->CheckString(2)));
 
 	return 1;
 }
@@ -101,30 +101,30 @@ LUA_FUNCTION(file_Rename)
 	const char* original = LUA->CheckString(1);
 	const char* newname = LUA->CheckString(2);
 
-	LUA->PushBool(filesystem->RenameFile(original, newname, "DATA"));
+	LUA->PushBool(filesystem2->RenameFile(original, newname, "DATA"));
 
 	return 1;
 }
 
 LUA_FUNCTION(file_Size)
 {
-	LUA->PushNumber(filesystem->Size(LUA->CheckString(1), "DATA"));
+	LUA->PushNumber(filesystem2->Size(LUA->CheckString(1), "DATA"));
 
 	return 1;
 }
 
 LUA_FUNCTION(file_Time)
 {
-	LUA->PushNumber(filesystem->GetFileTime(LUA->CheckString(1), "DATA"));
+	LUA->PushNumber(filesystem2->GetFileTime(LUA->CheckString(1), "DATA"));
 
 	return 1;
 }
 
 void InitFileLib(ILuaInterface* LUA)
 {
-	if (!filesystem)
+	if (!filesystem2)
 	{
-		filesystem = InterfacePointers::FileSystem();
+		filesystem2 = InterfacePointers::FileSystem();
 	}
 
 	LUA->PushSpecial(SPECIAL_GLOB);
