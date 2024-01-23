@@ -27,6 +27,7 @@ GMOD_MODULE_OPEN()
 	InitMetaTable((ILuaInterface*)LUA);
 
 	InitEnums((ILuaInterface*)LUA);
+	PreInitEngine();
 
 	Msg("LuaThreaded Loaded\n");
 

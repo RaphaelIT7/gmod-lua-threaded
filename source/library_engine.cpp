@@ -32,10 +32,9 @@ CGlobalVars* GlobalVars()
 CGlobalVars* gpGlobal;
 IVEngineServer* engine;
 IFileSystem* filesystem;
+std::list<IAddonSystem::Information> addons; // Maybe switch to use ->GetSubList()?
 LUA_FUNCTION(engine_GetAddons)
 {
-	std::list<IAddonSystem::Information> addons = filesystem->Addons()->GetList(); // Maybe switch to use ->GetSubList()?
-
 	LUA->CreateTable();
 	int i = 0;
 	for (IAddonSystem::Information addon : addons)
@@ -86,10 +85,9 @@ LUA_FUNCTION(engine_GetUserContent) // Deprecated. If anyone wants to use it, te
 	return 1;
 }
 
+std::list<IGameDepotSystem::Information> games;
 LUA_FUNCTION(engine_GetGames)
 {
-	std::list<IGameDepotSystem::Information> games = filesystem->Games()->GetList();
-
 	LUA->CreateTable();
 	int i = 0;
 	for (IGameDepotSystem::Information game : games)
@@ -121,10 +119,9 @@ LUA_FUNCTION(engine_GetGames)
 	return 1;
 }
 
+std::list<IGamemodeSystem::Information> gamemodes;
 LUA_FUNCTION(engine_GetGamemodes)
 {
-	std::list<IGamemodeSystem::Information> gamemodes = filesystem->Gamemodes()->GetList();
-
 	LUA->CreateTable();
 	int i = 0;
 	for (IGamemodeSystem::Information gamemode : gamemodes)
@@ -153,10 +150,10 @@ LUA_FUNCTION(engine_GetGamemodes)
 	return 1;
 }
 
+IGamemodeSystem::Information active_gamemode;
 LUA_FUNCTION(engine_ActiveGamemode)
 {
-	IGamemodeSystem::Information info = filesystem->Gamemodes()->Active();
-	LUA->PushString(info.name.c_str());
+	LUA->PushString(active_gamemode.name.c_str());
 
 	return 1;
 }
@@ -202,16 +199,24 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
+void PreInitEngine() // We need to get all of this stuff on the main thread or else it will crash.
+{
+	if (filesystem == nullptr)
+	{
+		filesystem = InterfacePointers::FileSystem();
+	}
+
+	addons = filesystem->Addons()->GetList();
+	gamemodes = filesystem->Gamemodes()->GetList();
+	games = filesystem->Games()->GetList();
+	active_gamemode = filesystem->Gamemodes()->Active();
+}
+
 void InitEngine(ILuaInterface* LUA)
 {
 	if (engine == nullptr)
 	{
 		engine = InterfacePointers::VEngineServer();
-	}
-
-	if (filesystem == nullptr)
-	{
-		filesystem = InterfacePointers::FileSystem();
 	}
 
 	if (gpGlobal == nullptr)
