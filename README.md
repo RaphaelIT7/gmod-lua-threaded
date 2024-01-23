@@ -36,7 +36,14 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] engine (Mostly implemented)  
 - - [ ] engine.GetAddons
 - - [-] engine.GetUserContent (Request it if anyone needs it)  
+- - [ ] engine.GetUserContent (Disabled because of a random error)
+- - [ ] engine.GetGames (Disabled because of a random error)
+- - [ ] engine.GetGamemodes (Disabled because of a random error)
+- - [ ] engine.ActiveGamemode (Disabled because of a random error)
 - [x] gmod (untested!)  
+- [x] file (Mostly implemented & untested!)
+- - [ ] file.AsyncRead
+- - [ ] file.Open (Required for file.Read, file.Write and file.Append)
 
 ### Classes
 - [x] Angle (untested)
