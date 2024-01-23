@@ -12,6 +12,7 @@
 #include "library_engine.h"
 #include "library_hammer.h"
 #include "library_timer.h"
+#include "library_gmod.h"
 #include "library_net.h"
 #include "library_sql.h"
 

@@ -36,6 +36,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] engine (Mostly implemented)  
 - - [ ] engine.GetAddons
 - - [-] engine.GetUserContent (Request it if anyone needs it)  
+- [x] gmod (untested!)  
 
 ### Classes
 - [x] Angle (untested)
@@ -78,7 +79,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] file  
 - - [ ] game  
 - - [ ] gamemode  
-- - [ ] gmod  
 - - [ ] gmsave  
 - - [ ] hook  
 - - [ ] http  
