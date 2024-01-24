@@ -31,7 +31,6 @@ CGlobalVars* GlobalVars()
 
 CGlobalVars* gpGlobal;
 IVEngineServer* engine;
-IFileSystem* filesystem;
 std::list<IAddonSystem::Information> addons; // Maybe switch to use ->GetSubList()?
 LUA_FUNCTION(engine_GetAddons)
 {
@@ -201,11 +200,6 @@ LUA_FUNCTION(engine_LightStyle)
 
 void PreInitEngine() // We need to get all of this stuff on the main thread or else it will crash.
 {
-	if (filesystem == nullptr)
-	{
-		filesystem = InterfacePointers::FileSystem();
-	}
-
 	addons = filesystem->Addons()->GetList();
 	gamemodes = filesystem->Gamemodes()->GetList();
 	games = filesystem->Games()->GetList();

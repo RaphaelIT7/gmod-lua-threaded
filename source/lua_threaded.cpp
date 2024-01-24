@@ -1,3 +1,4 @@
+#include <GarrysMod/InterfacePointers.hpp>
 #include <GarrysMod/Lua/Interface.h>
 #include "lua_threaded.h"
 
@@ -27,7 +28,10 @@ GMOD_MODULE_OPEN()
 	InitMetaTable((ILuaInterface*)LUA);
 
 	InitEnums((ILuaInterface*)LUA);
-	//PreInitEngine();
+
+	filesystem = InterfacePointers::FileSystem();
+
+	PreInitEngine();
 
 	Msg("LuaThreaded Loaded\n");
 

@@ -5,6 +5,8 @@
 #ifdef SYSTEM_WINDOWS
 #include <GarrysMod/Lua/LuaShared.h>
 
+IFileSystem* filesystem;
+
 static SourceSDK::FactoryLoader luashared_loader("lua_shared");
 GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
 	GarrysMod::Lua::ILuaShared* LuaShared = (GarrysMod::Lua::ILuaShared*)luashared_loader.GetFactory()(GMOD_LUASHARED_INTERFACE, nullptr);
