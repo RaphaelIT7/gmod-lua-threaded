@@ -3,4 +3,4 @@
 using namespace GarrysMod::Lua;
 
 extern void InitEngine(ILuaInterface*);
-extern void PreInitEngine();
+extern void UpdateEngine();

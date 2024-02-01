@@ -198,7 +198,7 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
-void PreInitEngine() // We need to get all of this stuff on the main thread or else it will crash.
+void UpdateEngine() // We need to get all of this stuff on the main thread or else it will crash.
 {
 	addons = filesystem->Addons()->GetList();
 	gamemodes = filesystem->Gamemodes()->GetList();

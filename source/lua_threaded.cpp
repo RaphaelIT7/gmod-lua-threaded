@@ -2,6 +2,12 @@
 #include <GarrysMod/Lua/Interface.h>
 #include "lua_threaded.h"
 
+LUA_FUNCTION(LUA_UpdateEngine)
+{
+	UpdateEngine();
+	return 0;
+}
+
 GMOD_MODULE_OPEN()
 {
 	Msg("LuaThreaded Loading\n");
@@ -30,8 +36,21 @@ GMOD_MODULE_OPEN()
 	InitEnums((ILuaInterface*)LUA);
 
 	filesystem = InterfacePointers::FileSystem();
+	UpdateEngine();
 
-	PreInitEngine();
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "hook");
+		if (LUA->IsType(-1, Type::Table)) {
+			LUA->GetField(-1, "Add");
+			if (LUA->IsType(-1, Type::Function)) {
+				LUA->PushString("GameContentChanged");
+				LUA->PushString("LuaThreaded");
+				LUA->PushCFunction(LUA_UpdateEngine);
+				LUA->Call(3, 0);
+			}
+			LUA->Pop();
+		}
+	LUA->Pop(2);
 
 	Msg("LuaThreaded Loaded\n");
 
