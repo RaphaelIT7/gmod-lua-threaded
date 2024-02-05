@@ -154,6 +154,8 @@ const std::vector<Symbol> CLuaGameCallback_MsgColourSym = {
 #endif
 };
 
+const Symbol IGet_Sym = Symbol::FromName("_ZL4cget");
+
 extern IFileSystem* gpFileSystem;
 
 extern void Symbols_Init();

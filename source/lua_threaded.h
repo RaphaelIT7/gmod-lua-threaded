@@ -3,6 +3,7 @@
 #include "lua_ILuaInterface.h"
 #include "lua_LuaThread.h"
 #include "lua_Enums.h"
+#include "IGet.h"
 
 #include "library_gameevent.h"
 #include "library_resource.h"
