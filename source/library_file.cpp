@@ -2,7 +2,7 @@
 
 LUA_FUNCTION(file_AsyncRead) // ToDo
 {
-	
+	return 0;
 }
 
 LUA_FUNCTION(file_CreateDir)

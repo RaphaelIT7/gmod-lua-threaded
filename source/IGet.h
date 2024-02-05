@@ -25,7 +25,13 @@ class IGMod_Audio;
 class IAnalytics;
 class CSteamID;
 
-enum ETextFilteringContext;
+enum ETextFilteringContext
+{
+	k_ETextFilteringContextUnknown,
+	k_ETextFilteringContextGameContent,
+	k_ETextFilteringContextChat,
+	k_ETextFilteringContextName
+};
 
 abstract_class IGet
 {
