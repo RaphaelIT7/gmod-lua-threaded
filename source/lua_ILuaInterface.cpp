@@ -210,6 +210,7 @@ void InitClasses(ILuaInterface* LUA)
 {
 	InitVectorClass(LUA);
 	InitAngleClass(LUA);
+	InitFileClass(LUA);
 
 	//func_InitLuaClasses(LUA);
 }
