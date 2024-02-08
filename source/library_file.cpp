@@ -1,4 +1,5 @@
 #include "lua_threaded.h"
+#include <algorithm>
 
 LUA_FUNCTION(file_AsyncRead) // ToDo
 {
@@ -26,6 +27,34 @@ LUA_FUNCTION(file_Exists)
 	return 1;
 }
 
+std::string extractDirectoryPath(const std::string& filepath) {
+    size_t lastSlashPos = filepath.find_last_of('/');
+    if (lastSlashPos != std::string::npos) {
+        return filepath.substr(0, lastSlashPos + 1);
+    } else {
+        return "";
+    }
+}
+
+std::vector<std::string> SortByDate(std::vector<std::string> files, const char* filepath, const char* path, bool ascending)
+{
+	std::string path = extractDirectoryPath((std::string)filepath);
+	std::unordered_map<std::string, long> dates;
+	for (std::string file : files) {
+		dates[file] = filesystem->GetFileTime((path + file).c_str(), path);
+	}
+
+	std::sort(files.begin(), files.end(), [&dates](const std::string& a, const std::string& b) {
+        return dates[a] < dates[b];
+    });
+
+	if (!ascending) {
+        std::reverse(files.begin(), files.end());
+    }
+
+	return files;
+}
+
 LUA_FUNCTION(file_Find)
 {
 	std::vector<std::string> files;
@@ -33,7 +62,7 @@ LUA_FUNCTION(file_Find)
 
 	const char* filepath = LUA->CheckString(1);
 	const char* path = LUA->CheckString(2);
-	const char* sorting = LUA->CheckString(3); // ToDo: Implement it later
+	const char* sorting = LUA->CheckString(3);
 
 	FileFindHandle_t findHandle;
 	const char *pFilename = filesystem->FindFirstEx(filepath, path, &findHandle);
@@ -50,6 +79,20 @@ LUA_FUNCTION(file_Find)
 	filesystem->FindClose(findHandle);
 
 	if (files.size() > 0) {
+		if (sorting == "namedesc") { // sort the files descending by name.
+			std::sort(files.begin(), files.end(), std::greater<std::string>());
+			std::sort(folders.begin(), folders.end(), std::greater<std::string>());
+		} else if (sorting == "dateasc") { // sort the files ascending by date.
+			SortByDate(files, filepath, path, true);
+			SortByDate(folders, filepath, path, true);
+		} else if (sorting == "datedesc") { // sort the files descending by date.
+			SortByDate(files, filepath, path, false);
+			SortByDate(folders, filepath, path, false);
+		} else { // Fallback to default: nameasc | sort the files ascending by name.
+			std::sort(files.begin(), files.end());
+			std::sort(folders.begin(), folders.end());
+		}
+
 		LUA->CreateTable();
 
 		int i = 0;
