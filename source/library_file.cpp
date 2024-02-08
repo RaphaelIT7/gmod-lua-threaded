@@ -38,10 +38,10 @@ std::string extractDirectoryPath(const std::string& filepath) {
 
 std::vector<std::string> SortByDate(std::vector<std::string> files, const char* filepath, const char* path, bool ascending)
 {
-	std::string path = extractDirectoryPath((std::string)filepath);
+	std::string str_filepath = extractDirectoryPath((std::string)filepath);
 	std::unordered_map<std::string, long> dates;
 	for (std::string file : files) {
-		dates[file] = filesystem->GetFileTime((path + file).c_str(), path);
+		dates[file] = filesystem->GetFileTime((str_filepath + file).c_str(), path);
 	}
 
 	std::sort(files.begin(), files.end(), [&dates](const std::string& a, const std::string& b) {
