@@ -19,3 +19,4 @@
 
 #include "class_vector.h"
 #include "class_angle.h"
+#include "class_file.h"

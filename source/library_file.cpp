@@ -132,7 +132,11 @@ LUA_FUNCTION(file_IsDir)
 
 LUA_FUNCTION(file_Open) // ToDo: Add the File class
 {
-	LUA->PushBool(true);
+	const char* filename = LUA->CheckString(1);
+	const char* fileMode = LUA->CheckString(2);
+	const char* path = LUA->CheckString(3);
+
+	Push_File(filename, fileMode, path);
 
 	return 1;
 }
