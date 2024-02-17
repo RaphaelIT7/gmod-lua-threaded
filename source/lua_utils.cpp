@@ -92,9 +92,9 @@ ILuaValue* GetOrCreate(std::string key)
 		if (val) {
 			if (val->type == Type::Table)
 			{
-				for (auto& [key, val] : val->tbl)
+				for (auto& [key2, val2] : val->tbl)
 				{
-					SafeDelete(val);
+					SafeDelete(val2);
 				}
 			}
 

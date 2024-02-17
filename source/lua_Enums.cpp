@@ -2987,7 +2987,7 @@ void RemoveEnums()
 {
 	for (std::string gmod_enum : enums)
 	{
-		ILuaValue* val = fullenums[gmod_enum];
+		//ILuaValue* val = fullenums[gmod_enum];
 
 		fullenums.erase(gmod_enum);
 		//SafeDelete(val);
