@@ -36,7 +36,7 @@ GMOD_MODULE_OPEN()
 
 			LUA->GetField(-1, "BRANCH");
 			GMOD->branch = LUA->GetString(-1);
-		LUA->Pop(2); // Global, VERSION, VERSIONSTR, BRANCH
+		LUA->Pop(2); // Global, BRANCH
 	//}
 
 	Symbols_Init();
@@ -47,8 +47,8 @@ GMOD_MODULE_OPEN()
 
 	InitEnums((ILuaInterface*)LUA);
 
-	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine();
+	//filesystem = InterfacePointers::FileSystem();
+	//UpdateEngine();
 
 	/*LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
