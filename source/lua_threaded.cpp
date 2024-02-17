@@ -50,7 +50,7 @@ GMOD_MODULE_OPEN()
 	filesystem = InterfacePointers::FileSystem();
 	UpdateEngine();
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	/*LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
 		if (LUA->IsType(-1, Type::Table)) {
 			LUA->GetField(-1, "Add");
@@ -62,7 +62,7 @@ GMOD_MODULE_OPEN()
 			}
 			LUA->Pop();
 		}
-	LUA->Pop(2);
+	LUA->Pop(2);*/
 
 	Msg("LuaThreaded Loaded\n");
 

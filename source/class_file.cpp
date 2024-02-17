@@ -391,16 +391,13 @@ LUA_FUNCTION(File_WriteUShort)
 
 void InitFileClass(ILuaInterface* LUA)
 {
-		int i=0;
-	i++;Msg("%i\n",i);
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
-	i++;Msg("%i\n",i);
 	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, File__gc, "__gc");
 		Add_Func(LUA, File__tostring, "__tostring");
-		i++;Msg("%i\n",i);
+
 		Add_Func(LUA, File_Close, "Close");
 		Add_Func(LUA, File_EndOfFile, "EndOfFile");
 		Add_Func(LUA, File_Flush, "Flush");
@@ -429,7 +426,5 @@ void InitFileClass(ILuaInterface* LUA)
 		Add_Func(LUA, File_WriteUInt64, "WriteUInt64");
 		Add_Func(LUA, File_WriteULong, "WriteULong");
 		Add_Func(LUA, File_WriteUShort, "WriteUShort");
-	i++;Msg("%i\n",i);
 	LUA->Pop(1);
-	i++;Msg("%i\n",i);
 }
