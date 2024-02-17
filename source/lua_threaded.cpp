@@ -12,19 +12,19 @@ GMOD_MODULE_OPEN()
 {
 	Msg("LuaThreaded Loading\n");
 
-	IGet* get;
+	/*IGet* get;
 	SourceSDK::FactoryLoader engine_loader("engine");
 	get = ResolveSymbol<IGet>(
 		engine_loader, IGet_Sym
-	);
+	);*/
 	
 	GMOD = new GMOD_Info;
-	if (get)
+	/*if (get)
 	{
 		GMOD->version = get->Version();
 		GMOD->versionstr = get->VersionStr();
 		GMOD->branch = "unknown"; // Always unknown
-	} else {
+	} else {*/
 		LUA->PushSpecial(SPECIAL_GLOB);
 			LUA->GetField(-1, "VERSION");
 			GMOD->version = LUA->GetNumber(-1);
@@ -37,7 +37,7 @@ GMOD_MODULE_OPEN()
 			LUA->GetField(-1, "BRANCH");
 			GMOD->branch = LUA->GetString(-1);
 		LUA->Pop(2); // Global, VERSION, VERSIONSTR, BRANCH
-	}
+	//}
 
 	Symbols_Init();
 
