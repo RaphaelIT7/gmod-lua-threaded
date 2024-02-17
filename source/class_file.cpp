@@ -142,7 +142,6 @@ LUA_FUNCTION(File_Read)
 LUA_FUNCTION(File_ReadBool)
 {
 	LUA_File* file = File_Get(LUA, 1);
-	double length = LUA->CheckNumber(2);
 
 	bool buffer = false;
 	gpFileSystem->Read(&buffer, sizeof(bool), file->handle);
@@ -244,7 +243,6 @@ LUA_FUNCTION(File_ReadULong)
 LUA_FUNCTION(File_ReadUShort)
 {
 	LUA_File* file = File_Get(LUA, 1);
-	double pos = LUA->CheckNumber(2);
 
 	unsigned short buffer = 0;
 	gpFileSystem->Read(&buffer, sizeof(unsigned short), file->handle);
@@ -397,6 +395,9 @@ void InitFileClass(ILuaInterface* LUA)
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
 	LUA->CreateMetaTableType(metaname, metatype);
+		Add_Func(LUA, File__gc, "__gc");
+		Add_Func(LUA, File__tostring, "__tostring");
+
 		Add_Func(LUA, File_Close, "Close");
 		Add_Func(LUA, File_EndOfFile, "EndOfFile");
 		Add_Func(LUA, File_Flush, "Flush");
