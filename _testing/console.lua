@@ -94,7 +94,25 @@ HTTP({
 		end
 	end,
 	body = json.encode({
-		command = "lua_run timer.Simple(5, function() engine.CloseServer() end) require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
+		command = "lua_run require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
+	})
+})
+
+local time = os.time() + 3
+while time > os.time() do end
+
+HTTP({
+	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
+	headers = header,
+	success = function(res)
+		local tbl = res ~= '' and json.decode(res) or {}
+		if tbl.errors then
+			print("Commands failed! Reason: " .. tbl.errors[1].detail)
+		end
+	end,
+	body = json.encode({
+		command = "quit"
 	})
 })
 
