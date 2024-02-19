@@ -50,6 +50,24 @@ HTTP({
 
 HTTP({
 	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/delete",
+	headers = header,
+	success = function(res)
+		local tbl = res ~= '' and json.decode(res) or {}
+		if tbl.errors then
+			print("error.txt failed! Reason: " .. tbl.errors[1].detail)
+		end
+	end,
+	body = json.encode({
+		root = "/garrysmod/data/",
+		files = {
+			"error.txt"
+		}
+	})
+})
+
+HTTP({
+	method = "POST",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
 	headers = header,
 	success = function(res)
@@ -94,7 +112,7 @@ HTTP({
 		end
 	end,
 	body = json.encode({
-		command = "lua_run require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
+		command = "lua_run xpcall(function() require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod() end, function(err) file.Write('error.txt', err) end)"
 	})
 })
 
@@ -143,6 +161,20 @@ HTTP({
 			print(" ======================= debug.log =======================")
 			print(content)
 			print(" ======================= debug.log =======================")
+			error("Server crashed!")
+		end
+	end,
+})
+
+HTTP({
+	method = "GET",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fgarrysmod%2Fdata%2Ferror.txt",
+	headers = header,
+	success = function(content)
+		if content:sub(1, 10) ~= [[{"errors":]] then
+			print(" ======================= error.txt =======================")
+			print(content)
+			print(" ======================= error.txt =======================")
 			error("Server crashed!")
 		end
 	end,
