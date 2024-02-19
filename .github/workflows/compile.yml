@@ -37,6 +37,11 @@ jobs:
             -X POST \
             -d '{ "command": "lua_run timer.Simple(10, function() RunConsoleCommand([[quit]]) end) require("lua_threaded") iFace = LuaThreaded.CreateInterface() iFace:InitGmod()" }' 
 
+      - uses: actions/checkout@v4
+        name: Checkout
+        with:
+          sparse-checkout: "_testing/*"
+
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
         with:
