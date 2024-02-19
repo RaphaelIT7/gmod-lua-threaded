@@ -85,7 +85,7 @@ print("Server started")
 
 HTTP({
 	method = "POST",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
 	headers = header,
 	success = function(res)
 		local tbl = res ~= '' and json.decode(res) or {}
@@ -122,7 +122,9 @@ HTTP({
 	headers = header,
 	success = function(content)
 		if content:sub(1, 10) ~= [[{"errors":]] then
+			print(" ======================= debug.log =======================")
 			print(content)
+			print(" ======================= debug.log =======================")
 			error("Server crashed!")
 		end
 	end,
@@ -134,7 +136,9 @@ HTTP({
 	headers = header,
 	success = function(content)
 		if content:sub(1, 10) ~= [[{"errors":]] then
+			print(" ======================= console.log =======================")
 			print(content)
+			print(" ======================= console.log =======================")
 		end
 	end,
 })
