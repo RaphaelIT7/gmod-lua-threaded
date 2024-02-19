@@ -1,10 +1,45 @@
 websocket = require("websocket")
 json = require("json")
+require("http")
 
 local args = {...}
 local url = args[1]
 local id = args[2]
-local api = args[3]
+local fullid = args[3]
+local api = args[4]
+
+
+JSONHTTP({
+	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
+	headers = {
+		Authorization = "Bearer " .. api
+	},
+	success = function(res)
+		if res.errors then
+			print("Restart failed! Reason: " .. res.errors[1].detail)
+		end
+	end,
+	body = json.encode({
+		signal = "restart"
+	})
+})
+
+JSONHTTP({
+	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
+	headers = {
+		Authorization = "Bearer " .. api
+	},
+	success = function(res)
+		if res.errors then
+			print("Restart failed! Reason: " .. res.errors[1].detail)
+		end
+	end,
+	body = json.encode({
+		command = "lua_run timer.Simple(10, function() RunConsoleCommand([[quit]]) end) require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
+	})
+})
 
 local uri = "wss://" .. url .. ":8080/api/servers/" .. id .. "/ws"
 
