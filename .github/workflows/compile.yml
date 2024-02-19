@@ -5,7 +5,6 @@ on:
   push:
     paths:
       - 'source/**'
-      - '_testing/**'
       - 'premake5.lua'
 
 jobs:
@@ -41,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout
         with:
-          sparse-checkout: "_testing/*"
+          sparse-checkout: "_testing/"
 
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: leafo/gh-actions-lua@v10
