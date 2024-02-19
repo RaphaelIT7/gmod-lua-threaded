@@ -66,21 +66,45 @@ HTTP({
 	})
 })
 
-HTTP({
-	method = "POST",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
+JSONHTTP({
+	method = "GET",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 	headers = header,
-	success = function(res)
-		local tbl = res ~= '' and json.decode(res) or {}
-		if tbl.errors then
-			print("Restart failed! Reason: " .. tbl.errors[1].detail)
+	success = function(content)
+		if content.attributes.current_state == "running" then
+			HTTP({
+				method = "POST",
+				url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
+				headers = header,
+				success = function(res)
+					local tbl = res ~= '' and json.decode(res) or {}
+					if tbl.errors then
+						print("Commands failed! Reason: " .. tbl.errors[1].detail)
+					end
+				end,
+				body = json.encode({
+					command = "map gm_flatgrass"
+				})
+			})
 		else
-			print("Restarted successfully")
+			HTTP({
+				method = "POST",
+				url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
+				headers = header,
+				success = function(res)
+					local tbl = res ~= '' and json.decode(res) or {}
+					if tbl.errors then
+						print("Restart failed! Reason: " .. tbl.errors[1].detail)
+					else
+						print("Restarted successfully")
+					end
+				end,
+				body = json.encode({
+					signal = "staret"
+				})
+			})
 		end
 	end,
-	body = json.encode({
-		signal = "restart"
-	})
 })
 
 print("Waiting for Server to start")
@@ -116,7 +140,7 @@ HTTP({
 	})
 })
 
-local time = os.time() + 5
+local time = os.time() + 10
 while time > os.time() do end
 
 HTTP({
