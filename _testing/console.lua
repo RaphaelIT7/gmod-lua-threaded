@@ -112,7 +112,7 @@ HTTP({
 		end
 	end,
 	body = json.encode({
-		command = "lua_run xpcall(function() require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod() end, function(err) file.Write('error.txt', err) end)"
+		command = "lua_run a,err=pcall(function() require('lua_threaded') iFace = LuaThreaded.CreateInterface() iFace:InitGmod() end) if err then file.Write('error.txt', err) end"
 	})
 })
 
