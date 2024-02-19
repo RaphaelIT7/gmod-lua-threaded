@@ -12,20 +12,19 @@ GMOD_MODULE_OPEN()
 {
 	Msg("LuaThreaded Loading\n");
 
-	/*IGet* get;
+	IGet* get;
 	SourceSDK::FactoryLoader engine_loader("engine");
 	get = ResolveSymbol<IGet>(
 		engine_loader, IGet_Sym
-	);*/
+	);
 	
-	Msg("1\n");
 	GMOD = new GMOD_Info;
-	/*if (get)
+	if (get)
 	{
 		GMOD->version = get->Version();
 		GMOD->versionstr = get->VersionStr();
 		GMOD->branch = "unknown"; // Always unknown
-	} else {*/
+	} else {
 		LUA->PushSpecial(SPECIAL_GLOB);
 			LUA->GetField(-1, "VERSION");
 			GMOD->version = LUA->GetNumber(-1);
@@ -38,19 +37,18 @@ GMOD_MODULE_OPEN()
 			LUA->GetField(-1, "BRANCH");
 			GMOD->branch = LUA->GetString(-1);
 		LUA->Pop(2); // Global, BRANCH
-	//}
-	Msg("2\n");
+	}
 
 	Symbols_Init();
-	Msg("3\n");
+
 	InitLuaThreaded((ILuaInterface*)LUA);
-	Msg("4\n");
+
 	InitMetaTable((ILuaInterface*)LUA);
-	Msg("5\n");
+
 	InitEnums((ILuaInterface*)LUA);
 
 	//filesystem = InterfacePointers::FileSystem();
-	//UpdateEngine();
+	//UpdateEngine(); // Look into it why it breaks my shit.
 
 	/*LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
