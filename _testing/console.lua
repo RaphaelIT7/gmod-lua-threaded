@@ -66,21 +66,30 @@ HTTP({
 	})
 })
 
-print("Waiting for HTTP")
+print("Waiting for Server to start")
 
-HTTP_WaitForAll()
+local i = 0
+local started = false
+while i > 15 do
+	JSONHTTP({
+		method = "GET",
+		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
+		headers = header,
+		success = function(content)
+			print(content.attributes.current_state)
+			i = i + 1
+		end,
+	})
+end
 
-print("Finished everything")
-local time = os.time() + 20
-while time > os.time() do end
-print("Checking for any crash")
+print("Server started")
 
 HTTP({
 	method = "GET",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fdebug.log",
 	headers = header,
 	success = function(content)
-		print("Lol")
+		print("Lol", content)
 	end,
 })
 
@@ -92,5 +101,3 @@ HTTP({
 		
 	end,
 })
-
-HTTP_WaitForAll()
