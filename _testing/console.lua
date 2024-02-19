@@ -70,7 +70,7 @@ print("Waiting for Server to start")
 
 local i = 0
 local started = false
-while i > 15 do
+while i < 15 do
 	JSONHTTP({
 		method = "GET",
 		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
