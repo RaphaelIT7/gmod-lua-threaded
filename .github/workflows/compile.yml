@@ -35,10 +35,4 @@ jobs:
       - name: Testing
         run: |
           cd _testing
-          wget https://luarocks.org/releases/luarocks-3.9.2.tar.gz
-          tar zxpf luarocks-3.9.2.tar.gz
-          cd luarocks-3.9.2
-          ./configure && make && sudo make install
-          luarocks install lua-websockets
-          mv ../*.lua .
-          lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_FULLSERVER}} ${{secrets.PTERODACTYL_KEY}}
+          lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_KEY}}

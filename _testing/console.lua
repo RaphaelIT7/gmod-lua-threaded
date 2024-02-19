@@ -1,23 +1,26 @@
-websocket = require("websocket")
-json = require("json") -- File will executed from the luarocks folder, so we need to use ../
+json = require("json")
 require("http")
 
 local args = {...}
 local url = args[1]
 local id = args[2]
-local fullid = args[3]
-local api = args[4]
+local api = args[3]
 
+local header = {
+	["Accept"] = "application/json",
+	["Content-Type"] = "application/json",
+	["Authorization"] = "Bearer " .. api,
+}
 
 JSONHTTP({
 	method = "POST",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
-	headers = {
-		Authorization = "Bearer " .. api
-	},
+	headers = header,
 	success = function(res)
 		if res.errors then
 			print("Restart failed! Reason: " .. res.errors[1].detail)
+		else
+			print("Restarted successfully")
 		end
 	end,
 	body = json.encode({
@@ -28,12 +31,12 @@ JSONHTTP({
 JSONHTTP({
 	method = "POST",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
-	headers = {
-		Authorization = "Bearer " .. api
-	},
+	headers = header,
 	success = function(res)
 		if res.errors then
-			print("Restart failed! Reason: " .. res.errors[1].detail)
+			print("Commands failed! Reason: " .. res.errors[1].detail)
+		else
+			print("Commands sent successfully")
 		end
 	end,
 	body = json.encode({
@@ -41,44 +44,50 @@ JSONHTTP({
 	})
 })
 
-local uri = "wss://" .. url .. ":8080/api/servers/" .. id .. "/ws"
-
-local client = websocket.client.sync()
-local ok, err = client:connect(uri)
-if not ok then
-    print("Failed to connect:", err)
-    return
-end
-
-local bytes_sent, err = client:send('{"event":"auth","args":["' .. api .. '"]}')
-if not bytes_sent then
-    print("Failed to send authentication message:", err)
-    client:close()
-    return
-end
-
-local run = true
-local handles = {
-	["console output"] = function(args)
-
+HTTP({
+	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/delete",
+	headers = header,
+	success = function(res)
+		if res.errors then
+			print("debug.log failed! Reason: " .. res.errors[1].detail)
+		else
+			print("Deleted debug.log")
+		end
 	end,
-	["status"] = function(args)
-		run = false
-	end,
-}
+	body = json.encode({
+		root = "/",
+		files = {
+			"debug.log"
+		}
+	})
+})
 
-while run do
-    local message, opcode, err = client:receive()
-    if not message then
-        print("Failed to receive message:", err)
-        client:close()
-        break
-    end
-    
-    local tbl = json.decode(message)
-    if handles[tbl.event] then
-    	handles[tbl.event](tbl.args)
-    else
-    	print(tbl.event, tbl.args)
-    end
-end
+print("Waiting for HTTP")
+
+HTTP_WaitForAll()
+
+print("Finished everything")
+local time = os.time() + 20
+while time > os.time() do end
+print("Checking for any crash")
+
+HTTP({
+	method = "GET",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fdebug.log",
+	headers = header,
+	success = function(content)
+		print("Lol")
+	end,
+})
+
+HTTP({
+	method = "GET",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2F",
+	headers = header,
+	success = function(content)
+		
+	end,
+})
+
+HTTP_WaitForAll()
