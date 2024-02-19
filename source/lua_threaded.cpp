@@ -18,6 +18,7 @@ GMOD_MODULE_OPEN()
 		engine_loader, IGet_Sym
 	);*/
 	
+	Msg("1\n");
 	GMOD = new GMOD_Info;
 	/*if (get)
 	{
@@ -38,13 +39,14 @@ GMOD_MODULE_OPEN()
 			GMOD->branch = LUA->GetString(-1);
 		LUA->Pop(2); // Global, BRANCH
 	//}
+	Msg("2\n");
 
 	Symbols_Init();
-
+	Msg("3\n");
 	InitLuaThreaded((ILuaInterface*)LUA);
-
+	Msg("4\n");
 	InitMetaTable((ILuaInterface*)LUA);
-
+	Msg("5\n");
 	InitEnums((ILuaInterface*)LUA);
 
 	//filesystem = InterfacePointers::FileSystem();
