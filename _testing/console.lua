@@ -206,7 +206,7 @@ HTTP({
 			print(" ======================= debug.log =======================")
 			error("Server crashed!")
 		else
-			print("debug.log not found?", json.decode(content).errors[1].detail, content)
+			--print("debug.log not found?", json.decode(content).errors[1].detail)
 		end
 	end,
 })
@@ -222,7 +222,7 @@ HTTP({
 			print(" ======================= error.txt =======================")
 			error("Failed to load Module or an error ocurred!")
 		else
-			print("error.txt not found?", json.decode(content).errors[1].detail, content)
+			--print("error.txt not found?", json.decode(content).errors[1].detail)
 		end
 	end,
 })
@@ -237,7 +237,7 @@ HTTP({
 			print(content)
 			print(" ======================= console.log =======================")
 		else
-			print("console.log not found?", json.decode(content).errors[1].detail, content)
+			--print("console.log not found?", json.decode(content).errors[1].detail)
 		end
 	end,
 })

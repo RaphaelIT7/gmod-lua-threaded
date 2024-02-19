@@ -201,13 +201,17 @@ LUA_FUNCTION(engine_LightStyle)
 void UpdateEngine() // We need to get all of this stuff on the main thread or else it will crash.
 {
 	Msg("1\n");
-	addons = filesystem->Addons()->GetList();
+	if (filesystem->Addons())
+		addons = filesystem->Addons()->GetList();
 	Msg("2\n");
-	gamemodes = filesystem->Gamemodes()->GetList();
+	if (filesystem->Gamemodes())
+		gamemodes = filesystem->Gamemodes()->GetList();
 	Msg("3\n");
-	games = filesystem->Games()->GetList();
+	if (filesystem->Games())
+		games = filesystem->Games()->GetList();
 	Msg("4\n");
-	active_gamemode = filesystem->Gamemodes()->Active();
+	if (filesystem->Gamemodes())
+		active_gamemode = filesystem->Gamemodes()->Active();
 	Msg("5\n");
 }
 
