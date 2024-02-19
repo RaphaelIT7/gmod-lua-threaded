@@ -135,7 +135,7 @@ while not started do
 		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 		headers = header,
 		success = function(content)
-			if content.attributes.current_state ~= "starting" then
+			if content.attributes.current_state == "running" then
 				started = true
 			end
 		end,
