@@ -204,8 +204,8 @@ void UpdateEngine() // We need to get all of this stuff on the main thread or el
 	if (filesystem->Addons())
 		addons = filesystem->Addons()->GetList();
 	Msg("2\n");
-	if (filesystem->Gamemodes())
-		gamemodes = filesystem->Gamemodes()->GetList();
+	filesystem->Gamemodes();
+	//gamemodes = filesystem->Gamemodes()->GetList();
 	Msg("3\n");
 	if (filesystem->Games())
 		games = filesystem->Games()->GetList();
