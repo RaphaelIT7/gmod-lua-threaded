@@ -14,6 +14,42 @@ local header = {
 
 HTTP({
 	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/delete",
+	headers = header,
+	success = function(res)
+		local tbl = res ~= '' and json.decode(res) or {}
+		if tbl.errors then
+			print("debug.log failed! Reason: " .. tbl.errors[1].detail)
+		end
+	end,
+	body = json.encode({
+		root = "/",
+		files = {
+			"debug.log"
+		}
+	})
+})
+
+HTTP({
+	method = "POST",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/delete",
+	headers = header,
+	success = function(res)
+		local tbl = res ~= '' and json.decode(res) or {}
+		if tbl.errors then
+			print("console.log failed! Reason: " .. tbl.errors[1].detail)
+		end
+	end,
+	body = json.encode({
+		root = "/garrysmod/",
+		files = {
+			"console.log"
+		}
+	})
+})
+
+HTTP({
+	method = "POST",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
 	headers = header,
 	success = function(res)
@@ -29,6 +65,24 @@ HTTP({
 	})
 })
 
+print("Waiting for Server to start")
+
+local started = false
+while not started do
+	JSONHTTP({
+		method = "GET",
+		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
+		headers = header,
+		success = function(content)
+			if content.attributes.current_state ~= "starting" then
+				started = true
+			end
+		end,
+	})
+end
+
+print("Server started")
+
 HTTP({
 	method = "POST",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
@@ -37,67 +91,50 @@ HTTP({
 		local tbl = res ~= '' and json.decode(res) or {}
 		if tbl.errors then
 			print("Commands failed! Reason: " .. tbl.errors[1].detail)
-		else
-			print("Commands sent successfully")
 		end
 	end,
 	body = json.encode({
-		command = "lua_run timer.Simple(10, function() RunConsoleCommand([[quit]]) end) require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
+		command = "lua_run timer.Simple(5, function() RunConsoleCommand([[quit]]) end) require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
 	})
 })
 
-HTTP({
-	method = "POST",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/delete",
-	headers = header,
-	success = function(res)
-		local tbl = res ~= '' and json.decode(res) or {}
-		if tbl.errors then
-			print("debug.log failed! Reason: " .. tbl.errors[1].detail)
-		else
-			print("Deleted debug.log")
-		end
-	end,
-	body = json.encode({
-		root = "/",
-		files = {
-			"debug.log"
-		}
-	})
-})
+print("Waiting for Server to stop")
 
-print("Waiting for Server to start")
-
-local i = 0
-local started = false
-while i < 15 do
+local stopped = false
+while not stopped do
 	JSONHTTP({
 		method = "GET",
 		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 		headers = header,
 		success = function(content)
-			print(content.attributes.current_state)
-			i = i + 1
+			if content.attributes.current_state == "offline" then
+				stopped = true
+			end
 		end,
 	})
 end
 
-print("Server started")
+print("Server stopped")
 
 HTTP({
 	method = "GET",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fdebug.log",
 	headers = header,
 	success = function(content)
-		print("Lol", content)
+		if content:sub(1, 10) ~= [[{"errors":]] then
+			print(content)
+			error("Server crashed!")
+		end
 	end,
 })
 
 HTTP({
 	method = "GET",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2F",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fgarrysmod%2Fconsole.log",
 	headers = header,
 	success = function(content)
-		
+		if content:sub(1, 10) ~= [[{"errors":]] then
+			print(content)
+		end
 	end,
 })

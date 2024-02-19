@@ -26,7 +26,6 @@ function HTTP(tbl)
     end
 
     local curlCommand = 'curl -s "' .. url .. '"' .. " -H 'Content-Type: application/json' -H 'Authorization: " .. tbl.headers.Authorization .. "' -H 'Accept: application/json'" .. (body == "" and "" or (" --data-raw '" .. body .. "'")) .. " -X " .. method
-   	print(curlCommand)
    	local handle = io.popen(curlCommand)
    	tbl.success(handle:read("*a"))
 end
