@@ -17,7 +17,7 @@ HTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
 	headers = header,
 	success = function(res)
-		if res != '' and json.decode(res).errors then
+		if res ~= '' and json.decode(res).errors then
 			print("Restart failed! Reason: " .. res.errors[1].detail)
 		else
 			print("Restarted successfully")
@@ -33,7 +33,7 @@ HTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/power",
 	headers = header,
 	success = function(res)
-		if res != '' and json.decode(res).errors then
+		if res ~= '' and json.decode(res).errors then
 			print("Commands failed! Reason: " .. res.errors[1].detail)
 		else
 			print("Commands sent successfully")
@@ -49,7 +49,7 @@ HTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/delete",
 	headers = header,
 	success = function(res)
-		if res != '' and json.decode(res).errors then
+		if res ~= '' and json.decode(res).errors then
 			print("debug.log failed! Reason: " .. res.errors[1].detail)
 		else
 			print("Deleted debug.log")
