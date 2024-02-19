@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'source/**'
+      - '_testing/**'
       - 'premake5.lua'
 
 jobs:
@@ -15,3 +16,33 @@ jobs:
       ARTIFACT_EXPIRE: "1"
       UPLOAD: "pterodactyl"
     secrets: inherit
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Restarting Gmod
+        run: |
+          curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/power" \
+            -H 'Accept: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            -d '{ "signal": "restart" }' 
+
+      - name: Run Commands
+        run: |
+          curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/command" \
+            -H 'Accept: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            -d '{ "command": "lua_run timer.Simple(10, function() RunConsoleCommand([[quit]]) end) require("lua_threaded") iFace = LuaThreaded.CreateInterface() iFace:InitGmod()" }' 
+
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.1.5"
+
+      - name: Listening
+        run: |
+          cd _testing
+          lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_FULLSERVER}} ${{secrets.PTERODACTYL_KEY}}
