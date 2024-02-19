@@ -94,7 +94,7 @@ HTTP({
 		end
 	end,
 	body = json.encode({
-		command = "lua_run timer.Simple(5, function() RunConsoleCommand([[quit]]) end) require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
+		command = "lua_run timer.Simple(5, function() engine.CloseServer() end) require([[lua_threaded]]) iFace = LuaThreaded.CreateInterface() iFace:InitGmod()"
 	})
 })
 
