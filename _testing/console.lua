@@ -66,38 +66,48 @@ HTTP({
 	})
 })
 
-HTTP({
-	method = "POST",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
+
+JSONHTTP({
+	method = "GET",
+	url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 	headers = header,
-	success = function(res)
-		local tbl = res ~= '' and json.decode(res) or {}
-		if tbl.errors then
-			print("Commands failed! Reason: " .. tbl.errors[1].detail)
+	success = function(content)
+		if content.attributes.current_state == "running" then
+			HTTP({
+				method = "POST",
+				url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
+				headers = header,
+				success = function(res)
+					local tbl = res ~= '' and json.decode(res) or {}
+					if tbl.errors then
+						print("Commands failed! Reason: " .. tbl.errors[1].detail)
+					end
+				end,
+				body = json.encode({
+					command = "quit"
+				})
+			})
+
+			print("Waiting for Server to stop")
+
+			local stopped = false
+			while not stopped do
+				JSONHTTP({
+					method = "GET",
+					url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
+					headers = header,
+					success = function(content)
+						if content.attributes.current_state == "offline" then
+							stopped = true
+						end
+					end,
+				})
+			end
+
+			print("Server stopped")
 		end
 	end,
-	body = json.encode({
-		command = "quit"
-	})
 })
-
-print("Waiting for Server to stop")
-
-local stopped = false
-while not stopped do
-	JSONHTTP({
-		method = "GET",
-		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
-		headers = header,
-		success = function(content)
-			if content.attributes.current_state == "offline" then
-				stopped = true
-			end
-		end,
-	})
-end
-
-print("Server stopped")
 
 HTTP({
 	method = "POST",
