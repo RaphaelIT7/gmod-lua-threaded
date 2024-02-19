@@ -200,7 +200,7 @@ HTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fdebug.log",
 	headers = header,
 	success = function(content)
-		if content:sub(1, 10) ~= [[{"errors":]] then
+		if not content:find([[{"errors":]]) then
 			print(" ======================= debug.log =======================")
 			print(content)
 			print(" ======================= debug.log =======================")
@@ -214,7 +214,7 @@ HTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fgarrysmod%2Fdata%2Ferror.txt",
 	headers = header,
 	success = function(content)
-		if content:sub(1, 10) ~= [[{"errors":]] then
+		if not content:find([[{"errors":]]) then
 			print(" ======================= error.txt =======================")
 			print(content)
 			print(" ======================= error.txt =======================")
@@ -228,7 +228,7 @@ HTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fgarrysmod%2Fconsole.log",
 	headers = header,
 	success = function(content)
-		if content:sub(1, 10) ~= [[{"errors":]] then
+		if not content:find([[{"errors":]]) then
 			print(" ======================= console.log =======================")
 			print(content)
 			print(" ======================= console.log =======================")
