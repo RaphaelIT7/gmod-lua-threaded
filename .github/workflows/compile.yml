@@ -14,6 +14,4 @@ jobs:
       BUILD_WINDOWS: "false"
       ARTIFACT_EXPIRE: "1"
       UPLOAD: "pterodactyl"
-      PTERODACTYL_KEY: ${{secrets.PTERODACTYL_KEY}}
-      PTERODACTYL_URL: ${{secrets.PTERODACTYL_URL}}
-      PTERODACTYL_SERVER: ${{secrets.PTERODACTYL_SERVER}}
+    secrets: inherit
