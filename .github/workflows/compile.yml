@@ -35,4 +35,5 @@ jobs:
       - name: Listening
         run: |
           cd _testing
+          luarocks install lua-websockets
           lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_FULLSERVER}} ${{secrets.PTERODACTYL_KEY}}
