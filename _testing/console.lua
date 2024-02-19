@@ -195,9 +195,6 @@ end
 
 print("Server stopped")
 
-local time = os.time() + 5
-while time > os.time() do end
-
 HTTP({
 	method = "GET",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fdebug.log",
