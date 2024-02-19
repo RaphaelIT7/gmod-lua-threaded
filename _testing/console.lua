@@ -98,7 +98,7 @@ HTTP({
 	})
 })
 
-local time = os.time() + 3
+local time = os.time() + 5
 while time > os.time() do end
 
 HTTP({
