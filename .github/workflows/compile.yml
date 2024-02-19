@@ -39,6 +39,6 @@ jobs:
           tar zxpf luarocks-3.9.2.tar.gz
           cd luarocks-3.9.2
           ./configure && make && sudo make install
-          luarocks install lua-websockets
           cd ../
+          luarocks install lua-websockets
           lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_FULLSERVER}} ${{secrets.PTERODACTYL_KEY}}
