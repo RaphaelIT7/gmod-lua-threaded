@@ -1,6 +1,6 @@
 websocket = require("websocket")
-json = require("../json") -- File will executed from the luarocks folder, so we need to use ../
-require("../http")
+json = require("json") -- File will executed from the luarocks folder, so we need to use ../
+require("http")
 
 local args = {...}
 local url = args[1]

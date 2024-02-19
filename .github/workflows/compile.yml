@@ -40,4 +40,5 @@ jobs:
           cd luarocks-3.9.2
           ./configure && make && sudo make install
           luarocks install lua-websockets
-          lua ../console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_FULLSERVER}} ${{secrets.PTERODACTYL_KEY}}
+          mv ../*.lua /
+          lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_FULLSERVER}} ${{secrets.PTERODACTYL_KEY}}
