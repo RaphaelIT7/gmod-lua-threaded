@@ -198,6 +198,25 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
+namespace GameDepot2
+{
+
+class System2
+{
+public:
+	virtual void Refresh( ) = 0;
+	virtual void Clear( ) = 0;
+	virtual void Save( ) = 0;
+	virtual void SetMount( uint32_t, bool ) = 0;
+	virtual void MarkGameAsMounted( const std::string ) = 0;
+	virtual const std::list<IGameDepotSystem::Information> &GetList( ) const = 0;
+	virtual void MountAsMapFix( uint32_t ) = 0;
+	virtual void MountCurrentGame( const std::string & ) = 0;
+};
+
+}
+
+
 void UpdateEngine() // We need to get all of this stuff on the main thread or else it will crash.
 {
 	Msg("1\n");
@@ -208,7 +227,7 @@ void UpdateEngine() // We need to get all of this stuff on the main thread or el
 	//gamemodes = filesystem->Gamemodes()->GetList();
 	Msg("3\n");
 	if (filesystem->Games())
-		games = filesystem->Games()->GetList();
+		games = ((GameDepot2::System2*)filesystem->Games())->GetList();
 	Msg("4\n");
 	//if (filesystem->Gamemodes())
 		//active_gamemode = filesystem->Gamemodes()->Active();
