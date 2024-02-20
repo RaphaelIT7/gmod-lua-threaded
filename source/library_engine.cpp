@@ -227,7 +227,7 @@ void UpdateEngine() // We need to get all of this stuff on the main thread or el
 	//gamemodes = filesystem->Gamemodes()->GetList();
 	Msg("3\n");
 	if (filesystem->Games())
-		games = dynamic_cast<GameDepot2::System2*>(filesystem->Games())->GetList();
+		games = ((GameDepot2::System2*)filesystem->Games())->GetList();
 	Msg("4\n");
 	//if (filesystem->Gamemodes())
 		//active_gamemode = filesystem->Gamemodes()->Active();
