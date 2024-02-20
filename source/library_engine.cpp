@@ -204,14 +204,14 @@ void UpdateEngine() // We need to get all of this stuff on the main thread or el
 	if (filesystem->Addons())
 		addons = filesystem->Addons()->GetList();
 	Msg("2\n");
-	filesystem->Gamemodes();
+	//filesystem->Gamemodes();
 	//gamemodes = filesystem->Gamemodes()->GetList();
 	Msg("3\n");
-	if (filesystem->Games())
-		games = filesystem->Games()->GetList();
+	//if (filesystem->Games())
+		//games = filesystem->Games()->GetList();
 	Msg("4\n");
-	if (filesystem->Gamemodes())
-		active_gamemode = filesystem->Gamemodes()->Active();
+	//if (filesystem->Gamemodes())
+		//active_gamemode = filesystem->Gamemodes()->Active();
 	Msg("5\n");
 }
 
