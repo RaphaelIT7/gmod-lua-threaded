@@ -198,40 +198,12 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
-namespace GameDepot2
+void UpdateEngine() // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
 {
-
-class System2
-{
-public:
-	virtual void Refresh( ) = 0;
-	virtual void Clear( ) = 0;
-	virtual void Save( ) = 0;
-	virtual void SetMount( uint, bool ) = 0;
-	virtual void MarkGameAsMounted( std::string ) = 0;
-	virtual const std::list<IGameDepotSystem::Information> &GetList( ) const = 0;
-	virtual void MountAsMapFix( uint ) = 0;
-	virtual void MountCurrentGame( const std::string & ) = 0;
-};
-
-}
-
-
-void UpdateEngine() // We need to get all of this stuff on the main thread or else it will crash.
-{
-	Msg("1\n");
-	if (filesystem->Addons())
-		addons = filesystem->Addons()->GetList();
-	Msg("2\n");
-	//filesystem->Gamemodes();
+	addons = filesystem->Addons()->GetList();
 	//gamemodes = filesystem->Gamemodes()->GetList();
-	Msg("3\n");
-	if (filesystem->Games())
-		games = ((GameDepot2::System2*)filesystem->Games())->GetList();
-	Msg("4\n");
-	//if (filesystem->Gamemodes())
-		//active_gamemode = filesystem->Gamemodes()->Active();
-	Msg("5\n");
+	//games = filesystem->Games()->GetList();
+	//active_gamemode = filesystem->Gamemodes()->Active();
 }
 
 void InitEngine(ILuaInterface* LUA)
