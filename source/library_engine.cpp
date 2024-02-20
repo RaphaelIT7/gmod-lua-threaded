@@ -207,8 +207,8 @@ void UpdateEngine() // We need to get all of this stuff on the main thread or el
 	//filesystem->Gamemodes();
 	//gamemodes = filesystem->Gamemodes()->GetList();
 	Msg("3\n");
-	//if (filesystem->Games())
-		//games = filesystem->Games()->GetList();
+	if (filesystem->Games())
+		games = filesystem->Games()->GetList();
 	Msg("4\n");
 	//if (filesystem->Gamemodes())
 		//active_gamemode = filesystem->Gamemodes()->Active();
