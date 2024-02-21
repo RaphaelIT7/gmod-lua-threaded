@@ -159,8 +159,12 @@ HTTP({
 	})
 })
 
-local time = os.time() + 10
-while time > os.time() do end
+local function Sleep(time)
+	local time = os.time() + time
+	while time > os.time() do end
+end
+
+Sleep(10)
 
 HTTP({
 	method = "POST",
@@ -204,6 +208,7 @@ HTTP({
 			print(" ======================= debug.log =======================")
 			print(content)
 			print(" ======================= debug.log =======================")
+			Sleep(1)
 			error("Server crashed!")
 		else
 			--print("debug.log not found?", json.decode(content).errors[1].detail)
@@ -220,6 +225,7 @@ HTTP({
 			print(" ======================= error.txt =======================")
 			print(content)
 			print(" ======================= error.txt =======================")
+			Sleep(1)
 			error("Failed to load Module or an error ocurred!")
 		else
 			--print("error.txt not found?", json.decode(content).errors[1].detail)
