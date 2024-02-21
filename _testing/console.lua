@@ -257,7 +257,7 @@ HTTP({
 	end,
 })
 
-if Status != STATUS.WORKS then
+if Status ~= STATUS.WORKS then
 	Sleep(1)
 	error("Something broke!")
 end
