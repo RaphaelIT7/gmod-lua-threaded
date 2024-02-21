@@ -1,4 +1,5 @@
 #include "lua_threaded.h"
+#include <GarrysMod/Lua/LuaObject.h>
 
 static int32_t metatype = GarrysMod::Lua::Type::Vector;
 static const char metaname[] = "Vector";
@@ -17,6 +18,10 @@ void Push_Vector(ILuaBase* LUA, float x, float y, float z)
 
 	LUA->CreateMetaTableType(metaname, metatype);
 	LUA->SetMetaTable(-2);
+
+	/*ILuaInterface* IFace = (ILuaInterface*)LUA;
+	ILuaObject* obj = IFace->CreateObject();
+	obj->SetMetaTable(*/
 }
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
@@ -716,5 +721,21 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector_Negate, "Negate");
 		Add_Func(LUA, Vector_GetNegated, "GetNegated");
 
+		LUA->PushString("ATestString");
+		LUA->SetField(-2, "__test");
+
 	LUA->Pop(1);
+
+	ILuaObject* obj = LUA->GetMetaTableObject(metaname, metatype);
+	if (obj) {
+		Msg("Got Metatable\n");
+		if (obj->isTable()) {
+			Msg("It's a Table :D\n");
+			Msg("__test = %s\n", obj->GetMemberStr("__test", "Something went wrong"));
+		} else {
+			Msg("It's %i?\n", obj->GetType());
+		}
+	} else {
+		Msg("Failed to get Metatable!\n");
+	}
 }
