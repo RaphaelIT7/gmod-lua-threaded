@@ -678,7 +678,7 @@ void InitVectorClass(ILuaInterface* LUA)
 
 
 
-	/*LUA->CreateMetaTableType(metaname, metatype);
+	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Vector__gc, "__gc"); // Gmod doesn't have __gc
 		Add_Func(LUA, Vector__index, "__index");
 		Add_Func(LUA, Vector__newindex, "__newindex");
@@ -723,36 +723,5 @@ void InitVectorClass(ILuaInterface* LUA)
 		Add_Func(LUA, Vector_Negate, "Negate");
 		Add_Func(LUA, Vector_GetNegated, "GetNegated");
 
-		LUA->PushString("ATestString");
-		LUA->SetField(-2, "__test");
-
-	LUA->Pop(1);*/
-
-	Msg("1\n");
-	LUA->PushSpecial(SPECIAL_ENV);
-	Msg("2\n");
-		ILuaObject* meta = LUA->CreateObject();
-		Msg("3\n");
-		meta->SetMember("__test", "ATestString");
-		Msg("4\n");
-
-		LUA->PushLuaObject(meta);
-		Msg("5\n");
-		LUA->SetField(-2, metaname);
-		Msg("6\n");
-	LUA->Pop();
-	Msg("7\n");
-
-	ILuaObject* obj = LUA->GetMetaTableObject(metaname, metatype);
-	if (obj) {
-		Msg("Got Metatable\n");
-		if (obj->isTable()) {
-			Msg("It's a Table :D\n");
-			Msg("__test = %s\n", obj->GetMemberStr("__test", "Something went wrong"));
-		} else {
-			Msg("It's %i?\n", obj->GetType());
-		}
-	} else {
-		Msg("Failed to get Metatable!\n");
-	}
+	LUA->Pop(1);
 }

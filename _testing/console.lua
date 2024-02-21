@@ -258,6 +258,7 @@ HTTP({
 })
 
 if Status ~= STATUS.WORKS then
-	Sleep(1)
+	Sleep(3)
+	print("Error")
 	error("Something broke!")
 end
