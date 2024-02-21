@@ -733,7 +733,7 @@ void InitVectorClass(ILuaInterface* LUA)
 		meta->SetMember("__test", "ATestString");
 
 		LUA->PushLuaObject(meta);
-		LUA->SetField(-1, metaname);
+		LUA->SetField(-2, metaname);
 	LUA->Pop();
 
 
