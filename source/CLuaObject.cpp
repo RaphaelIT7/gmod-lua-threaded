@@ -47,6 +47,10 @@ void CLuaObject::Push()
 	if (m_reference != -1)
 	{
 		LUA->ReferencePush(m_reference);
+		if (m_metatable != -1) {
+			LUA->ReferencePush(m_metatable);
+			LUA->SetMetaTable(-2);
+		}
 	} else {
 		LUA->PushNil();
 	}
