@@ -676,7 +676,9 @@ void InitVectorClass(ILuaInterface* LUA)
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
-	LUA->CreateMetaTableType(metaname, metatype);
+
+
+	/*LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Vector__gc, "__gc"); // Gmod doesn't have __gc
 		Add_Func(LUA, Vector__index, "__index");
 		Add_Func(LUA, Vector__newindex, "__newindex");
@@ -724,7 +726,16 @@ void InitVectorClass(ILuaInterface* LUA)
 		LUA->PushString("ATestString");
 		LUA->SetField(-2, "__test");
 
-	LUA->Pop(1);
+	LUA->Pop(1);*/
+
+	LUA->PushSpecial(SPECIAL_ENV);
+		ILuaObject* meta = LUA->CreateObject();
+		meta->SetMember("__test", "ATestString");
+
+		LUA->PushLuaObject(meta);
+		LUA->SetField(-1, metaname);
+	LUA->Pop();
+
 
 	ILuaObject* obj = LUA->GetMetaTableObject(metaname, metatype);
 	if (obj) {
