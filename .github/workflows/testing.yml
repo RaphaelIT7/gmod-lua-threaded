@@ -3,9 +3,6 @@ name: Build Testing
 on:
   workflow_dispatch:
   workflow_call:
-  push:
-    paths:
-      - '_testing/**'
 
 jobs:
   testing:
