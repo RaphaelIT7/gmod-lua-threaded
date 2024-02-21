@@ -20,5 +20,5 @@ jobs:
     secrets: inherit
 
   test:
-    uses: RaphaelIT7/gmod-lua-threaded/.github/workflows/testing.yml@workflow
+    uses: RaphaelIT7/gmod-lua-threaded/.github/workflows/testing.yml
     secrets: inherit
