@@ -728,14 +728,20 @@ void InitVectorClass(ILuaInterface* LUA)
 
 	LUA->Pop(1);*/
 
+	Msg("1\n");
 	LUA->PushSpecial(SPECIAL_ENV);
+	Msg("2\n");
 		ILuaObject* meta = LUA->CreateObject();
+		Msg("3\n");
 		meta->SetMember("__test", "ATestString");
+		Msg("4\n");
 
 		LUA->PushLuaObject(meta);
+		Msg("5\n");
 		LUA->SetField(-2, metaname);
+		Msg("6\n");
 	LUA->Pop();
-
+	Msg("7\n");
 
 	ILuaObject* obj = LUA->GetMetaTableObject(metaname, metatype);
 	if (obj) {

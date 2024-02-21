@@ -216,7 +216,7 @@ HTTP({
 			print(content)
 			print(" ======================= debug.log =======================")
 			Status = STATUS.CRASH
-			//error("Server crashed!")
+			--error("Server crashed!")
 		else
 			--print("debug.log not found?", json.decode(content).errors[1].detail)
 		end
@@ -234,7 +234,7 @@ if STATUS.WORKS then
 				print(content)
 				print(" ======================= error.txt =======================")
 				Status = STATUS.ERROR
-				//error("Failed to load Module or an error ocurred!")
+				--error("Failed to load Module or an error ocurred!")
 			else
 				--print("error.txt not found?", json.decode(content).errors[1].detail)
 			end
