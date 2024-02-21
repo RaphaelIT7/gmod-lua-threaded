@@ -7,6 +7,7 @@ local ret, err = pcall(function()
 end)
 
 if err then
+	print("[ERROR] " .. err)
 	file.Write("error.txt", err)
 end
 

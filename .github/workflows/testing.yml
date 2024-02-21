@@ -1,0 +1,28 @@
+name: Build Project
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    paths:
+      - '_testing/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+        with:
+          sparse-checkout: "_testing/"
+
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.1.5"
+
+      - name: Testing
+        run: |
+          cd _testing
+          lua console.lua ${{secrets.PTERODACTYL_URL}} ${{secrets.PTERODACTYL_SERVER}} ${{secrets.PTERODACTYL_KEY}}

@@ -66,19 +66,6 @@ HTTP({
 	})
 })
 
-HTTP({
-	method = "POST",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/write?file=%2Fgarrysmod%2Flua%2Fgmod_testing.lua",
-	headers = header,
-	success = function(res)
-		local tbl = res ~= '' and json.decode(res) or {}
-		if tbl.errors then
-			print("debug.log failed! Reason: " .. tbl.errors[1].detail)
-		end
-	end,
-	body = "@_testing/gmod_testing.lua"
-})
-
 JSONHTTP({
 	method = "GET",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",

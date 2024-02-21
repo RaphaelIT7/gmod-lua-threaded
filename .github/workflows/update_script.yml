@@ -1,0 +1,31 @@
+name: Build Project
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '_testing/gmod_testing.lua'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout
+        with:
+          sparse-checkout: "_testing/"
+
+      - name: Prepare
+        run: |
+          apt update
+          apt install -y curl
+
+      - name: Update gmod_testing.lua
+        run: |
+          cd _testing
+          curl "https://${{secrets.PTERODACTYL_URL}}/api/client/servers/${{secrets.PTERODACTYL_SERVER}}/files/write?file=%2Fgarrysmod%2Flua%2Fgmod_testing.lua" \
+            -H 'Accept: application/json' \
+            -H 'Authorization: Bearer ${{secrets.PTERODACTYL_KEY}}' \
+            -X POST \
+            --data-binary '@gmod_testing.lua'
