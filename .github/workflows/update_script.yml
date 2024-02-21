@@ -1,4 +1,4 @@
-name: Build Project
+name: Testing Script Update
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - '_testing/gmod_testing.lua'
 
 jobs:
-  test:
+  update:
     runs-on: ubuntu-latest
     container: debian:bullseye
     steps:
