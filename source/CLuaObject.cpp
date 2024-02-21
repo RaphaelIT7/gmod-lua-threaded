@@ -16,6 +16,9 @@ void CLuaObject::UnReference()
 {
 	LUA->ReferenceFree(m_reference);
 	m_reference = -1;
+	// Should we also reset the Metatable?
+	// LUA->ReferenceFree(m_metatable)
+	// m_metatable = -1;
 }
 
 void CLuaObject::SetReference(int reference)
