@@ -2,6 +2,7 @@
 
 #include "lua_ILuaInterface.h"
 #include "lua_LuaThread.h"
+#include "CLuaObject.h"
 #include "lua_Enums.h"
 #include "IGet.h"
 

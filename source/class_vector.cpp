@@ -13,15 +13,25 @@ void Push_Vector(ILuaBase* LUA, float x, float y, float z)
 	udata->y = y;
 	udata->z = z;
 
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	/*ILuaInterface* ILUA = (ILuaInterface*)LUA;
 	ILUA->SetType(Type::Vector);
 
 	LUA->CreateMetaTableType(metaname, metatype);
-	LUA->SetMetaTable(-2);
+	LUA->SetMetaTable(-2);*/
 
-	/*ILuaInterface* IFace = (ILuaInterface*)LUA;
-	ILuaObject* obj = IFace->CreateObject();
-	obj->SetMetaTable(*/
+	ILuaInterface* IFace = (ILuaInterface*)LUA;
+	CLuaObject* obj = new CLuaObject();
+	obj->Init(IFace);
+
+	CLuaObject* meta = new CLuaObject();
+	meta->Init(IFace);
+	LUA->CreateMetaTableType(metaname, metatype);
+	meta->SetFromStack(-1);
+
+	obj->SetMetaTable((ILuaObject*)meta);
+	obj->SetFromStack(-1);
+
+	obj->Push();
 }
 
 void Push_Vector(ILuaBase* LUA, Vector vec)
