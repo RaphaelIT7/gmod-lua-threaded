@@ -199,6 +199,13 @@ end
 
 print("Server stopped")
 
+local STATUS = {
+	CRASH = 1,
+	ERROR = 2,
+	WORKS = 3
+}
+
+local Status = STATUS.WORKS
 HTTP({
 	method = "GET",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fdebug.log",
@@ -208,30 +215,32 @@ HTTP({
 			print(" ======================= debug.log =======================")
 			print(content)
 			print(" ======================= debug.log =======================")
-			Sleep(1)
-			error("Server crashed!")
+			Status = STATUS.CRASH
+			//error("Server crashed!")
 		else
 			--print("debug.log not found?", json.decode(content).errors[1].detail)
 		end
 	end,
 })
 
-HTTP({
-	method = "GET",
-	url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fgarrysmod%2Fdata%2Ferror.txt",
-	headers = header,
-	success = function(content)
-		if not content:find([[{"errors":]]) then
-			print(" ======================= error.txt =======================")
-			print(content)
-			print(" ======================= error.txt =======================")
-			Sleep(1)
-			error("Failed to load Module or an error ocurred!")
-		else
-			--print("error.txt not found?", json.decode(content).errors[1].detail)
-		end
-	end,
-})
+if STATUS.WORKS then
+	HTTP({
+		method = "GET",
+		url = "https://" .. url .. "/api/client/servers/" .. id .. "/files/contents?file=%2Fgarrysmod%2Fdata%2Ferror.txt",
+		headers = header,
+		success = function(content)
+			if not content:find([[{"errors":]]) then
+				print(" ======================= error.txt =======================")
+				print(content)
+				print(" ======================= error.txt =======================")
+				Status = STATUS.ERROR
+				//error("Failed to load Module or an error ocurred!")
+			else
+				--print("error.txt not found?", json.decode(content).errors[1].detail)
+			end
+		end,
+	})
+end
 
 HTTP({
 	method = "GET",
@@ -247,3 +256,8 @@ HTTP({
 		end
 	end,
 })
+
+if Status != STATUS.WORKS then
+	Sleep(1)
+	error("Something broke!")
+end
