@@ -15,8 +15,6 @@ jobs:
       BUILD_WINDOWS: "false"
       ARTIFACT_EXPIRE: "1"
       UPLOAD: "pterodactyl"
-      GARRYSMOD_COOMON_BRANCH: "patch-2"
-      GARRYSMOD_COOMON: "RaphaelIT7/garrysmod_common"
     secrets: inherit
 
   test:
