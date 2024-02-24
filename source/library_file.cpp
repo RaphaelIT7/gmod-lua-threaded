@@ -134,7 +134,10 @@ LUA_FUNCTION(file_Open) // ToDo: Add the File class
 {
 	const char* filename = LUA->CheckString(1);
 	const char* fileMode = LUA->CheckString(2);
-	const char* path = LUA->CheckString(3);
+	const char* path = LUA->GetString(3);
+
+	if (path == NULL)
+		path = "GAME";
 
 	Push_File(LUA, filename, fileMode, path);
 
