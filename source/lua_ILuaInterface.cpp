@@ -252,6 +252,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitTimer(LUA);
 	InitHammer(LUA);
 	InitGmodLib(LUA);
+	InitFileLib(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
