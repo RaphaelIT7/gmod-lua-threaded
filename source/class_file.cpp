@@ -92,10 +92,8 @@ LUA_FUNCTION_STATIC(File__gc)
 
 LUA_FUNCTION_STATIC(File__tostring)
 {
-	LUA_Vector* vec = Vector_Get(LUA, 1);
-	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%f %f %f", vec->x, vec->y, vec->z);
-	LUA->PushString(szBuf);
+	LUA_File* vec = File_Get(LUA, 1);
+	LUA->PushString("File");
 	return 1;
 }
 
