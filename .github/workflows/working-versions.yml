@@ -3,7 +3,7 @@ name: Last working & tested version
 on:
   workflow_dispatch:
   push:
-    path:
+    paths:
       - '_testing/trigger_shit.txt'
 
 jobs:
