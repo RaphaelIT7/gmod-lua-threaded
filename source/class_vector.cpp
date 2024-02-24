@@ -17,7 +17,7 @@ void Push_Vector(ILuaBase* LUA, float x, float y, float z)
 	ILUA->SetType(Type::Vector);
 
 	LUA->CreateMetaTableType(metaname, metatype);
-	LUA->SetMetaTable(-2);*
+	LUA->SetMetaTable(-2);
 
 	/*ILuaInterface* IFace = (ILuaInterface*)LUA;
 	CLuaObject* obj = new CLuaObject();
