@@ -127,7 +127,10 @@ LUA_FUNCTION(File_Flush)
 LUA_FUNCTION(File_Read)
 {
 	LUA_File* file = File_Get(LUA, 1);
-	int length = LUA->CheckNumber(2);
+	int length = LUA->GetNumber(2);
+
+	if (length == 0)
+		length = gpFileSystem->Size(file->handle);
 
 	char* buffer = new char[length];
 	gpFileSystem->Read(buffer, length, file->handle);
