@@ -1,4 +1,4 @@
-name: Testing Script Update
+name: Update Testing Script
 
 on:
   workflow_dispatch:
