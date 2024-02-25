@@ -6,7 +6,7 @@ local ret, err = pcall(function()
 	print(Vector(1, 1, 1), type(Vector(1, 1, 1)), isvector(Vector(1, 1, 1)))
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
-	print("File Exists (garrysmod.ver): " .. file.Exists("garrysmod.ver", "MOD"))
+	print("File Exists (garrysmod.ver) ", file.Exists("garrysmod.ver", "MOD"))
 	local gm = file.Open("garrysmod.ver", "MOD")
 	print("File:__tostring ", gm)
 	print("File:Read ", gm:Read())
