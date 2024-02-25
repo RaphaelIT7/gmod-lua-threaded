@@ -9,8 +9,6 @@ void Push_File(ILuaBase* LUA, const char* filename, const char* fileMode, const 
 {
 	LUA_File* udata = (LUA_File*)LUA->NewUserdata(sizeof(LUA_File));
 	udata->filename = filename;
-	udata->filemode = fileMode;
-	udata->path = path;
 	udata->handle = gpFileSystem->Open(filename, fileMode, path);
 
 	ILuaInterface* ILUA = (ILuaInterface*)LUA;
@@ -92,8 +90,10 @@ LUA_FUNCTION_STATIC(File__gc)
 
 LUA_FUNCTION_STATIC(File__tostring)
 {
-	LUA_File* vec = File_Get(LUA, 1);
-	LUA->PushString("File");
+	LUA_File* file = File_Get(LUA, 1);
+	char szBuf[270] = {};
+	V_snprintf(szBuf, sizeof(szBuf),"File [%s]", file->filename);
+	LUA->PushString(szBuf);
 	return 1;
 }
 

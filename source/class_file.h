@@ -5,8 +5,6 @@ using namespace GarrysMod::Lua;
 struct LUA_File
 {
 	const char* filename;
-	const char* filemode;
-	const char* path;
 	FileHandle_t handle;
 };
 
