@@ -1,6 +1,8 @@
 print("Testing Started")
 
 local code = [[
+
+local ret, err = pcall(function()
 	print(Vector(1, 1, 1), type(Vector(1, 1, 1)), isvector(Vector(1, 1, 1)))
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
@@ -8,6 +10,12 @@ local code = [[
 	print(gm)
 	print(gm:Read(gm:Size()))
 	gm:Close()
+end)
+
+if err then
+	print("[ERROR] " .. err)
+	file.Write("error.txt", err)
+end
 ]]
 
 local ret, err = pcall(function()
