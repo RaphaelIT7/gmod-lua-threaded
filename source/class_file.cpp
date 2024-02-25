@@ -52,7 +52,7 @@ LUA_File* File_GetUserdata(ILuaBase *LUA, int index)
 	return (LUA_File*)LUA->GetUserdata(index);
 }
 
-LUA_File* File_Get(ILuaBase* LUA, int index)
+LUA_File* File_Get(ILuaBase* LUA, int index, bool error)
 {
 	File_CheckType(LUA, index);
 
@@ -60,7 +60,7 @@ LUA_File* File_Get(ILuaBase* LUA, int index)
 	if(file == nullptr)
 		LUA->ArgError(index, invalid_error);
 
-	if (!file->handle)
+	if (!file->handle && error)
 		LUA->ThrowError("Tried to use a NULL File!");
 
 	return file;
@@ -90,9 +90,9 @@ LUA_FUNCTION_STATIC(File__gc)
 
 LUA_FUNCTION_STATIC(File__tostring)
 {
-	LUA_File* file = File_Get(LUA, 1);
+	LUA_File* file = File_Get(LUA, 1, false);
 	char szBuf[270] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"File [%s]", file->filename);
+	V_snprintf(szBuf, sizeof(szBuf),"File [%s]", file->handle ? file->filename : "NULL");
 	LUA->PushString(szBuf);
 	return 1;
 }
