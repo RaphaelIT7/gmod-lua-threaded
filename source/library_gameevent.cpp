@@ -1,12 +1,17 @@
 #include "lua_threaded.h"
+#ifdef ARCHITECTURE_X86
+#include "KeyValues.h"
+#else
+#include "keyvalues.h"
+#endif
 
 IGameEventManager2* eventmanager = nullptr;
 
-ILuaValue* GetBool(IGameEvent* event, const char* pKey)
+ILuaValue* GetFloat(IGameEvent* event, const char* pKey)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::Bool;
-	val->number = event->GetBool(pKey);
+	val->type = Type::Number;
+	val->number = event->GetFloat(pKey);
 
 	return val;
 }
@@ -29,13 +34,41 @@ ILuaValue* GetString(IGameEvent* event, const char* pKey)
 	return val;
 }
 
+class CGameEventDescriptor;
+class CGameEvent : public IGameEvent
+{
+public:
+
+	CGameEvent( CGameEventDescriptor *descriptor );
+	virtual ~CGameEvent();
+
+	const char *GetName() const;
+	bool  IsEmpty(const char *keyName = NULL);
+	bool  IsLocal() const;
+	bool  IsReliable() const;
+
+	bool  GetBool( const char *keyName = NULL, bool defaultValue = false );
+	int   GetInt( const char *keyName = NULL, int defaultValue = 0 );
+	float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f );
+	const char *GetString( const char *keyName = NULL, const char *defaultValue = "" );
+
+	void SetBool( const char *keyName, bool value );
+	void SetInt( const char *keyName, int value );
+	void SetFloat( const char *keyName, float value );
+	void SetString( const char *keyName, const char *value );
+	
+	CGameEventDescriptor	*m_pDescriptor;
+	KeyValues				*m_pDataKeys;
+};
+
 class GameEventListener : public IGameEventListener2
 {
 public:
 	GameEventListener() = default;
 
-	void FireGameEvent(IGameEvent* event)
+	void FireGameEvent(IGameEvent* ev)
 	{
+		CGameEvent* event = (CGameEvent*)ev;
 		ILuaAction* act = new ILuaAction;
 		act->type = LuaAction::ACT_Gameevent;
 		act->data = event->GetName();
@@ -43,139 +76,28 @@ public:
 		ILuaValue* val = new ILuaValue;
 		std::unordered_map<std::string, ILuaValue*> tbl;
 
-		if (strcmp(act->data, "OnRequestFullUpdate") == 0)
+		KeyValues* subkey = event->m_pDataKeys->GetFirstSubKey();
+		while (subkey)
 		{
-			tbl["networkid"] = GetString(event, "networkid");
-			tbl["name"] = GetString(event, "name");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["index"] = GetInt(event, "index");
-		}
-		else if (strcmp(act->data, "achievement_earned") == 0)
-		{
-			tbl["achievement"] = GetInt(event, "achievement");
-			tbl["player"] = GetInt(event, "player");
-		}
-		else if (strcmp(act->data, "achievement_event") == 0)
-		{
-			tbl["achievement_name"] = GetString(event, "achievement_name");
-			tbl["cur_val"] = GetInt(event, "cur_val");
-			tbl["max_val"] = GetInt(event, "max_val");
-		}
-		else if (strcmp(act->data, "break_breakable") == 0)
-		{
-			tbl["entindex"] = GetString(event, "entindex");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["material"] = GetInt(event, "material");
-		}
-		else if (strcmp(act->data, "break_prop") == 0)
-		{
-			tbl["entindex"] = GetString(event, "entindex");
-			tbl["userid"] = GetInt(event, "userid");
-		}
-		else if (strcmp(act->data, "client_disconnect") == 0)
-		{
-			tbl["message"] = GetString(event, "message");
-		}
-		else if (strcmp(act->data, "entity_killed") == 0)
-		{
-			tbl["entindex_inflictor"] = GetInt(event, "entindex_inflictor");
-			tbl["entindex_attacker"] = GetInt(event, "entindex_attacker");
-			tbl["damagebits"] = GetInt(event, "damagebits");
-			tbl["entindex_killed"] = GetInt(event, "entindex_killed");
-		}
-		else if (strcmp(act->data, "flare_ignite_npc") == 0)
-		{
-			tbl["entindex"] = GetString(event, "entindex");
-		}
-		else if (strcmp(act->data, "host_quit") == 0)
-		{
-		}
-		else if (strcmp(act->data, "player_activate") == 0)
-		{
-			tbl["userid"] = GetInt(event, "userid");
-		}
-		else if (strcmp(act->data, "player_changename") == 0)
-		{
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["oldname"] = GetString(event, "oldname");
-			tbl["newname"] = GetString(event, "newname");
-		}
-		else if (strcmp(act->data, "player_connect") == 0)
-		{
-			tbl["bot"] = GetInt(event, "bot");
-			tbl["networkid"] = GetString(event, "networkid");
-			tbl["name"] = GetString(event, "name");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["index"] = GetInt(event, "index");
-			tbl["address"] = GetString(event, "address");
-		}
-		else if (strcmp(act->data, "player_connect_client") == 0)
-		{
-			tbl["bot"] = GetInt(event, "bot");
-			tbl["networkid"] = GetString(event, "networkid");
-			tbl["name"] = GetString(event, "name");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["index"] = GetInt(event, "index");
-		}
-		else if (strcmp(act->data, "player_disconnect") == 0)
-		{
-			tbl["bot"] = GetInt(event, "bot");
-			tbl["networkid"] = GetString(event, "networkid");
-			tbl["name"] = GetString(event, "name");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["reason"] = GetString(event, "reason");
-		}
-		else if (strcmp(act->data, "player_hurt") == 0)
-		{
-			tbl["health"] = GetInt(event, "health");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["attacker"] = GetInt(event, "attacker");
-		}
-		else if (strcmp(act->data, "player_info") == 0)
-		{
-			tbl["friendsid"] = GetInt(event, "friendsid");
-			tbl["index"] = GetInt(event, "index");
-			tbl["bot"] = GetInt(event, "bot");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["name"] = GetString(event, "name");
-			tbl["networkid"] = GetString(event, "networkid");
-		}
-		else if (strcmp(act->data, "player_say") == 0)
-		{
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["text"] = GetString(event, "text");
-		}
-		else if (strcmp(act->data, "player_spawn") == 0)
-		{
-			tbl["userid"] = GetInt(event, "userid");
-		}
-		else if (strcmp(act->data, "ragdoll_dissolved") == 0)
-		{
-			tbl["entindex"] = GetInt(event, "entindex");
-		}
-		else if (strcmp(act->data, "server_addban") == 0)
-		{
-			tbl["networkid"] = GetString(event, "networkid");
-			tbl["name"] = GetString(event, "name");
-			tbl["userid"] = GetInt(event, "userid");
-			tbl["ip"] = GetString(event, "ip");
-			tbl["duration"] = GetString(event, "duration");
-			tbl["by"] = GetString(event, "by");
-			tbl["kicked"] = GetBool(event, "kicked");
-		}
-		else if (strcmp(act->data, "server_cvar") == 0)
-		{
-			tbl["cvarname"] = GetString(event, "cvarname");
-			tbl["cvarvalue"] = GetString(event, "cvarvalue");
-		}
-		else if (strcmp(act->data, "server_removeban") == 0)
-		{
-			tbl["networkid"] = GetString(event, "networkid");
-			tbl["ip"] = GetString(event, "ip");
-			tbl["by"] = GetString(event, "by");
+			const char* pName = subkey->GetName();
+			KeyValues::types_t pType = subkey->GetDataType();
+			if (pType == KeyValues::TYPE_STRING)
+			{
+				tbl[pName] = GetString(ev, pName);
+			} else if (pType == KeyValues::TYPE_UINT64 || pType == KeyValues::TYPE_INT)
+			{
+				tbl[pName] = GetInt(ev, pName);
+			} else if (pType == KeyValues::TYPE_FLOAT)
+			{
+				tbl[pName] = GetFloat(ev, pName);
+			} else {
+				//GlobalLUA->PushNil();
+				Msg("Invalid Type?!? (%s -> %s)\n", event->GetName(), subkey->GetName());
+			}
+
+			subkey = subkey->GetNextKey();
 		}
 		val->tbl = tbl;
-		
 		act->val = val;
 	}
 };

@@ -129,7 +129,7 @@ struct ILuaValue
 {
 	int type = -1;
 
-	int number = -1;
+	double number = -1;
 	const char* string = "";
 	Vector vec;
 	QAngle ang;
