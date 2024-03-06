@@ -65,6 +65,9 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [ ] Add a new way to send data across threads. Maybe something like net messages but for threads?  
 - [ ] Look again into Error handling. Maybe show which file had an error?
 
+### Bugs
+- [ ] File:Seek seems to have some issues?
+
 I listed all Libraries below that are serverside. Regardless if they are implemented in lua or in c++.  
 - - [ ] Global(functions)  
 - - [ ] ai  

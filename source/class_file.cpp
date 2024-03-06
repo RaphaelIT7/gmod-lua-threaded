@@ -150,6 +150,9 @@ LUA_FUNCTION(File_Read)
 	if (length == 0)
 		length = gpFileSystem->Size(file->handle);
 
+	if ((gpFileSystem->Tell(file->handle) + length) > gpFileSystem->Size(file->handle))
+		length = (gpFileSystem->Tell(file->handle) + length) - gpFileSystem->Size(file->handle); // Limit what we can read to not read memory?
+
 	char* buffer = new char[length + 1];
 	gpFileSystem->Read(buffer, length, file->handle);
 	buffer[length] = 0;
