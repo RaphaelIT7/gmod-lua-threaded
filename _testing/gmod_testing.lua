@@ -2,10 +2,15 @@ local code = [[local ret, err = pcall(function()
 	print(Vector(1, 1, 1), type(Vector(1, 1, 1)), isvector(Vector(1, 1, 1)))
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
+	print("=== File Library ===")
+
 	print("file.Exists (garrysmod.ver) ", file.Exists("garrysmod.ver", "MOD"))
 	print("file.IsDir (data/) ", file.IsDir("data/", "MOD"))
 	print("file.Size (garrysmod.ver) ", file.Size("garrysmod.ver", "MOD"))
 	print("file.Time (garrysmod.ver) ", file.Time("garrysmod.ver", "MOD"))
+
+
+	print("=== File Class ===")
 	local test = file.Open("test.txt", "wb", "DATA")
 	print("File:__tostring ", test)
 	test:Write("Test")
@@ -35,6 +40,8 @@ local code = [[local ret, err = pcall(function()
 	print("File:ReadUInt64 ", test:ReadUInt64())
 	print("File:ReadUShort ", test:ReadUShort())
 	test:Close()
+
+	print("=== Timer Library ===")
 
 	timer.Simple(1, function()
 		print("timer.Simple works")

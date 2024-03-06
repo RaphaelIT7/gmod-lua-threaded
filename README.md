@@ -43,7 +43,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] gmod (untested!)  
 - [x] file (Mostly implemented & untested!)
 - - [ ] file.AsyncRead
-- - [ ] file.Open (Required for file.Read, file.Write and file.Append)
+- - [x] file.Open (Required for file.Read, file.Write and file.Append)
 
 ### Classes
 - [x] Angle (untested)
