@@ -12,7 +12,7 @@ local code = [[local ret, err = pcall(function()
 	for k, v in pairs(getmetatable(gm)) do
 		print(k, v)
 	end
-	print("File:Read ", gm:Read())
+	print("File:Read ", getmetatable(gm).Read(gm))
 	gm:Close()
 end)
 
