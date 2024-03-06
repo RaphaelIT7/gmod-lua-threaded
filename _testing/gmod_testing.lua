@@ -8,10 +8,6 @@ local code = [[local ret, err = pcall(function()
 	print("file.Time (garrysmod.ver) ", file.Time("garrysmod.ver", "MOD"))
 	local gm = file.Open("garrysmod.ver", "r", "MOD")
 	print("File:__tostring ", gm)
-	print(getmetatable(gm))
-	for k, v in pairs(getmetatable(gm)) do
-		print(k, v)
-	end
 	print("File:Read ", gm:Read())
 	gm:Close()
 end)
