@@ -36,6 +36,16 @@ local code = [[local ret, err = pcall(function()
 	print("File:ReadUShort ", test:ReadUShort())
 	test:Close()
 
+	timer.Simple(1, function()
+		print("timer.Simple works")
+	end)
+
+	timer.Create("Test", 0.5, 3, function()
+		print("timer.Create works " .. timer.RepsLeft("Test"))
+	end)
+
+	print("timer.Exists ", timer.Exists("Test"))
+
 	error("Error handling test")
 end)
 
