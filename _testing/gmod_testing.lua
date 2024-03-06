@@ -9,6 +9,8 @@ local code = [[local ret, err = pcall(function()
 	local gm = file.Open("garrysmod.ver", "r", "MOD")
 	print("File:__tostring ", gm)
 	print("File:Read ", gm:Read())
+	print("File:ReadLine ", gm:ReadLine())
+	print("File:ReadLine ", gm:ReadLine())
 	gm:Close()
 end)
 
