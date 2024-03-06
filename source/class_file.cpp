@@ -208,8 +208,9 @@ LUA_FUNCTION(File_ReadLine)
 	LUA_File* file = File_Get(LUA, 1);
 
 	int max_size = gpFileSystem->Size(file->handle) - gpFileSystem->Tell(file->handle);
-	char* buffer = new char[max_size];
+	char* buffer = new char[max_size + 1];
 	gpFileSystem->ReadLine(buffer, max_size, file->handle);
+	buffer[max_size] = 0;
 	LUA->PushString(buffer);
 	delete[] buffer;
 
