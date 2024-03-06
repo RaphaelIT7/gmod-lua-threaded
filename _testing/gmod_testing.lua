@@ -35,6 +35,8 @@ local code = [[local ret, err = pcall(function()
 	print("File:ReadUInt64 ", test:ReadUInt64())
 	print("File:ReadUShort ", test:ReadUShort())
 	test:Close()
+
+	error("Error handling test")
 end)
 
 if err then
