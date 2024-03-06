@@ -97,6 +97,24 @@ LUA_FUNCTION_STATIC(File__tostring)
 	return 1;
 }
 
+LUA_FUNCTION_STATIC(File__index)
+{
+	LUA_File* file = File_Get(LUA, 1, false);
+	const char* pKey = LUA->CheckString(2);
+
+	int ref = -1;
+	LUA->GetMetaTable(1);
+		LUA->GetField(-1, pKey);
+			ref = LUA->ReferenceCreate();
+
+	LUA->Pop(2);
+
+	LUA->ReferencePush(ref);
+	LUA->ReferenceFree(ref);
+
+	return 1;
+}
+
 LUA_FUNCTION(File_Close)
 {
 	LUA_File* file = File_Get(LUA, 1);
@@ -401,6 +419,7 @@ void InitFileClass(ILuaInterface* LUA)
 	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, File__gc, "__gc");
 		Add_Func(LUA, File__tostring, "__tostring");
+		Add_Func(LUA, File__index, "__index");
 
 		Add_Func(LUA, File_Close, "Close");
 		Add_Func(LUA, File_EndOfFile, "EndOfFile");
