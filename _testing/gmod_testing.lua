@@ -21,7 +21,9 @@ local code = [[local ret, err = pcall(function()
 	print("File:Tell ", test:Tell())
 	print("File:EndOfFile ", test:EndOfFile())
 	test:Flush()
-	test:Seek(0)
+	test:Close()
+
+	local test = file.Open("test.txt", "rb", "DATA")
 	print("File:Seek ", test:Tell())
 	print("File:Read ", test:Read(4))
 	print("File:ReadBool ", test:ReadBool())
@@ -32,7 +34,6 @@ local code = [[local ret, err = pcall(function()
 	print("File:ReadShort ", test:ReadShort())
 	print("File:ReadUInt64 ", test:ReadUInt64())
 	print("File:ReadUShort ", test:ReadUShort())
-
 	test:Close()
 end)
 
