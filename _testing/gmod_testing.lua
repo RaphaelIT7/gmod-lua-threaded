@@ -10,7 +10,7 @@ local ret, err = pcall(function()
 	print("file.IsDir (data/) ", file.IsDir("data/", "MOD"))
 	print("file.Size (garrysmod.ver) ", file.Size("garrysmod.ver", "MOD"))
 	print("file.Time (garrysmod.ver) ", file.Time("garrysmod.ver", "MOD"))
-	local gm = file.Open("garrysmod.ver", "MOD")
+	local gm = file.Open("garrysmod.ver", "r", "MOD")
 	print("File:__tostring ", gm)
 	print(getmetatable(gm))
 	for k, v in pairs(getmetatable(gm)) do
