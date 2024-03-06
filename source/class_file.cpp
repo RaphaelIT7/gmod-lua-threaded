@@ -126,8 +126,10 @@ LUA_FUNCTION(File_Flush)
 
 LUA_FUNCTION(File_Read)
 {
+	Msg("1\n");
 	LUA_File* file = File_Get(LUA, 1);
 	int length = LUA->GetNumber(2);
+	Msg("2\n");
 
 	if (length == 0)
 		length = gpFileSystem->Size(file->handle);
@@ -136,6 +138,7 @@ LUA_FUNCTION(File_Read)
 	gpFileSystem->Read(buffer, length, file->handle);
 	LUA->PushString(buffer);
 	delete[] buffer;
+	Msg("3\n");
 
 	return 1;
 }
