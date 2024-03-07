@@ -1,9 +1,16 @@
 #include "lua_threaded.h"
 #include <algorithm>
 
-void AsnycCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
+std::unordered_map<FileAsyncRequest_t, IAsyncFile*> requests;
+void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
 {
-	Msg("Callback called? are we finished? %i %i %i\n", err, nBytesRead, ThreadGetCurrentId());
+	IAsyncFile* async = requests[request];
+	if (async)
+	{
+		async->thread->async.push_back(async);
+	} else {
+		Msg("Invalid request?\n");
+	}
 }
 
 LUA_FUNCTION(file_AsyncRead)
@@ -20,10 +27,14 @@ LUA_FUNCTION(file_AsyncRead)
 	FileAsyncRequest_t* request = new FileAsyncRequest_t;
 	request->pszFilename = fileName;
 	request->pszPathID = gamePath;
-	request->pfnCallback = AsnycCallback;
+	request->pfnCallback = AsyncCallback;
 	request->flags = sync ? FSASYNC_FLAGS_SYNC : 0;
 
-	Msg("file.AsyncRead %i\n", ThreadGetCurrentId());
+	IAsyncFile* file = new IAsyncFile;
+	file->thread = thread;
+	file->callback = reference;
+	file->req = request;
+
 	LUA->PushNumber(filesystem->AsyncReadMultiple(request, 1));
 
 	return 1;
@@ -31,8 +42,15 @@ LUA_FUNCTION(file_AsyncRead)
 
 void FileLibThink(ILuaThread* thread)
 {
+	ILuaInterface* LUA = thread->IFace;
 	for(IAsyncFile* file : thread->async) {
-
+		LUA->ReferencePush(file->callback);
+		LUA->PushString(file->req->pszFilename);
+		LUA->PushString(file->req->pszPathID);
+		LUA->PushNumber(file->Status);
+		LUA->PushString((const char*)file->req->pData);
+		LUA->PCall(4, 0, 0);
+		LUA->ReferenceFree(file->callback);
 	}
 }
 

@@ -162,10 +162,14 @@ struct ILuaTimer
 	bool markdelete = false;
 };
 
+struct ILuaThread;
 struct IAsyncFile
 {
 	FileAsyncRequest_t* req;
+	ILuaThread* thread;
 	int callback;
+	int nBytesRead;
+	int Status
 };
 
 struct ILuaThread
