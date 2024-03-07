@@ -581,7 +581,8 @@ unsigned LuaThread(void* data)
 
 		thread_data->actions.clear();
 
-		TimerThink(thread_data); // Check & Run all Timers. Done in Gmod by GarrysMod::Lua::Libraries::Timer::Cycle
+		TimerThink(thread_data); // Check & Runs all Timers. Done in Gmod by GarrysMod::Lua::Libraries::Timer::Cycle
+		FileLibThink(thread_data); // Checks & Runs all file.AsyncRead callbacks.
 
 		thread_data->mutex.Unlock();
 
