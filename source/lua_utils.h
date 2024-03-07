@@ -170,6 +170,7 @@ struct IAsyncFile
 	int callback;
 	int nBytesRead;
 	int Status;
+	bool finished = false;
 };
 
 struct ILuaThread

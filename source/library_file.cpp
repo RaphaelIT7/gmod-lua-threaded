@@ -1,13 +1,21 @@
 #include "lua_threaded.h"
 #include <algorithm>
 
-std::unordered_map<FileAsyncRequest_t, IAsyncFile*> requests;
+std::vector<IAsyncFile*> requests;
 void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
 {
-	IAsyncFile* async = requests[request];
+	IAsyncFile* async;
+	for (IAsyncFile* file : requests)
+	{
+		if (file->req == &request) {
+			async = file;
+			break;
+		}
+	}
+
 	if (async)
 	{
-		async->thread->async.push_back(async);
+		async->finished = true;
 	} else {
 		Msg("Invalid request?\n");
 	}
@@ -35,6 +43,8 @@ LUA_FUNCTION(file_AsyncRead)
 	file->callback = reference;
 	file->req = request;
 
+	thread->async.push_back(file);
+
 	LUA->PushNumber(filesystem->AsyncReadMultiple(request, 1));
 
 	return 1;
@@ -42,8 +52,10 @@ LUA_FUNCTION(file_AsyncRead)
 
 void FileLibThink(ILuaThread* thread)
 {
+	std::vector<IAsyncFile*> files;
 	ILuaInterface* LUA = thread->IFace;
 	for(IAsyncFile* file : thread->async) {
+		if (!file->finished) { continue; }
 		LUA->ReferencePush(file->callback);
 		LUA->PushString(file->req->pszFilename);
 		LUA->PushString(file->req->pszPathID);
@@ -51,6 +63,11 @@ void FileLibThink(ILuaThread* thread)
 		LUA->PushString((const char*)file->req->pData);
 		LUA->PCall(4, 0, 0);
 		LUA->ReferenceFree(file->callback);
+		files.push_back(file);
+	}
+
+	for(IAsyncFile* file : files) {
+		thread->async.erase(find(thread->async.begin(),thread->async.end(), file)); // This is probably shit.
 	}
 }
 
