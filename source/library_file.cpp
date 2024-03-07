@@ -7,7 +7,7 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	IAsyncFile* async;
 	for (IAsyncFile* file : requests)
 	{
-		if (file->req->pszFilename == request.pszFilename) { // Shitty but works for now ToDo: Change this bs
+		if (file->req->pszFilename == request.pszFilename) { // Shitty but works for now ToDo: Change this bs. You could call file.AsyncRead multiple times on the same file.
 			async = file;
 			break;
 		}
@@ -221,14 +221,22 @@ LUA_FUNCTION(file_Rename)
 
 LUA_FUNCTION(file_Size)
 {
-	LUA->PushNumber(filesystem->Size(LUA->CheckString(1), "DATA"));
+	const char* path = LUA->GetString(2);
+	if (path == NULL)
+		path = "GAME";
+
+	LUA->PushNumber(filesystem->Size(LUA->CheckString(1), path));
 
 	return 1;
 }
 
 LUA_FUNCTION(file_Time)
 {
-	LUA->PushNumber(filesystem->GetFileTime(LUA->CheckString(1), "DATA"));
+	const char* path = LUA->GetString(2);
+	if (path == NULL)
+		path = "GAME";
+
+	LUA->PushNumber(filesystem->GetFileTime(LUA->CheckString(1), path));
 
 	return 1;
 }
