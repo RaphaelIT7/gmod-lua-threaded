@@ -1,9 +1,38 @@
 #include "lua_threaded.h"
 #include <algorithm>
 
-LUA_FUNCTION(file_AsyncRead) // ToDo
+void AsnycCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
 {
-	return 0;
+	Msg("Callback called? are we finished? %i %i", err, nBytesRead);
+}
+
+LUA_FUNCTION(file_AsyncRead)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+	const char* fileName = LUA->CheckString(1);
+	const char* gamePath = LUA->CheckString(2);
+	LUA->CheckType(3, Type::Function);
+	LUA->Push(3);
+	int reference = LUA->ReferenceCreate();
+	LUA->Pop();
+	bool sync = LUA->GetBool(4);
+
+	FileAsyncRequest_t* request = new FileAsyncRequest_t;
+	request->pszFilename = fileName;
+	request->pszPathID = gamePath;
+	request->pfnCallback = AsnycCallback;
+	request->flags = sync ? FSASYNC_FLAGS_SYNC : 0;
+
+	LUA->PushNumber(filesystem->AsyncReadMultiple(request, 1));
+
+	return 1;
+}
+
+void FileLibThink(ILuaThread* thread)
+{
+	for(IAsyncFile* file : thread->async) {
+
+	}
 }
 
 LUA_FUNCTION(file_CreateDir)

@@ -3,3 +3,4 @@
 using namespace GarrysMod::Lua;
 
 extern void InitFileLib(ILuaInterface*);
+extern void FileLibThink(ILuaThread*);

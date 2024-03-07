@@ -162,6 +162,12 @@ struct ILuaTimer
 	bool markdelete = false;
 };
 
+struct IAsyncFile
+{
+	FileAsyncRequest_t* req;
+	int callback;
+};
+
 struct ILuaThread
 {
 	ILuaInterface* IFace;
@@ -185,6 +191,9 @@ struct ILuaThread
 
 	// timer library
 	std::vector<ILuaTimer*> timers;
+
+	// File library
+	std::vector<IAsyncFile*> async;
 };
 
 struct GMOD_Info
