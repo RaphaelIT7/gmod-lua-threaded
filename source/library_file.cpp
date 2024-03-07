@@ -7,7 +7,7 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	IAsyncFile* async;
 	for (IAsyncFile* file : requests)
 	{
-		if (file->req == &request) {
+		if (file->req->pszFilename == request.pszFilename) { // Shitty but works for now ToDo: Change this bs
 			async = file;
 			break;
 		}
@@ -17,7 +17,7 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 	} else {
-		Msg("Invalid request?\n");
+		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
 	}
 }
 
