@@ -169,7 +169,7 @@ struct IAsyncFile
 	ILuaThread* thread;
 	int callback;
 	int nBytesRead;
-	int Status
+	int Status;
 };
 
 struct ILuaThread
