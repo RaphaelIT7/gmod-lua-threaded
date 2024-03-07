@@ -3,7 +3,7 @@
 
 void AsnycCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
 {
-	Msg("Callback called? are we finished? %i %i", err, nBytesRead);
+	Msg("Callback called? are we finished? %i %i %i\n", err, nBytesRead, ThreadGetCurrentId());
 }
 
 LUA_FUNCTION(file_AsyncRead)
@@ -23,6 +23,7 @@ LUA_FUNCTION(file_AsyncRead)
 	request->pfnCallback = AsnycCallback;
 	request->flags = sync ? FSASYNC_FLAGS_SYNC : 0;
 
+	Msg("file.AsyncRead %i\n", ThreadGetCurrentId());
 	LUA->PushNumber(filesystem->AsyncReadMultiple(request, 1));
 
 	return 1;
