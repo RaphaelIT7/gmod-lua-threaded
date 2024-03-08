@@ -1,18 +1,10 @@
 #include "lua_threaded.h"
 #include <algorithm>
 
-std::vector<IAsyncFile*> requests;
+std::unordered_map<const FileAsyncRequest_t*, IAsyncFile*> async_list;
 void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
 {
-	IAsyncFile* async;
-	for (IAsyncFile* file : requests)
-	{
-		if (file->req->pszFilename == request.pszFilename) { // Shitty but works for now ToDo: Change this bs. You could call file.AsyncRead multiple times on the same file.
-			async = file;
-			break;
-		}
-	}
-
+	IAsyncFile* async = async_list[&request];
 	if (async)
 	{
 		async->finished = true;
@@ -43,7 +35,7 @@ LUA_FUNCTION(file_AsyncRead)
 	file->callback = reference;
 	file->req = request;
 
-	thread->async.push_back(file);
+	async_list[request]= file;
 
 	LUA->PushNumber(filesystem->AsyncReadMultiple(request, 1));
 
