@@ -4,6 +4,7 @@
 std::unordered_map<const FileAsyncRequest_t*, IAsyncFile*> async_list;
 void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
 {
+	Msg("file.AsyncRead callback: %s %i %i\n", request.pszFilename, async_list.find(&request), async_list.end());
 	IAsyncFile* async = async_list[&request];
 	if (async)
 	{
@@ -35,7 +36,8 @@ LUA_FUNCTION(file_AsyncRead)
 	file->callback = reference;
 	file->req = request;
 
-	async_list[request]= file;
+	async_list[request] = file;
+	thread->async.push_back(file);
 
 	LUA->PushNumber(filesystem->AsyncReadMultiple(request, 1));
 
