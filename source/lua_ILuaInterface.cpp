@@ -543,7 +543,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 
 	if (hook_tbl->number > 0)
 	{
-		for(int pos = 3; pos < top; ++pos)
+		for(int pos = 3; pos < hook_tbl->number; ++pos)
 		{
 			ILuaValue* val = new ILuaValue;
 			FillValue(LUA, val, pos, LUA->GetType(pos));
@@ -704,13 +704,13 @@ void InitMetaTable(ILuaInterface* LUA)
 		Add_Func(LUA, index, "__index");
 		Add_Func(LUA, newindex, "__newindex");
 
-		Add_Func(LUA, ILuaInterface_RunString, "RunString");
 		Add_Func(LUA, ILuaInterface_RunHook, "RunHook");
+		Add_Func(LUA, ILuaInterface_RunFile, "RunFile");
+		Add_Func(LUA, ILuaInterface_RunString, "RunString");
 		Add_Func(LUA, ILuaInterface_InitClasses, "InitClasses");
 		Add_Func(LUA, ILuaInterface_InitLibraries, "InitLibraries");
 		Add_Func(LUA, ILuaInterface_LoadFunction, "LoadFunction");
 		Add_Func(LUA, ILuaInterface_Autorun, "Autorun");
-		Add_Func(LUA, ILuaInterface_RunFile, "RunFile");
 		Add_Func(LUA, ILuaInterface_InitEnums, "InitEnums");
 		Add_Func(LUA, ILuaInterface_InitGmod, "InitGmod");
 		Add_Func(LUA, ILuaInterface_Lock, "Lock");

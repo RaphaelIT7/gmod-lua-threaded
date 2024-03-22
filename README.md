@@ -222,6 +222,10 @@ Loads:
 Runs the given File.  
 This function could be renamed in the future!  
 
+### ILuaInterface:RunHook(string name, args ...)
+Runs the given Hook.  
+(Calls hook.Run with the name and args)  
+
 Args:  
 1. Path to the file.  
 NOTE: This will use the `GAME` search path!  
