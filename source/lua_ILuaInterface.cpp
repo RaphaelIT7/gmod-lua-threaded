@@ -559,10 +559,9 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 		action->data = name;
 		action->val = hook_tbl;
 
-		// ToDo: Why does mutex.Lock crash HERE
-		//thread->mutex.Lock();
+		thread->mutex.Lock(); // ToDo: Why does mutex.Lock crash HERE
 		thread->actions.push_back(action);
-		//thread->mutex.Unlock();
+		thread->mutex.Unlock();
 	} else {
 		RunHook(thread->IFace, name, hook_tbl);
 	}
