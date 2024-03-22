@@ -154,11 +154,21 @@ int LuaThread_Msg(lua_State* L)
 	return 0;
 }
 
+LUA_FUNCTION(LuaThread_IsMainThread)
+{
+	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->GetField(-1, "__InterfaceID");
+	
+	LUA->PushBool(LUA->GetNumber(0) == 0);
+
+    return 1;
+}
+
 void InitLuaThreaded(ILuaInterface* LUA, int id)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->PushNumber(id);
-		LUA->SetField(-2, "__InterfaceID");
+		LUA->SetField(-2, "__InterfaceID"); // Someone could change the __InterfaceID var but if someone would do this, it could break a bunch of stuff. So don't.
 
 		LUA->CreateTable();
 			Add_Func(LUA, LuaThread_GetAllInterfaces, "GetAllInterfaces");
@@ -169,6 +179,7 @@ void InitLuaThreaded(ILuaInterface* LUA, int id)
 			Add_Func(LUA, LuaThread_GetTable, "GetTable");
 			Add_Func(LUA, LuaThread_SetValue, "SetValue");
 			Add_Func(LUA, LuaThread_GetValue, "GetValue");
+			Add_Func(LUA, LuaThread_IsMainThread, "IsMainThread");
 
 		LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop();
