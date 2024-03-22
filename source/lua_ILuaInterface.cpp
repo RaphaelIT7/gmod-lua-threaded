@@ -484,7 +484,6 @@ LUA_FUNCTION(ILuaInterface_LoadFunction)
 LUA_FUNCTION(ILuaInterface_Lock)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
-	const char* func = LUA->CheckString(2);
 
 	if (thread->threaded)
 	{
@@ -501,7 +500,6 @@ LUA_FUNCTION(ILuaInterface_Lock)
 LUA_FUNCTION(ILuaInterface_Unlock)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
-	const char* func = LUA->CheckString(2);
 
 	if (thread->threaded)
 	{
@@ -509,6 +507,64 @@ LUA_FUNCTION(ILuaInterface_Unlock)
 	}
 
 	return 0;
+}
+
+void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
+{
+	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->GetField(-1, "hook");
+	if (LUA->IsType(-1, Type::Table))
+	{
+		LUA->GetField(-1, "Run");
+		if (LUA->IsType(-1, Type::Function))
+		{
+			LUA->PushString(name);
+			for(auto&[key, val] : args->tbl)
+			{
+				PushValue(LUA, val);
+			}
+			LUA->Call(args->number + 1, 0);
+		} else {
+			LUA->ThrowError("hook.Run is missing or not a function!");
+		}
+	} else {
+		LUA->ThrowError("hook table is missing or not a table!");
+	}
+}
+
+LUA_FUNCTION(ILuaInterface_RunHook)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+	const char* name = LUA->CheckString(2);
+
+	ILuaValue* hook_tbl = new ILuaValue;
+	hook_tbl->type = Type::Table;
+	hook_tbl->number = LUA->Top() - 2;
+
+	if (hook_tbl->number > 0)
+	{
+		for(int pos = 3; pos < top; ++pos)
+		{
+			ILuaValue* val = new ILuaValue;
+			FillValue(LUA, val, pos, LUA->GetType(pos));
+
+			hook_tbl->tbl[std::to_string(pos - 2)] = val;
+		}
+	}
+
+	if (thread->threaded)
+	{
+		ILuaAction* action = new ILuaAction;
+		action->type = LuaAction::ACT_RunHook;
+		action->data = name;
+		action->val = hook_tbl;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(action);
+		thread->mutex.Unlock();
+	} else {
+		RunHook(thread->IFace, name, hook_tbl);
+	}
 }
 
 void RunCommand(ILuaInterface* LUA, const CCommand& cmd, void* ply)
@@ -613,6 +669,9 @@ unsigned LuaThread(void* data)
 			} else if (action->type == LuaAction::ACT_Gameevent)
 			{
 				RunGameevent(IFace, action->data, action->val);
+			} else if (action->type == LuaAction::ACT_RunHook)
+			{
+				RunHook(IFace, action->data, action->val);
 			}
 
 			delete action;
@@ -646,6 +705,7 @@ void InitMetaTable(ILuaInterface* LUA)
 		Add_Func(LUA, newindex, "__newindex");
 
 		Add_Func(LUA, ILuaInterface_RunString, "RunString");
+		Add_Func(LUA, ILuaInterface_RunHook, "RunHook");
 		Add_Func(LUA, ILuaInterface_InitClasses, "InitClasses");
 		Add_Func(LUA, ILuaInterface_InitLibraries, "InitLibraries");
 		Add_Func(LUA, ILuaInterface_LoadFunction, "LoadFunction");

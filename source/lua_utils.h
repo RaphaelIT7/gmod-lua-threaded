@@ -113,15 +113,16 @@ using namespace GarrysMod::Lua;
 
 enum LuaAction
 {
+	ACT_RunFile,
+	ACT_RunHook,
 	ACT_RunString,
+	ACT_RunCommand,
 	ACT_InitClasses,
 	ACT_InitLibraries,
 	ACT_LoadFunc,
 	ACT_Autorun,
-	ACT_RunFile,
 	ACT_InitEnums,
 	ACT_InitGmod,
-	ACT_RunCommand,
 	ACT_Gameevent,
 };
 

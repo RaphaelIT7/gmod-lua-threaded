@@ -56,6 +56,16 @@ local code = [[local ret, err = pcall(function()
 
 	print("timer.Exists ", timer.Exists("Test"))
 
+	hook = {
+		Run = function(name, ...)
+			local args = {...}
+			print("hook.Run called!", name)
+			for k, v in pairs(args) do
+				print(v)
+			end
+		end
+	}
+
 	error("Error handling test")
 end)
 
@@ -71,6 +81,7 @@ local ret, err = pcall(function()
 	iFace = LuaThreaded.CreateInterface()
 	iFace:InitGmod()
 	iFace:RunString(code)
+	iFace:RunHook("ExampleHook", "ExampleArg", 1234, Vector(1, 2, 3))
 end)
 
 if err then
