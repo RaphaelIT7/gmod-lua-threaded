@@ -337,7 +337,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 		int file_len = gpFileSystem->Size(fh);
 		char* code = new char[file_len + 1];
 
-		gpFileSystem->Read((void*)code,file_len,fh);
+		gpFileSystem->Read((void*)code, file_len, fh);
 		code[file_len] = 0;
 
 		gpFileSystem->Close(fh);
@@ -481,6 +481,36 @@ LUA_FUNCTION(ILuaInterface_LoadFunction)
 	return 0;
 }
 
+LUA_FUNCTION(ILuaInterface_Lock)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+	const char* func = LUA->CheckString(2);
+
+	if (thread->threaded)
+	{
+		thread->locked = true;
+		while (thread->run && !thread->waiting)
+		{
+			ThreadSleep(1);
+		}
+	}
+
+	return 0;
+}
+
+LUA_FUNCTION(ILuaInterface_Unlock)
+{
+	ILuaThread* thread = GetValidThread(LUA, 1);
+	const char* func = LUA->CheckString(2);
+
+	if (thread->threaded)
+	{
+		thread->locked = false;
+	}
+
+	return 0;
+}
+
 void RunCommand(ILuaInterface* LUA, const CCommand& cmd, void* ply)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -540,6 +570,15 @@ unsigned LuaThread(void* data)
 
 	while(thread_data->run)
 	{
+		if (thread_data->locked)
+		{
+			thread_data->waiting = true;
+			while (thread_data->locked) {
+				ThreadSleep(0.5);
+			}
+			thread_data->waiting = false;
+		}
+
 		thread_data->mutex.Lock();
 
 		for (ILuaAction* action : thread_data->actions)
@@ -614,6 +653,8 @@ void InitMetaTable(ILuaInterface* LUA)
 		Add_Func(LUA, ILuaInterface_RunFile, "RunFile");
 		Add_Func(LUA, ILuaInterface_InitEnums, "InitEnums");
 		Add_Func(LUA, ILuaInterface_InitGmod, "InitGmod");
+		Add_Func(LUA, ILuaInterface_Lock, "Lock");
+		Add_Func(LUA, ILuaInterface_Unlock, "Unlock");
 
 	LUA->Pop(1);
 }

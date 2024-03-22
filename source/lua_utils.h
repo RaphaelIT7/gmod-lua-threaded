@@ -184,6 +184,7 @@ struct ILuaThread
 	bool run = true;
 	bool init = false;
 	bool threaded = false;
+	bool locked = false;
 	
 	int id = -1;
 
