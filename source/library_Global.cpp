@@ -218,7 +218,7 @@ LUA_FUNCTION(Global_Msg)
 	std::stringstream ss;
 	for (int i=1; i <= LUA->Top(); ++i)
 	{
-		const char* arg_str = lua_tostring(LUA->GetState(), i);
+		const char* arg_str = func_lua_tostring(LUA->GetState(), i, NULL);
 		if (arg_str)
 		{
 			ss << arg_str;
