@@ -9,7 +9,7 @@ local code = [[local ret, err = pcall(function()
 	print("file.Size (garrysmod.ver) ", file.Size("garrysmod.ver", "MOD"))
 	print("file.Time (garrysmod.ver) ", file.Time("garrysmod.ver", "MOD"))
 	file.AsyncRead("garrysmod.ver", "MOD", function(fileName, gamePath, status, data)
-		print("file.AsyncRead callback called", data, status)
+		print("file.AsyncRead callback called", data, data:len(), status)
 	end)
 
 
