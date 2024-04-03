@@ -56,6 +56,42 @@ local code = [[local ret, err = pcall(function()
 
 	print("timer.Exists ", timer.Exists("Test"))
 
+	print("=== Engine Library ===")
+	print("engine.TickCount: ", engine.TickCount())
+	print("engine.AbsoluteFrameTime: ", engine.AbsoluteFrameTime())
+	print("engine.TickInterval: ", engine.TickInterval())
+	print("engine.ActiveGamemode: ", engine.ActiveGamemode())
+
+	local printtbl = nil
+	local function PrintTable(tbl, tabs) -- I don't think we currently can load Gmod's PrintTable
+		tabs = tabs or 0
+
+		local start_str = ""
+		for k=1, tabs do
+			start_str = start_str .. "	"
+		end
+
+		for k, v in pairs(tbl) do
+			if (type(v) == "table") then
+				print(start_str .. tostring(k) .. ": ")
+				printtbl(v, tabs + 1)
+			else
+
+				print(start_str .. tostring(k), v)
+			end
+		end
+	end
+	printtbl = PrintTable
+
+	print("=== engine.GetAddons ===")
+	PrintTable(engine.GetAddons())
+	print("=== engine.GetUserContent ===")
+	PrintTable(engine.GetUserContent())
+	print("=== engine.GetGames ===")
+	PrintTable(engine.GetGames())
+	print("=== engine.GetGamemodes ===")
+	PrintTable(engine.GetGamemodes())
+
 	hook = {
 		Run = function(name, ...)
 			local args = {...}
