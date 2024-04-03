@@ -137,6 +137,7 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 		val->type = type;
 		std::unordered_map<std::string, ILuaValue*> tbl;
 
+		LUA->Push(iStackPos);
 		LUA->PushNil();
 		while (LUA->Next(-2)) {
 			LUA->Push(-2);

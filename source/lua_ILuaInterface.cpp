@@ -565,6 +565,8 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 	} else {
 		RunHook(thread->IFace, name, hook_tbl);
 	}
+
+	return 0;
 }
 
 void RunCommand(ILuaInterface* LUA, const CCommand& cmd, void* ply)
