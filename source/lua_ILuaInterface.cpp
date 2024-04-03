@@ -244,7 +244,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitGlobal(LUA);
 	InitNet(LUA);
 	InitGameevent(thread);
-	//InitPhysEnv(LUA);
+	InitPhysEnv(LUA);
 	//InitResource(LUA);
 	InitSql(LUA);
 	InitSystem(LUA);
