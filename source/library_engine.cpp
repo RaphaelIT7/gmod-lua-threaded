@@ -118,11 +118,13 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		SafeDelete(GMOD->usercontent);
 	}
 
+	Msg("Top %i\n", LUA->Top());
 	LUA->PushSpecial(SPECIAL_GLOB);
+		Msg("Top %i\n", LUA->Top());
 		LUA->GetField(-1, "engine");
 		if (LUA->IsType(-1, Type::Table))
 		{
-			Msg("Top %i", LUA->Top());
+			Msg("Top %i\n", LUA->Top());
 			LUA->GetField(-1, "GetAddons");
 			if (LUA->IsType(-1, Type::Function))
 			{
@@ -132,9 +134,9 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 				FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
 			} else {
 				Msg("engine.GetAddons is not a valid function!\n");
-				LUA->Pop(1);
 			}
-			Msg("Top %i", LUA->Top());
+			LUA->Pop(1);
+			Msg("Top %i\n", LUA->Top());
 
 			LUA->GetField(-1, "GetGames");
 			if (LUA->IsType(-1, Type::Function))
@@ -145,9 +147,9 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 				FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
 			} else {
 				Msg("engine.GetGames is not a valid function!\n");
-				LUA->Pop(1);
 			}
-			Msg("Top %i", LUA->Top());
+			LUA->Pop(1);
+			Msg("Top %i\n", LUA->Top());
 
 			LUA->GetField(-1, "GetGamemodes");
 			if (LUA->IsType(-1, Type::Function))
@@ -158,9 +160,9 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 				FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
 			} else {
 				Msg("engine.GetGamemodes is not a valid function!\n");
-				LUA->Pop(1);
 			}
-			Msg("Top %i", LUA->Top());
+			LUA->Pop(1);
+			Msg("Top %i\n", LUA->Top());
 
 			LUA->GetField(-1, "GetUserContent");
 			if (LUA->IsType(-1, Type::Function))
@@ -169,11 +171,11 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 
 				GMOD->usercontent = new ILuaValue;
 				FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
-				LUA->Pop(1);
 			} else {
 				Msg("engine.GetUserContent is not a valid function!\n");
 			}
-			Msg("Top %i", LUA->Top());
+			LUA->Pop(1);
+			Msg("Top %i\n", LUA->Top());
 
 			LUA->GetField(-1, "ActiveGamemode");
 			if (LUA->IsType(-1, Type::Function))
@@ -183,13 +185,14 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 				GMOD->active_gamemode = LUA->GetString(-1);
 			} else {
 				Msg("engine.ActiveGamemode is not a valid function!\n");
-				LUA->Pop(1);
 			}
-			Msg("Top %i", LUA->Top());
+			LUA->Pop(1);
+			Msg("Top %i\n", LUA->Top());
 		} else {
 			Msg("engine is not a valid table!\n");
 		}
 	LUA->Pop(2);
+	Msg("Top %i\n", LUA->Top());
 	Msg("UpdateEngine finish\n");
 }
 
