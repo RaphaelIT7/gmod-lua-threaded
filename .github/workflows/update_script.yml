@@ -8,7 +8,6 @@ on:
 
 jobs:
   update:
-    if: secrets.PTERODACTYL_KEY
     runs-on: ubuntu-latest
     container: debian:bullseye
     steps:

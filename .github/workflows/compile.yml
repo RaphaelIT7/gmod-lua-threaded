@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    if: secrets.PTERODACTYL_URL
     uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
     with:
       PROJECT_NAME: "lua_threaded"
