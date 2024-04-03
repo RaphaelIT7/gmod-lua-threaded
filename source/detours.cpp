@@ -55,6 +55,8 @@ void* FindFunction(void* loader, const std::vector<Symbol> symbols)
 		if (func)
 			return func;
 	}
+
+	return nullptr;
 }
 
 void* FindSymbol(std::string name)

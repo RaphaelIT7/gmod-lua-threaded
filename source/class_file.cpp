@@ -18,12 +18,6 @@ void Push_File(ILuaBase* LUA, const char* filename, const char* fileMode, const 
 	LUA->SetMetaTable(-2);
 }
 
-void File_CheckType(ILuaBase* LUA, int index)
-{
-	if(!LUA->IsType(index, Type::UserData))
-		luaL_typerror(LUA->GetState(), index, metaname);
-}
-
 bool IsFile(ILuaBase* LUA, int index)
 {
 	if (LUA->IsType(index, Type::UserData))
@@ -45,6 +39,12 @@ bool IsFile(ILuaBase* LUA, int index)
 	}
 
 	return false;
+}
+
+void File_CheckType(ILuaBase* LUA, int index)
+{
+	if(!IsFile(LUA, index))
+		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
 LUA_File* File_GetUserdata(ILuaBase *LUA, int index)
@@ -99,7 +99,7 @@ LUA_FUNCTION_STATIC(File__tostring)
 
 LUA_FUNCTION_STATIC(File__index)
 {
-	LUA_File* file = File_Get(LUA, 1, false);
+	File_CheckType(LUA, 1);
 	const char* pKey = LUA->CheckString(2);
 
 	int ref = -1;
