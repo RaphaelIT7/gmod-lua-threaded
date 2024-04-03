@@ -223,7 +223,16 @@ LUA_FUNCTION(Global_Msg)
 		{
 			ss << arg_str;
 		} else {
-			ss << "<Something Unknown. Scary>";
+			int type = LUA->GetType(i);
+			switch(type)
+			{
+				case Type::Bool:
+					ss << LUA->GetBool(i) ? "true" : "false";
+					break;
+				default:
+					ss << "<Something Unknown. Scary>";
+					break;
+			}
 		}
 	}
 
