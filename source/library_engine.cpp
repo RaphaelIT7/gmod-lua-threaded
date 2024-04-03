@@ -109,6 +109,7 @@ LUA_FUNCTION(engine_LightStyle)
 
 void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
 {
+	Msg("UpdateEngine start\n");
 	if (GMOD->addons)
 	{
 		SafeDelete(GMOD->addons);
@@ -183,6 +184,7 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 			Msg("engine is not a valid table!\n");
 		}
 	LUA->Pop(2);
+	Msg("UpdateEngine finish\n");
 }
 
 void InitEngine(ILuaInterface* LUA)
