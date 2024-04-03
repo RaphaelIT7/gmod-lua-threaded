@@ -82,7 +82,7 @@ void LuaConCommand(const CCommand& cmd)
 	ToDo: Look someday again to these values. They seem to be raised in Gmod.
 	I won't implement this for now.
 */
-int LuaConCommandAutocomplete(const char *partial, char commands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ])
+int LuaConCommandAutocomplete(const char *partial, char ccommands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ])
 {
 	return 0;
 }
@@ -227,7 +227,7 @@ LUA_FUNCTION(Global_Msg)
 			switch(type)
 			{
 				case Type::Bool:
-					ss << LUA->GetBool(i) ? "true" : "false";
+					ss << (LUA->GetBool(i) ? "true" : "false");
 					break;
 				default:
 					ss << "<Something Unknown. Scary>";
