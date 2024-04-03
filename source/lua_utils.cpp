@@ -59,8 +59,9 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 			LUA->CreateTable();
 			for (auto& [key, val] : value->tbl)
 			{
+				PushValue(LUA, key);
 				PushValue(LUA, val);
-				LUA->SetField(-2, key.c_str());
+				LUA->SetTable(-3);
 			}
 			break;
 		default:
@@ -134,20 +135,20 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 	} else if (type == Type::Table)
 	{
 		val->type = type;
-		std::unordered_map<std::string, ILuaValue*> tbl;
+		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 
 		LUA->Push(iStackPos);
 		LUA->PushNil();
 		while (LUA->Next(-2)) {
 			LUA->Push(-2);
 
-			const char* key = LUA->GetString(-1);
-			int val_type = LUA->GetType(-2);
+			ILuaValue* key = new ILuaValue;
+			FillValue(LUA, key, -1, LUA->GetType(-1));
 
 			ILuaValue* new_val = new ILuaValue;
+			FillValue(LUA, new_val, -2, LUA->GetType(-2));
 
-			FillValue(LUA, new_val, -2, val_type);
-			tbl[(std::string)key] = new_val;
+			tbl[key] = new_val;
 
 			LUA->Pop(2);
 		}
@@ -253,4 +254,22 @@ std::string ToPath(std::string path)
     }
 
     return path;
+}
+
+ILuaValue* CreateValue(int value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = Type::Number;
+	val->number = value;
+
+	return val;
+}
+
+ILuaValue* CreateValue(const char* value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = Type::String;
+	val->string = value;
+
+	return val;
 }

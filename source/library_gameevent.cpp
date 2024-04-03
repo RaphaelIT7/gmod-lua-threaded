@@ -74,7 +74,7 @@ public:
 		act->data = event->GetName();
 
 		ILuaValue* val = new ILuaValue;
-		std::unordered_map<std::string, ILuaValue*> tbl;
+		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 
 		KeyValues* subkey = event->m_pDataKeys->GetFirstSubKey();
 		while (subkey)
@@ -83,13 +83,13 @@ public:
 			KeyValues::types_t pType = subkey->GetDataType();
 			if (pType == KeyValues::TYPE_STRING)
 			{
-				tbl[pName] = GetString(ev, pName);
+				tbl[CreateValue(pName)] = GetString(ev, pName);
 			} else if (pType == KeyValues::TYPE_UINT64 || pType == KeyValues::TYPE_INT)
 			{
-				tbl[pName] = GetInt(ev, pName);
+				tbl[CreateValue(pName)] = GetInt(ev, pName);
 			} else if (pType == KeyValues::TYPE_FLOAT)
 			{
-				tbl[pName] = GetFloat(ev, pName);
+				tbl[CreateValue(pName)] = GetFloat(ev, pName);
 			} else {
 				//GlobalLUA->PushNil();
 				Msg("Invalid Type?!? (%s -> %s)\n", event->GetName(), subkey->GetName());

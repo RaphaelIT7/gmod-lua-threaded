@@ -548,7 +548,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 			ILuaValue* val = new ILuaValue;
 			FillValue(LUA, val, pos, LUA->GetType(pos));
 
-			hook_tbl->tbl[std::to_string(pos - 2)] = val;
+			hook_tbl->tbl[CreateValue(std::to_string(pos - 2).c_str())] = val;
 		}
 	}
 

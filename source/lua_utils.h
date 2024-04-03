@@ -134,7 +134,7 @@ struct ILuaValue
 	const char* string = "";
 	Vector vec;
 	QAngle ang;
-	std::unordered_map<std::string, ILuaValue*> tbl;
+	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 };
 
 struct ILuaAction
@@ -238,6 +238,9 @@ extern void PushValue(ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
 extern ILuaValue* GetOrCreate(std::string);
 extern void FillValue(ILuaBase*, ILuaValue*, int, int);
+
+extern ILuaValue* CreateValue(int);
+extern ILuaValue* CreateValue(const char*);
 
 extern void Add_Func(GarrysMod::Lua::ILuaBase*, CFunc, const char*);
 extern ILuaThread* FindThread(int);

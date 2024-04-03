@@ -2853,15 +2853,6 @@ void PrepareEnums()
 	enums[2841] = "FSASYNC_STATUS_UNSERVICED";
 }
 
-ILuaValue* CreateValue(int value)
-{
-	ILuaValue* val = new ILuaValue;
-	val->type = Type::Number;
-	val->number = value;
-
-	return val;
-}
-
 void InitEnums(ILuaInterface* LUA)
 {
 	PrepareEnums();
@@ -2906,27 +2897,27 @@ void InitEnums(ILuaInterface* LUA)
 		ILuaValue* val = new ILuaValue;
 		val->type = Type::Table;
 		
-		std::unordered_map<std::string, ILuaValue*> tbl;
-		tbl["HIP"]				= CreateValue(0);
-		tbl["SPINE"]			= CreateValue(1);
-		tbl["SHOULDER"]			= CreateValue(2);
-		tbl["HEAD"]				= CreateValue(3);
-		tbl["SHOULDER_LEFT"]	= CreateValue(4);
-		tbl["ELBOW_LEFT"]		= CreateValue(5);
-		tbl["WRIST_LEFT"]		= CreateValue(6);
-		tbl["HAND_LEFT"]		= CreateValue(7);
-		tbl["SHOULDER_RIGHT"]	= CreateValue(8);
-		tbl["ELBOW_RIGHT"]		= CreateValue(9);
-		tbl["WRIST_RIGHT"]		= CreateValue(10);
-		tbl["HAND_RIGHT"]		= CreateValue(11);
-		tbl["HIP_LEFT"]			= CreateValue(12);
-		tbl["KNEE_LEFT"]		= CreateValue(13);
-		tbl["ANKLE_LEFT"]		= CreateValue(14);
-		tbl["FOOT_LEFT"]		= CreateValue(15);
-		tbl["HIP_RIGHT"]		= CreateValue(16);
-		tbl["KNEE_RIGHT"]		= CreateValue(17);
-		tbl["ANKLE_RIGHT"]		= CreateValue(18);
-		tbl["FOOT_RIGHT"]		= CreateValue(19);
+		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
+		tbl[CreateValue("HIP")]				= CreateValue(0);
+		tbl[CreateValue("SPINE")]			= CreateValue(1);
+		tbl[CreateValue("SHOULDER")]		= CreateValue(2);
+		tbl[CreateValue("HEAD")]			= CreateValue(3);
+		tbl[CreateValue("SHOULDER_LEFT")]	= CreateValue(4);
+		tbl[CreateValue("ELBOW_LEFT")]		= CreateValue(5);
+		tbl[CreateValue("WRIST_LEFT")]		= CreateValue(6);
+		tbl[CreateValue("HAND_LEFT")]		= CreateValue(7);
+		tbl[CreateValue("SHOULDER_RIGHT")]	= CreateValue(8);
+		tbl[CreateValue("ELBOW_RIGHT")]		= CreateValue(9);
+		tbl[CreateValue("WRIST_RIGHT")]		= CreateValue(10);
+		tbl[CreateValue("HAND_RIGHT")]		= CreateValue(11);
+		tbl[CreateValue("HIP_LEFT")]		= CreateValue(12);
+		tbl[CreateValue("KNEE_LEFT")]		= CreateValue(13);
+		tbl[CreateValue("ANKLE_LEFT")]		= CreateValue(14);
+		tbl[CreateValue("FOOT_LEFT")]		= CreateValue(15);
+		tbl[CreateValue("HIP_RIGHT")]		= CreateValue(16);
+		tbl[CreateValue("KNEE_RIGHT")]		= CreateValue(17);
+		tbl[CreateValue("ANKLE_RIGHT")]		= CreateValue(18);
+		tbl[CreateValue("FOOT_RIGHT")]		= CreateValue(19);
 
 		val->tbl = tbl;
 		fullenums["SENSORBONE"] = val;
@@ -2940,11 +2931,11 @@ void InitEnums(ILuaInterface* LUA)
 		ILuaValue* val = new ILuaValue;
 		val->type = Type::Table;
 		
-		std::unordered_map<std::string, ILuaValue*> tbl;
-		tbl["NONE"]			= CreateValue(0);
-		tbl["POINT"]		= CreateValue(1);
-		tbl["LINEAR"]		= CreateValue(2);
-		tbl["ANISOTROPIC"]	= CreateValue(3);
+		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
+		tbl[CreateValue("NONE")]		= CreateValue(0);
+		tbl[CreateValue("POINT")]		= CreateValue(1);
+		tbl[CreateValue("LINEAR")]		= CreateValue(2);
+		tbl[CreateValue("ANISOTROPIC")]	= CreateValue(3);
 
 		val->tbl = tbl;
 		fullenums["TEXFILTER"] = val;
@@ -2958,12 +2949,12 @@ void InitEnums(ILuaInterface* LUA)
 		ILuaValue* val = new ILuaValue;
 		val->type = Type::Table;
 		
-		std::unordered_map<std::string, ILuaValue*> tbl;
-		tbl["IN"]		= CreateValue(1);
-		tbl["OUT"]		= CreateValue(2);
-		tbl["MODULATE"]	= CreateValue(4);
-		tbl["STAYOUT"]	= CreateValue(8);
-		tbl["PURGE"]	= CreateValue(16);
+		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
+		tbl[CreateValue("IN")]		= CreateValue(1);
+		tbl[CreateValue("OUT")]		= CreateValue(2);
+		tbl[CreateValue("MODULATE")]	= CreateValue(4);
+		tbl[CreateValue("STAYOUT")]	= CreateValue(8);
+		tbl[CreateValue("PURGE")]	= CreateValue(16);
 
 		val->tbl = tbl;
 		fullenums["SCREENFADE"] = val;

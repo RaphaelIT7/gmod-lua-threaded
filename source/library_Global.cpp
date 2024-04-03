@@ -223,7 +223,7 @@ LUA_FUNCTION(Global_Msg)
 		{
 			ss << arg_str;
 		} else {
-		ss << "<Something Unknown. Scary>";
+			ss << "<Something Unknown. Scary>";
 		}
 	}
 	ss << "\n";
