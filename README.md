@@ -9,6 +9,8 @@ The Goal is to be able to create a ILuaInterface with all of Gmod's libraries, f
 You can download the last working version(which exist for 1 month) which was tested from [here](https://github.com/RaphaelIT7/gmod-lua-threaded/actions/workflows/working-versions.yml)  
 If you want the newest version, just create a fork and run the Build Project (Artifact) workflow  
 
+If you have any Issue, Request or Question you can always open an Issue for it or ask me in Discord  
+
 NOTE:  
 This only works on Linux because on Windows creating a ILuaInterface on another thread currently crashes the game.  
 
