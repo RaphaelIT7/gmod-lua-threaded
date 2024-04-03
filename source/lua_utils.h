@@ -211,6 +211,8 @@ struct GMOD_Info
 	const char* versionstr = "????????";
 	const char* branch = "Unknown";
 
+	bool threadready = false;
+
 	// engine library
 	ILuaValue* addons;
 	ILuaValue* games;

@@ -93,6 +93,8 @@ print("Testing Started")
 
 local ret, err = pcall(function()
 	require("lua_threaded")
+	LuaThreaded.ReadyThreads()
+	
 	iFace = LuaThreaded.CreateInterface()
 	iFace:InitGmod()
 	iFace:RunFile("lua/includes/init.lua")

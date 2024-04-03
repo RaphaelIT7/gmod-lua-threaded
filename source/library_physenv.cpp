@@ -143,7 +143,7 @@ LUA_FUNCTION(physenv_SetPerformanceSettings)
 	return 0;
 }
 
-void InitPhysEnv(ILuaInterface* LUA)
+void InitPhysEnv(ILuaInterface* LUA) // BUG: If this is called before InitPostEntity was called we could crash for some reason.
 {
 	if (physenv == nullptr) {
 		phys = (IPhysics*)physics_loader.GetFactory()(VPHYSICS_INTERFACE_VERSION, nullptr);

@@ -164,6 +164,16 @@ LUA_FUNCTION(LuaThread_IsMainThread)
     return 1;
 }
 
+LUA_FUNCTION(LuaThread_ReadyThreads)
+{
+	if (!ThreadInMainThread())
+		return 0;
+
+	GMOD->threadready = true;
+
+    return 1;
+}
+
 void InitLuaThreaded(ILuaInterface* LUA, int id)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -180,6 +190,7 @@ void InitLuaThreaded(ILuaInterface* LUA, int id)
 			Add_Func(LUA, LuaThread_SetValue, "SetValue");
 			Add_Func(LUA, LuaThread_GetValue, "GetValue");
 			Add_Func(LUA, LuaThread_IsMainThread, "IsMainThread");
+			Add_Func(LUA, LuaThread_ReadyThreads, "ReadyThreads");
 
 		LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop();

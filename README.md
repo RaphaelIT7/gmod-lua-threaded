@@ -63,6 +63,8 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 
 ### Bugs
 - [ ] File:Seek seems to have some issues?
+- [ ] Requiring this module befor InitPostEntity was called causes a bunch of weird bugs.
+See [LuaThreaded.ReadyThreads()](https://github.com/RaphaelIT7/gmod-lua-threaded?tab=readme-ov-file#luathreadedreadythreads) for the implemented workaround.
 
 I listed all Libraries below that are serverside. Regardless if they are implemented in lua or in c++.  
 - - [ ] Global(functions)  
@@ -172,6 +174,13 @@ Returns only the specified value from the shared table.
 Args:  
 1. The Key inside the Table  
 2. The Value to set. Allowed Types: Number, Bool, String, Vector, Angle and Table  
+
+### LuaThreaded.ReadyThreads()
+Enables all threads. Until then, all Threads will just wait and do nothing.
+You can still create Threads and give them tasks, but they won't do them until this function is called.
+
+This is a workaround for a crash if you try to do stuff way too soon.
+This needs to be called if you require the module Inside or after InitPostEntity is called.
 
 ## ILuaInterface
 ### ILuaInterface:RunString(string code)

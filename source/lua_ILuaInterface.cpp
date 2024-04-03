@@ -248,11 +248,11 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitResource(LUA);
 	InitSql(LUA);
 	InitSystem(LUA);
-	//InitEngine(LUA);
+	InitEngine(LUA);
 	InitTimer(LUA);
 	InitHammer(LUA);
 	InitGmodLib(LUA);
-	//InitFileLib(LUA);
+	InitFileLib(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
@@ -628,6 +628,12 @@ unsigned LuaThread(void* data)
 
 	while(thread_data->run)
 	{
+		if (!GMOD->threadready)
+		{
+			ThreadSleep(0.5);
+			continue;
+		}
+
 		if (thread_data->locked)
 		{
 			thread_data->waiting = true;

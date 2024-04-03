@@ -8,6 +8,12 @@ LUA_FUNCTION(LUA_UpdateEngine)
 	return 0;
 }
 
+LUA_FUNCTION(LUA_ReadyThreads)
+{
+	GMOD->threadready = true;
+	return 0;
+}
+
 GMOD_MODULE_OPEN()
 {
 	Msg("LuaThreaded Loading\n");
@@ -63,6 +69,21 @@ GMOD_MODULE_OPEN()
 				LUA->PushString("GameContentChanged");
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_UpdateEngine);
+				LUA->Call(3, 0);
+			}
+			LUA->Pop();
+		}
+	LUA->Pop(2);
+
+	// NOTE: We need to wait until InitPostEntity is called because a bunch of stuff is missing which cause a crash.
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "hook");
+		if (LUA->IsType(-1, Type::Table)) {
+			LUA->GetField(-1, "Add");
+			if (LUA->IsType(-1, Type::Function)) {
+				LUA->PushString("InitPostEntity");
+				LUA->PushString("LuaThreaded");
+				LUA->PushCFunction(LUA_ReadyThreads);
 				LUA->Call(3, 0);
 			}
 			LUA->Pop();
