@@ -107,6 +107,7 @@ ILuaValue* GetOrCreate(std::string key)
 
 void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 {
+	Type::
 	Msg("FillValue %i %i\n", iStackPos, type);
 	if (type == Type::Number)
 	{
@@ -137,12 +138,6 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 		val->type = type;
 		std::unordered_map<std::string, ILuaValue*> tbl;
 
-		int ref = LUA->ReferenceCreate();
-
-		if (iStackPos != -1) {
-			LUA->Push(-1);
-		}
-
 		LUA->PushNil();
 		while (LUA->Next(-2)) {
 			LUA->Push(-2);
@@ -158,13 +153,6 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 			LUA->Pop(2);
 		}
 		LUA->Pop(1);
-
-		if (iStackPos != -1) {
-			LUA->Pop();
-		}
-
-		LUA->ReferencePush(ref);
-		LUA->ReferenceFree(ref);
 
 		val->tbl = tbl;
 	}

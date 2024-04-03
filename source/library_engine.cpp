@@ -107,9 +107,41 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
+bool PushFunction(ILuaInterface* LUA, const char* eng)
+{
+	int ref = -1;
+
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "engine");
+		if (LUA->IsType(-1, Type::Table))
+		{
+			LUA->GetField(-1, eng);
+			if (LUA->IsType(-1, Type::Function))
+			{
+				ref = LUA->ReferenceCreate();
+			} else {
+				Msg("engine.%s is not a valid function!\n", eng);
+			}
+			LUA->Pop(1);
+
+		} else {
+			Msg("engine is not a valid table!\n");
+		}
+	LUA->Pop(2);
+
+	if (ref != -1)
+	{
+		LUA->ReferencePush(ref);
+		LUA->ReferenceFree(ref);
+	}
+
+	return ref != -1;
+}
+
 void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
 {
 	Msg("UpdateEngine start\n");
+	Msg("Top %i\n", LUA->Top());
 	if (GMOD->addons)
 	{
 		SafeDelete(GMOD->addons);
@@ -118,80 +150,50 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		SafeDelete(GMOD->usercontent);
 	}
 
-	Msg("Top %i\n", LUA->Top());
-	LUA->PushSpecial(SPECIAL_GLOB);
-		Msg("Top %i\n", LUA->Top());
-		LUA->GetField(-1, "engine");
-		if (LUA->IsType(-1, Type::Table))
-		{
-			Msg("Top %i\n", LUA->Top());
-			LUA->GetField(-1, "GetAddons");
-			if (LUA->IsType(-1, Type::Function))
-			{
-				LUA->Call(0, 1);
+	if (PushFunction(LUA, "GetAddons"))
+	{
+		LUA->Call(0, 1);
 
-				GMOD->addons = new ILuaValue;
-				FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
-			} else {
-				Msg("engine.GetAddons is not a valid function!\n");
-			}
-			LUA->Pop(1);
-			Msg("Top %i\n", LUA->Top());
+		GMOD->addons = new ILuaValue;
+		FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
+		LUA->Pop(2);
+	}
 
-			LUA->GetField(-1, "GetGames");
-			if (LUA->IsType(-1, Type::Function))
-			{
-				LUA->Call(0, 1);
+	if (PushFunction(LUA, "GetGames"))
+	{
+		LUA->Call(0, 1);
 
-				GMOD->games = new ILuaValue;
-				FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
-			} else {
-				Msg("engine.GetGames is not a valid function!\n");
-			}
-			LUA->Pop(1);
-			Msg("Top %i\n", LUA->Top());
+		GMOD->games = new ILuaValue;
+		FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
+		LUA->Pop(2);
+	}
 
-			LUA->GetField(-1, "GetGamemodes");
-			if (LUA->IsType(-1, Type::Function))
-			{
-				LUA->Call(0, 1);
+	if (PushFunction(LUA, "GetGamemodes"))
+	{
+		LUA->Call(0, 1);
 
-				GMOD->gamemodes = new ILuaValue;
-				FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
-			} else {
-				Msg("engine.GetGamemodes is not a valid function!\n");
-			}
-			LUA->Pop(1);
-			Msg("Top %i\n", LUA->Top());
+		GMOD->gamemodes = new ILuaValue;
+		FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
+		LUA->Pop(2);
+	}
 
-			LUA->GetField(-1, "GetUserContent");
-			if (LUA->IsType(-1, Type::Function))
-			{
-				LUA->Call(0, 1);
+	if (PushFunction(LUA, "GetUserContent"))
+	{
+		LUA->Call(0, 1);
 
-				GMOD->usercontent = new ILuaValue;
-				FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
-			} else {
-				Msg("engine.GetUserContent is not a valid function!\n");
-			}
-			LUA->Pop(1);
-			Msg("Top %i\n", LUA->Top());
+		GMOD->usercontent = new ILuaValue;
+		FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
+		LUA->Pop(2);
+	}
 
-			LUA->GetField(-1, "ActiveGamemode");
-			if (LUA->IsType(-1, Type::Function))
-			{
-				LUA->Call(0, 1);
+	if (PushFunction(LUA, "ActiveGamemode"))
+	{
+		LUA->Call(0, 1);
 
-				GMOD->active_gamemode = LUA->GetString(-1);
-			} else {
-				Msg("engine.ActiveGamemode is not a valid function!\n");
-			}
-			LUA->Pop(1);
-			Msg("Top %i\n", LUA->Top());
-		} else {
-			Msg("engine is not a valid table!\n");
-		}
-	LUA->Pop(2);
+		GMOD->active_gamemode = LUA->GetString(-1);
+		LUA->Pop(2);
+	}
+
 	Msg("Top %i\n", LUA->Top());
 	Msg("UpdateEngine finish\n");
 }
