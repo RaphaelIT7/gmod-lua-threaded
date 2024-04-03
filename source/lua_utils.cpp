@@ -137,21 +137,26 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 		val->type = type;
 		std::unordered_map<std::string, ILuaValue*> tbl;
 
-		LUA->PushNil();
-		while (LUA->Next(-2)) {
-			LUA->Push(-2);
+		int ref = LUA->ReferenceCreate();
 
-			const char* key = LUA->GetString(-1);
-			int val_type = LUA->GetType(-2);
+		LUA->PushNil();
+		while (LUA->Next(iStackPos + -2)) {
+			LUA->Push(iStackPos + -2);
+
+			const char* key = LUA->GetString(iStackPos + -1);
+			int val_type = LUA->GetType(iStackPos + -2);
 
 			ILuaValue* new_val = new ILuaValue;
 
-			FillValue(LUA, new_val, -2, val_type);
+			FillValue(LUA, new_val, iStackPos + -2, val_type);
 			tbl[(std::string)key] = new_val;
 
 			LUA->Pop(2);
 		}
-		//LUA->Pop(1);
+		LUA->Pop(1);
+
+		LUA->ReferencePush(ref);
+		LUA->ReferenceFree(ref);
 
 		val->tbl = tbl;
 	}
