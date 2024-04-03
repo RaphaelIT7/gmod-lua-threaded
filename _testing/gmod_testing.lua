@@ -64,6 +64,7 @@ local code = [[local ret, err = pcall(function()
 
 	local printtbl = nil
 	local function PrintTable(tbl, tabs) -- I don't think we currently can load Gmod's PrintTable
+		if !tbl then return end
 		tabs = tabs or 0
 
 		local start_str = ""
