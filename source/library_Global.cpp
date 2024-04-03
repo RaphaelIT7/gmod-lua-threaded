@@ -226,7 +226,7 @@ LUA_FUNCTION(Global_Msg)
 			ss << "<Something Unknown. Scary>";
 		}
 	}
-	ss << "\n";
+
 	Msg(ss.str().c_str());
 
 	return 0;
