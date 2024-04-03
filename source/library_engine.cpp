@@ -150,14 +150,16 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		SafeDelete(GMOD->usercontent);
 	}
 
+	Msg("Top %i\n", LUA->Top());
 	if (PushFunction(LUA, "GetAddons"))
 	{
 		LUA->Call(0, 1);
 
 		GMOD->addons = new ILuaValue;
 		FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
-		LUA->Pop(2);
+		LUA->Pop(1);
 	}
+	Msg("Top %i\n", LUA->Top());
 
 	if (PushFunction(LUA, "GetGames"))
 	{
@@ -165,8 +167,9 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 
 		GMOD->games = new ILuaValue;
 		FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
-		LUA->Pop(2);
+		LUA->Pop(1);
 	}
+	Msg("Top %i\n", LUA->Top());
 
 	if (PushFunction(LUA, "GetGamemodes"))
 	{
@@ -176,6 +179,7 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
 		LUA->Pop(2);
 	}
+	Msg("Top %i\n", LUA->Top());
 
 	if (PushFunction(LUA, "GetUserContent"))
 	{
@@ -183,15 +187,16 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 
 		GMOD->usercontent = new ILuaValue;
 		FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
-		LUA->Pop(2);
+		LUA->Pop(1);
 	}
+	Msg("Top %i\n", LUA->Top());
 
 	if (PushFunction(LUA, "ActiveGamemode"))
 	{
 		LUA->Call(0, 1);
 
 		GMOD->active_gamemode = LUA->GetString(-1);
-		LUA->Pop(2);
+		LUA->Pop(1);
 	}
 
 	Msg("Top %i\n", LUA->Top());
