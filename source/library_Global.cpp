@@ -212,6 +212,19 @@ LUA_FUNCTION(isvector)
 	return 1;
 }
 
+LUA_FUNCTION(Global_Msg)
+{
+	std::string msg;
+	for (int i=0; i<LUA->Top();++i)
+	{
+		msg = msg + func_lua_tostring(LUA->GetState(), i, NULL);
+	}
+	msg = msg + "\n";
+	Msg(msg.c_str());
+
+	return 0;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -220,6 +233,7 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, FindMetaTable, "FindMetaTable");
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
+		Add_Func(LUA, Global_Msg, "Msg");
 
 		Add_Func(LUA, isangle, "isangle");
 		Add_Func(LUA, isbool, "isbool");
