@@ -243,16 +243,16 @@ void InitLuaLibraries(ILuaThread* thread)
 
 	InitGlobal(LUA);
 	InitNet(LUA);
-	InitGameevent(thread);
-	InitPhysEnv(LUA);
-	InitResource(LUA);
+	//InitGameevent(thread);
+	//InitPhysEnv(LUA);
+	//InitResource(LUA);
 	InitSql(LUA);
 	InitSystem(LUA);
-	InitEngine(LUA);
+	//InitEngine(LUA);
 	InitTimer(LUA);
 	InitHammer(LUA);
 	InitGmodLib(LUA);
-	InitFileLib(LUA);
+	//InitFileLib(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)
