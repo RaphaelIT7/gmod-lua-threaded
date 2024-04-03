@@ -31,128 +31,37 @@ CGlobalVars* GlobalVars()
 
 CGlobalVars* gpGlobal;
 IVEngineServer* engine;
-std::list<IAddonSystem::Information> addons; // Maybe switch to use ->GetSubList()?
 LUA_FUNCTION(engine_GetAddons)
 {
-	LUA->CreateTable();
-	int i = 0;
-	for (IAddonSystem::Information addon : addons)
-	{
-		++i;
-		LUA->CreateTable();
-
-		LUA->PushBool(true); // ToDo: How can I check this? (Look into it while creating custom filesystem_stdio.dll)
-		LUA->SetField(-2, "downloaded");
-
-		LUA->PushNumber(addon.placeholder6); // Maybe placeholder6 contains the models count?
-		LUA->SetField(-2, "models");
-
-		LUA->PushString(addon.title.c_str());
-		LUA->SetField(-2, "title");
-
-		LUA->PushString(addon.file.c_str());
-		LUA->SetField(-2, "file");
-
-		LUA->PushBool(true); // ToDo: Same todo as for downloaded
-		LUA->SetField(-2, "mounted");
-
-		LUA->PushNumber(addon.wsid);
-		LUA->SetField(-2, "wsid");
-
-		LUA->PushNumber(addon.placeholder4); // Maybe placerholder4 is the size?
-		LUA->SetField(-2, "size");
-
-		LUA->PushNumber(addon.time_updated);
-		LUA->SetField(-2, "updated");
-
-		LUA->PushString(addon.tags.c_str());
-		LUA->SetField(-2, "tags");
-
-		LUA->PushNumber(addon.time_updated);
-		LUA->SetField(-2, "timeadded");
-
-		LUA->SetField(-2, std::to_string(i).c_str());
-	}
+	PushValue(LUA, GMOD->addons);
 
 	return 1;
 }
 
 LUA_FUNCTION(engine_GetUserContent) // Deprecated. If anyone wants to use it, tell me. Until then, I won't bother implementing it.
 {
-	LUA->CreateTable();
+	PushValue(LUA, GMOD->usercontent);
 
 	return 1;
 }
 
-std::list<IGameDepotSystem::Information> games;
 LUA_FUNCTION(engine_GetGames)
 {
-	LUA->CreateTable();
-	int i = 0;
-	for (IGameDepotSystem::Information game : games)
-	{
-		++i;
-		LUA->CreateTable();
-
-		LUA->PushNumber(game.depot);
-		LUA->SetField(-2, "depot");
-
-		LUA->PushString(game.title.c_str());
-		LUA->SetField(-2, "title");
-
-		LUA->PushBool(game.owned);
-		LUA->SetField(-2, "owned");
-
-		LUA->PushString(game.folder.c_str());
-		LUA->SetField(-2, "folder");
-
-		LUA->PushBool(game.mounted);
-		LUA->SetField(-2, "mounted");
-
-		LUA->PushBool(game.installed);
-		LUA->SetField(-2, "installed");
-
-		LUA->SetField(-2, std::to_string(i).c_str());
-	}
+	PushValue(LUA, GMOD->games);
 
 	return 1;
 }
 
-std::list<IGamemodeSystem::Information> gamemodes;
 LUA_FUNCTION(engine_GetGamemodes)
 {
-	LUA->CreateTable();
-	int i = 0;
-	for (IGamemodeSystem::Information gamemode : gamemodes)
-	{
-		++i;
-		LUA->CreateTable();
-
-		LUA->PushString(gamemode.title.c_str());
-		LUA->SetField(-2, "title");
-
-		LUA->PushNumber(gamemode.workshopid);
-		LUA->SetField(-2, "workshopid");
-
-		LUA->PushBool(gamemode.menusystem);
-		LUA->SetField(-2, "menusystem");
-
-		LUA->PushString(gamemode.maps.c_str());
-		LUA->SetField(-2, "maps");
-
-		LUA->PushString(gamemode.name.c_str());
-		LUA->SetField(-2, "name");
-
-		LUA->SetField(-2, std::to_string(i).c_str());
-	}
+	PushValue(LUA, GMOD->gamemodes);
 
 	return 1;
 }
 
-IGamemodeSystem::Information active_gamemode;
 LUA_FUNCTION(engine_ActiveGamemode)
 {
-	LUA->PushString(active_gamemode.name.c_str());
+	LUA->PushString(GMOD->active_gamemode);
 
 	return 1;
 }
@@ -198,12 +107,82 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
-void UpdateEngine() // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
+void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
 {
-	addons = filesystem->Addons()->GetList();
-	//gamemodes = filesystem->Gamemodes()->GetList();
-	//games = filesystem->Games()->GetList();
-	//active_gamemode = filesystem->Gamemodes()->Active();
+	if (GMOD->addons)
+	{
+		SafeDelete(GMOD->addons);
+		SafeDelete(GMOD->games);
+		SafeDelete(GMOD->gamemodes);
+		SafeDelete(GMOD->usercontent);
+	}
+
+	LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->GetField(-1, "engine");
+		if (LUA->IsType(-1, Type::Table))
+		{
+			LUA->GetField(-1, "GetAddons");
+			if (LUA->IsType(-1, Type::Function))
+			{
+				LUA->Call(0, 1);
+
+				GMOD->addons = new ILuaValue;
+				FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
+			} else {
+				Msg("engine.GetAddons is not a valid function!\n");
+			}
+			LUA->Pop();
+
+			LUA->GetField(-1, "GetGames");
+			if (LUA->IsType(-1, Type::Function))
+			{
+				LUA->Call(0, 1);
+
+				GMOD->games = new ILuaValue;
+				FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
+			} else {
+				Msg("engine.GetGames is not a valid function!\n");
+			}
+			LUA->Pop();
+
+			LUA->GetField(-1, "GetGamemodes");
+			if (LUA->IsType(-1, Type::Function))
+			{
+				LUA->Call(0, 1);
+
+				GMOD->gamemodes = new ILuaValue;
+				FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
+			} else {
+				Msg("engine.GetGamemodes is not a valid function!\n");
+			}
+			LUA->Pop();
+
+			LUA->GetField(-1, "GetUserContent");
+			if (LUA->IsType(-1, Type::Function))
+			{
+				LUA->Call(0, 1);
+
+				GMOD->usercontent = new ILuaValue;
+				FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
+			} else {
+				Msg("engine.GetUserContent is not a valid function!\n");
+			}
+			LUA->Pop();
+
+			LUA->GetField(-1, "ActiveGamemode");
+			if (LUA->IsType(-1, Type::Function))
+			{
+				LUA->Call(0, 1);
+
+				GMOD->active_gamemode = LUA->GetString(-1);
+			} else {
+				Msg("engine.ActiveGamemode is not a valid function!\n");
+			}
+			LUA->Pop();
+		} else {
+			Msg("engine is not a valid table!\n");
+		}
+	LUA->Pop(2);
 }
 
 void InitEngine(ILuaInterface* LUA)

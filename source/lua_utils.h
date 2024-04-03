@@ -210,6 +210,14 @@ struct GMOD_Info
 	int version = 0;
 	const char* versionstr = "????????";
 	const char* branch = "Unknown";
+
+	// engine library
+	ILuaValue* addons;
+	ILuaValue* games;
+	ILuaValue* gamemodes;
+	ILuaValue* usercontent;
+
+	const char* active_gamemode;
 };
 
 inline float Lerp(float delta, float from, float to)
