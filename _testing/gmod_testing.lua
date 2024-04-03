@@ -81,7 +81,7 @@ local ret, err = pcall(function()
 	iFace = LuaThreaded.CreateInterface()
 	iFace:InitGmod()
 	iFace:RunString(code)
-	iFace:RunHook("ExampleHook", "ExampleArg", 1234, Vector(1, 2, 3))
+	--iFace:RunHook("ExampleHook", "ExampleArg", 1234, Vector(1, 2, 3))
 end)
 
 if err then
