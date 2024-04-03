@@ -215,9 +215,12 @@ LUA_FUNCTION(isvector)
 LUA_FUNCTION(Global_Msg)
 {
 	std::string msg;
+	Msg("Top: %i\n", LUA->Top());
 	for (int i=1; i<LUA->Top();++i)
 	{
+		Msg("1. %i\n", i);
 		msg = msg + func_lua_tostring(LUA->GetState(), i, NULL);
+		Msg("2. %i\n", i);
 	}
 	msg = msg + "\n";
 	Msg(msg.c_str());
