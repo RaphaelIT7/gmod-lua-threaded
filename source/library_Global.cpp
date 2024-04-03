@@ -1,4 +1,5 @@
 #include "lua_threaded.h"
+#include <sstream>
 
 LUA_FUNCTION(include)
 {
@@ -214,16 +215,19 @@ LUA_FUNCTION(isvector)
 
 LUA_FUNCTION(Global_Msg)
 {
-	std::string msg;
-	Msg("Top: %i\n", LUA->Top());
-	for (int i=1; i<LUA->Top();++i)
+	std::stringstream ss;
+	for (int i=1; i <= LUA->Top(); ++i)
 	{
-		Msg("1. %i\n", i);
-		msg = msg + func_lua_tostring(LUA->GetState(), i, NULL);
-		Msg("2. %i\n", i);
+		const char* arg_str = lua_tostring(LUA->GetState(), i);
+		if (arg_str)
+		{
+			ss << arg_str;
+		} else {
+		ss << "<Something Unknown. Scary>";
+		}
 	}
-	msg = msg + "\n";
-	Msg(msg.c_str());
+	ss << "\n";
+	Msg(ss.str().c_str());
 
 	return 0;
 }
