@@ -9,6 +9,7 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
+		Msg("Read %i\n", nBytesRead);
 	} else {
 		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
 	}

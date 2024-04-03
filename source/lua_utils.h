@@ -132,9 +132,9 @@ struct ILuaValue
 
 	double number = -1;
 	const char* string = "";
+	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 	Vector vec;
 	QAngle ang;
-	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 };
 
 struct ILuaAction
