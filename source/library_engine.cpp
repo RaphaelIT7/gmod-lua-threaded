@@ -140,8 +140,6 @@ bool PushEngineFunction(ILuaInterface* LUA, const char* eng)
 
 void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
 {
-	Msg("UpdateEngine start\n");
-	Msg("Top %i\n", LUA->Top());
 	if (GMOD->addons)
 	{
 		SafeDelete(GMOD->addons);
@@ -150,30 +148,21 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		SafeDelete(GMOD->usercontent);
 	}
 
-	Msg("Top %i\n", LUA->Top());
 	if (PushEngineFunction(LUA, "GetAddons"))
 	{
-		Msg("1. Top %i\n", LUA->Top());
 		LUA->Call(0, 1);
-		Msg("2. Top %i\n", LUA->Top());
 
 		GMOD->addons = new ILuaValue;
 		FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
-		Msg("3. Top %i\n", LUA->Top());
 	}
-	Msg("Top %i\n", LUA->Top());
 
 	if (PushEngineFunction(LUA, "GetGames"))
 	{
-		Msg("1. Top %i\n", LUA->Top());
 		LUA->Call(0, 1);
-		Msg("2. Top %i\n", LUA->Top());
 
 		GMOD->games = new ILuaValue;
 		FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
-		Msg("3. Top %i\n", LUA->Top());
 	}
-	Msg("Top %i\n", LUA->Top());
 
 	if (PushEngineFunction(LUA, "GetGamemodes"))
 	{
@@ -182,7 +171,6 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		GMOD->gamemodes = new ILuaValue;
 		FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
 	}
-	Msg("Top %i\n", LUA->Top());
 
 	if (PushEngineFunction(LUA, "GetUserContent"))
 	{
@@ -191,7 +179,6 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		GMOD->usercontent = new ILuaValue;
 		FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
 	}
-	Msg("Top %i\n", LUA->Top());
 
 	if (PushEngineFunction(LUA, "ActiveGamemode"))
 	{
@@ -200,9 +187,6 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 		GMOD->active_gamemode = LUA->GetString(-1);
 		LUA->Pop(1);
 	}
-
-	Msg("Top %i\n", LUA->Top());
-	Msg("UpdateEngine finish\n");
 }
 
 void InitEngine(ILuaInterface* LUA)
