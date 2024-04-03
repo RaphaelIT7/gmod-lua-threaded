@@ -26,6 +26,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] jit  
 - [x] timer  
 - [x] hammer (useful for Windows later)  
+- [x] engine  
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
@@ -35,13 +36,6 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] gameevent (untested!)  
 - [x] resource (untested!)  
 - [x] system (untested!)  
-- [x] engine (Mostly implemented)  
-- - [ ] engine.GetAddons
-- - [-] engine.GetUserContent (Request it if anyone needs it)  
-- - [ ] engine.GetUserContent (Disabled because of a random error)
-- - [ ] engine.GetGames (Disabled because of a random error)
-- - [ ] engine.GetGamemodes (Disabled because of a random error)
-- - [ ] engine.ActiveGamemode (Disabled because of a random error)
 - [x] gmod (untested!)  
 - [x] file (Mostly implemented & untested!)
 - - [ ] file.AsyncRead
