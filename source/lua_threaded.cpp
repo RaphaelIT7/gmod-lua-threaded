@@ -4,7 +4,7 @@
 
 LUA_FUNCTION(LUA_UpdateEngine)
 {
-	UpdateEngine();
+	UpdateEngine((ILuaInterface*)LUA);
 	return 0;
 }
 
@@ -48,7 +48,7 @@ GMOD_MODULE_OPEN()
 	InitEnums((ILuaInterface*)LUA);
 
 	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine(); // Look into it why it breaks my shit.
+	UpdateEngine((ILuaInterface*)LUA); // Look into it why it breaks my shit.
 
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
