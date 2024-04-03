@@ -106,6 +106,7 @@ struct lua_State
 #include "ILuaConVars.h"
 #include "detours.h"
 #include <setjmp.h>
+#include <eiface.h>
 #include <vector>
 #include <lua.h>
 
@@ -252,3 +253,4 @@ extern void ShutdownInterface(ILuaThread*);
 
 extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
+extern CGlobalVars* gpGlobal;

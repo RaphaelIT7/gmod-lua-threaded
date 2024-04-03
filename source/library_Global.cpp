@@ -241,6 +241,20 @@ LUA_FUNCTION(Global_Msg)
 	return 0;
 }
 
+LUA_FUNCTION(CurTime)
+{
+	LUA->PushNumber(gpGlobal->curtime);
+
+	return 1;
+}
+
+LUA_FUNCTION(RealTime)
+{
+	LUA->PushNumber(gpGlobal->realtime);
+
+	return 1;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -250,6 +264,9 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
 		Add_Func(LUA, Global_Msg, "Msg");
+
+		Add_Func(LUA, CurTime, "CurTime");
+		Add_Func(LUA, RealTime, "RealTime");
 
 		Add_Func(LUA, isangle, "isangle");
 		Add_Func(LUA, isbool, "isbool");

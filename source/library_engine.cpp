@@ -29,7 +29,6 @@ CGlobalVars* GlobalVars()
 	return iface_pointer;
 }
 
-CGlobalVars* gpGlobal;
 IVEngineServer* engine;
 LUA_FUNCTION(engine_GetAddons)
 {
