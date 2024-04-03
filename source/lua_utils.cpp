@@ -107,7 +107,6 @@ ILuaValue* GetOrCreate(std::string key)
 
 void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 {
-	Type::
 	Msg("FillValue %i %i\n", iStackPos, type);
 	if (type == Type::Number)
 	{
