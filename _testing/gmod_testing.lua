@@ -62,28 +62,6 @@ local code = [[local ret, err = pcall(function()
 	print("engine.TickInterval: ", engine.TickInterval())
 	print("engine.ActiveGamemode: ", engine.ActiveGamemode())
 
-	local printtbl = nil
-	local function PrintTable(tbl, tabs) -- I don't think we currently can load Gmod's PrintTable
-		if !tbl then return end
-		tabs = tabs or 0
-
-		local start_str = ""
-		for k=1, tabs do
-			start_str = start_str .. "	"
-		end
-
-		for k, v in pairs(tbl) do
-			if (type(v) == "table") then
-				print(start_str .. tostring(k) .. ": ")
-				printtbl(v, tabs + 1)
-			else
-
-				print(start_str .. tostring(k), v)
-			end
-		end
-	end
-	printtbl = PrintTable
-
 	print("=== engine.GetAddons ===")
 	PrintTable(engine.GetAddons())
 	print("=== engine.GetUserContent ===")
@@ -117,6 +95,7 @@ local ret, err = pcall(function()
 	require("lua_threaded")
 	iFace = LuaThreaded.CreateInterface()
 	iFace:InitGmod()
+	iFace:RunFile("lua/includes/util.lua")
 	iFace:RunString(code)
 	--iFace:RunHook("ExampleHook", "ExampleArg", 1234, Vector(1, 2, 3))
 end)
