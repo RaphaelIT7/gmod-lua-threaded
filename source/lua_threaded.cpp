@@ -70,8 +70,9 @@ GMOD_MODULE_OPEN()
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_UpdateEngine);
 				LUA->Call(3, 0);
+			} else {
+				LUA->Pop();
 			}
-			LUA->Pop();
 		}
 	LUA->Pop(2);
 
@@ -85,8 +86,9 @@ GMOD_MODULE_OPEN()
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_ReadyThreads);
 				LUA->Call(3, 0);
+			} else {
+				LUA->Pop();
 			}
-			LUA->Pop();
 		}
 	LUA->Pop(2);
 
