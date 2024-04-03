@@ -19,6 +19,11 @@ GMOD_MODULE_OPEN()
 	);
 	
 	GMOD = new GMOD_Info;
+	GMOD->active_gamemode = "";
+	GMOD->addons = new ILuaValue;
+	GMOD->games = new ILuaValue;
+	GMOD->gamemodes = new ILuaValue;
+	GMOD->usercontent = new ILuaValue;
 	if (get)
 	{
 		GMOD->version = get->Version();
