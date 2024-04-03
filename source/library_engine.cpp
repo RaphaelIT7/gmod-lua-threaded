@@ -107,7 +107,7 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
-bool PushFunction(ILuaInterface* LUA, const char* eng)
+bool PushEngineFunction(ILuaInterface* LUA, const char* eng)
 {
 	int ref = -1;
 
@@ -151,47 +151,49 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 	}
 
 	Msg("Top %i\n", LUA->Top());
-	if (PushFunction(LUA, "GetAddons"))
+	if (PushEngineFunction(LUA, "GetAddons"))
 	{
+		Msg("1. Top %i\n", LUA->Top());
 		LUA->Call(0, 1);
+		Msg("2. Top %i\n", LUA->Top());
 
 		GMOD->addons = new ILuaValue;
 		FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
-		LUA->Pop(1);
+		Msg("3. Top %i\n", LUA->Top());
 	}
 	Msg("Top %i\n", LUA->Top());
 
-	if (PushFunction(LUA, "GetGames"))
+	if (PushEngineFunction(LUA, "GetGames"))
 	{
+		Msg("1. Top %i\n", LUA->Top());
 		LUA->Call(0, 1);
+		Msg("2. Top %i\n", LUA->Top());
 
 		GMOD->games = new ILuaValue;
 		FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
-		LUA->Pop(1);
+		Msg("3. Top %i\n", LUA->Top());
 	}
 	Msg("Top %i\n", LUA->Top());
 
-	if (PushFunction(LUA, "GetGamemodes"))
+	if (PushEngineFunction(LUA, "GetGamemodes"))
 	{
 		LUA->Call(0, 1);
 
 		GMOD->gamemodes = new ILuaValue;
 		FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
-		LUA->Pop(2);
 	}
 	Msg("Top %i\n", LUA->Top());
 
-	if (PushFunction(LUA, "GetUserContent"))
+	if (PushEngineFunction(LUA, "GetUserContent"))
 	{
 		LUA->Call(0, 1);
 
 		GMOD->usercontent = new ILuaValue;
 		FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
-		LUA->Pop(1);
 	}
 	Msg("Top %i\n", LUA->Top());
 
-	if (PushFunction(LUA, "ActiveGamemode"))
+	if (PushEngineFunction(LUA, "ActiveGamemode"))
 	{
 		LUA->Call(0, 1);
 
