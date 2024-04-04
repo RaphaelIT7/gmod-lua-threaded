@@ -108,7 +108,6 @@ public:
 		thread->mutex.Lock();
 		thread->actions.push_back(act);
 		thread->mutex.Unlock();
-		Msg("Event %s was called!\n", act->data);
 	}
 
 private:
@@ -120,7 +119,6 @@ LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFun
 	const char* name = LUA->CheckString(1);
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	if (!eventmanager->FindListener(thread->listener, name)) {
-		Msg("Added Listener for %s\n", name);
 		eventmanager->AddListener(thread->listener, name, false);
 	}
 

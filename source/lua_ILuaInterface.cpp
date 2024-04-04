@@ -559,10 +559,13 @@ void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
 				PushValue(LUA, args);
 			}
 			LUA->CallFunctionProtected((args->type != Type::Table ? args->number : 1) + 1, 0, true);
+			SafeDelete(args);
 		} else {
+			SafeDelete(args);
 			LUA->ThrowError("hook.Run is missing or not a function!");
 		}
 	} else {
+		SafeDelete(args);
 		LUA->ThrowError("hook table is missing or not a table!");
 	}
 }
