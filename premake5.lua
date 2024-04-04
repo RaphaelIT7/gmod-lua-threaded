@@ -18,7 +18,7 @@ CreateWorkspace({name = "lua_threaded", abi_compatible = false})
     -- Can define "manual_files", which allows you to manually add files to the project,
     -- instead of automatically including them from the "source_path"
     -- Can also define "abi_compatible", for project specific compatibility
-    CreateProject({serverside = true, manual_files = true})
+    CreateProject({serverside = true, manual_files = false})
         kind "SharedLib"
         symbols "On"
         -- Remove some or all of these includes if they're not needed
@@ -37,8 +37,6 @@ CreateWorkspace({name = "lua_threaded", abi_compatible = false})
         --IncludeSteamAPI()
         IncludeDetouring()
         IncludeScanning()
-
-        files({"baseentity.h"})
 
         filter("system:windows")
             files({"source/win32/*.cpp", "source/win32/*.hpp"})
