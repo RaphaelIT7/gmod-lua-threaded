@@ -155,13 +155,13 @@ std::string generateStackTrace(lua_State* L) {
 	int level = 0;
 	lua_Debug ar;
 
-	lua_getstack(L, 0, &ar);
-	lua_getinfo(L, "nSl", &ar);
+	func_lua_getstack(L, 0, &ar);
+	func_lua_getinfo(L, "nSl", &ar);
 
 	trace << "Error in: " << ar.source << ":" << ar.currentline << " [" << (ar.name ? ar.name : "main") << "]" << std::endl;
 
-	while (lua_getstack(L, level, &ar)) {
-		lua_getinfo(L, "Sl", &ar);
+	while (func_lua_getstack(L, level, &ar)) {
+		func_lua_getinfo(L, "Sl", &ar);
 
 		for (int i = 0; i < level; ++i) {
 			trace << "  ";
