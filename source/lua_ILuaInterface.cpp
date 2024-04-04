@@ -346,7 +346,9 @@ void RunFile(ILuaThread* LUA, const char* file)
 	std::string old_path = LUA->current_path;
 	LUA->current_path = ToPath(file);
 
-	Msg("RunFile: %s\n", file);
+	LUA->IFace->FindAndRunScript(file, true, true, "", true);
+
+	/*Msg("RunFile: %s\n", file);
 	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
 	if(fh)
 	{
@@ -360,15 +362,15 @@ void RunFile(ILuaThread* LUA, const char* file)
 			RunFile_Intern(LUA, file, fh);
 		} else {
 			LUA->current_path = ToPath(old_path + file);
-			fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
+			fh = gpFileSystem->Open(("lua/" + (std::string)file).c_str(), "r", "GAME");
 			if(fh)
 			{
 				RunFile_Intern(LUA, file, fh);
 			} else {
-				Msg("Failed to find %s! Try 2.\n", file);
+				Msg("Failed to find %s! Try 3.\n", file);
 			}
 		}
-	}
+	}*/
 
 	LUA->current_path = old_path;
 }
