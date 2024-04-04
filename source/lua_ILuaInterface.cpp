@@ -343,12 +343,19 @@ void RunFile_Intern(ILuaThread* LUA, const char* file, FileHandle_t fh)
 
 void RunFile(ILuaThread* LUA, const char* file)
 {
+	std::string str_file = file;
+	if (str_file.substr(0, 4) == "lua/") {
+		str_file = str_file.substr(4);
+	}
+
+	Msg("RunFile: %s %s\n", file, str_file.c_str());
+	LUA->IFace->FindAndRunScript(str_file.c_str(), true, true, "", true);
+
+	/*
 	std::string old_path = LUA->current_path;
 	LUA->current_path = ToPath(file);
 
-	LUA->IFace->FindAndRunScript(file, true, true, "", true);
-
-	/*Msg("RunFile: %s\n", file);
+	Msg("RunFile: %s\n", file);
 	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
 	if(fh)
 	{
@@ -370,20 +377,21 @@ void RunFile(ILuaThread* LUA, const char* file)
 				Msg("Failed to find %s! Try 3.\n", file);
 			}
 		}
-	}*/
+	}
 
 	LUA->current_path = old_path;
+	*/
 }
 
 void Autorun(ILuaThread* LUA)
 {
-	RunFile(LUA, "lua/includes/init.lua");
+	RunFile(LUA, "includes/init.lua");
 
 	FileFindHandle_t findHandle;
 	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(LUA, (((std::string)"lua/autorun/") + pFilename).c_str()); // Kill me later.
+		RunFile(LUA, (((std::string)"autorun/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
@@ -391,7 +399,7 @@ void Autorun(ILuaThread* LUA)
 	pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(LUA, (((std::string)"lua/autorun/server/") + pFilename).c_str()); // Kill me later.
+		RunFile(LUA, (((std::string)"autorun/server/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
@@ -402,7 +410,7 @@ void Autorun(ILuaThread* LUA)
 	pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/sensorbones/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(LUA, (((std::string)"lua/autorun/server/sensorbones/") + pFilename).c_str()); // Kill me later.
+		RunFile(LUA, (((std::string)"autorun/server/sensorbones/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
