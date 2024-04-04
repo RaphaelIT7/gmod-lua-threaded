@@ -177,8 +177,7 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		int result = LUA->PCall(0, 0, 0);
-		HandleError(LUA, result, pFile);
+		LUA->CallFunctionProtected(0, 0, false);
 	}
     else
     {
