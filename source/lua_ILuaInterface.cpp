@@ -153,10 +153,13 @@ void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
+		/*
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
 		Msg("[ERROR] ILuaInterface:RunString: %s (%s)\n", err, pFile);
+		*/
+		func_AdvancedLuaErrorReporter(LUA->GetState());
 		return;
 	}
 }
