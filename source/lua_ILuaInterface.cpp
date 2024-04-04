@@ -348,8 +348,12 @@ void RunFile(ILuaThread* LUA, const char* file)
 		str_file = str_file.substr(4);
 	}
 
+	char* maxpath = new char[511];
+	gpFileSystem->RelativePathToFullPath(file, "GAME", maxpath, sizeof(maxpath));
+
 	Msg("RunFile: %s %s\n", file, str_file.c_str());
-	LUA->IFace->FindAndRunScript(str_file.c_str(), true, true, "", true);
+	LUA->IFace->FindAndRunScript(maxpath, true, true, "", true);
+	delete maxpath;
 
 	/*
 	std::string old_path = LUA->current_path;
