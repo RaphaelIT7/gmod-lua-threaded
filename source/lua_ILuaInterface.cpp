@@ -384,7 +384,7 @@ void RunFile(ILuaThread* LUA, const char* file, const char* called)
 	FileHandle_t fh = gpFileSystem->Open(path.c_str(), "r", "GAME");
 	if(fh)
 	{
-		RunFile_Intern(LUA, file, fh);
+		RunFile_Intern(LUA, path.c_str(), fh);
 	} else {
 		std::string path2 = ToPath(called);
 		if (path2.substr(0, 4) != "lua/")
@@ -396,7 +396,7 @@ void RunFile(ILuaThread* LUA, const char* file, const char* called)
 		fh = gpFileSystem->Open(path2.c_str(), "r", "GAME");
 		if(fh)
 		{
-			RunFile_Intern(LUA, file, fh);
+			RunFile_Intern(LUA, path2.c_str(), fh);
 		} else {
 			LUA->IFace->ThrowError(((std::string)"Failed to find " + file).c_str());
 		}
