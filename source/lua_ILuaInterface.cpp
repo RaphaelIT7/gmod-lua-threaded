@@ -1,6 +1,7 @@
 #include <GarrysMod/Lua/Interface.h>
 #include <GarrysMod/Lua/LuaObject.h>
 #include "lua_threaded.h"
+#include <sstream>
 
 static int32_t metatype = GarrysMod::Lua::Type::NONE;
 static const char metaname[] = "ILuaInterface";
@@ -149,14 +150,39 @@ LUA_FUNCTION_STATIC(newindex)
 	return 0;
 }
 
+std::string generateStackTrace(lua_State* L) {
+    std::stringstream trace;
+    int level = 0;
+    lua_Debug ar;
+
+    while (lua_getstack(L, level, &ar)) {
+        lua_getinfo(L, "Sl", &ar);
+
+        if (ar.source[0] == '@') {
+            trace << "  " << level + 1 << ". " << ar.source << ":" << ar.currentline;
+        } else {
+            trace << "  " << level + 1 << ". [" << ar.source << "]";
+        }
+        if (ar.name) {
+            trace << ": in function '" << ar.name << "'";
+        }
+        trace << std::endl;
+
+        level++;
+    }
+
+    return trace.str();
+}
+
 void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
+		std::string stack = generateStackTrace(LUA->GetState());
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
-		Msg("[ERROR] ILuaInterface:RunString: %s (%s)\n", err, pFile);
+		Msg("[ERROR] ILuaInterface:RunString: %s\n%s", err, stack.c_str());
 		return;
 	}
 }
