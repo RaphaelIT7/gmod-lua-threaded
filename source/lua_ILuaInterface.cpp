@@ -346,7 +346,7 @@ void RunFile(ILuaThread* LUA, const char* file)
 	std::string old_path = LUA->current_path;
 	LUA->current_path = ToPath(file);
 
-	Msg("RunFile: %s\n");
+	Msg("RunFile: %s\n", file);
 	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
 	if(fh)
 	{
