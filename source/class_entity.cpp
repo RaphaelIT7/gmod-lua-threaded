@@ -17,7 +17,7 @@ void Push_Entity(ILuaBase* LUA, char type[], char classname[])
 
 void Push_Entity(ILuaBase* LUA, LUA_Entity* ent)
 {
-	Push_Entity(LUA, ent->index, ent->type);
+	Push_Entity(LUA, ent->type, ent->classname);
 }
 
 void Entity_CheckType(ILuaBase* LUA, int index)
@@ -178,6 +178,7 @@ void InitEntityClass(ILuaInterface* LUA)
 	// ToDo: Look into what Get_AngleIndex does in Gmod
 	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Entity__gc, "__gc"); // Gmod doesn't have __gc
+		Add_Func(LUA, Entity__eq, "__eq");
 		Add_Func(LUA, Entity__index, "__index");
 		Add_Func(LUA, Entity__newindex, "__newindex");
 		Add_Func(LUA, Entity__tostring, "__tostring");
