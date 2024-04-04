@@ -386,13 +386,13 @@ void RunFile(ILuaThread* LUA, const char* file, const char* called)
 	{
 		RunFile_Intern(LUA, file, fh);
 	} else {
-		std::string path2 = called;
+		std::string path2 = ToPath(called);
 		if (path2.substr(0, 4) != "lua/")
 			path2 = "lua/" + path2;
 
 		path2 = path2 + file;
 
-		Msg("2. RunFile: %s %s\n", path2.c_str(), called);
+		Msg("2. RunFile: %s %s %s\n", path2.c_str(), called, ToPath(called).c_str());
 		fh = gpFileSystem->Open(path2.c_str(), "r", "GAME");
 		if(fh)
 		{
