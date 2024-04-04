@@ -149,7 +149,7 @@ void Symbols_Init()
 	func_GMOD_LoadBinaryModule = (GMOD_LoadBinaryModule)FindFunction(lua_shared_loader.GetModule(), GMOD_LoadBinaryModuleSym);
 	CheckFunction(func_GMOD_LoadBinaryModule, "GMOD_LoadBinaryModule");
 
-	func_AdvancedLuaErrorReporter = (AdvancedLuaErrorReporter)FindFunction(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym);
+	func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)FindFunction(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym);
 	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");
 
 	/*

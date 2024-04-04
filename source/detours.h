@@ -75,6 +75,10 @@ typedef const char* (*GMOD_LoadBinaryModule)(lua_State*, const char*);
 extern GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
 const Symbol GMOD_LoadBinaryModuleSym = Symbol::FromName("GMOD_LoadBinaryModule");
 
+typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
+extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
+const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");
+
 /*
 	server_srv stuff
 */
