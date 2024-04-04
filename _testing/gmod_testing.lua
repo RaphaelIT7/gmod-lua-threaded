@@ -5,6 +5,8 @@ local code = [[local ret, err = pcall(function()
 	print("=== Entity ===")
 
 	PrintTable(ents)
+
+	print("ENTITY META")
 	
 	local meta = FindMetaTable( "Entity" )
 	PrintTable(meta)

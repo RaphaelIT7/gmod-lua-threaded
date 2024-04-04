@@ -1,4 +1,5 @@
 #include "lua_threaded.h"
+#include "game/server/entitylist.h"
 
 LUA_FUNCTION(ents_Create)
 {
@@ -8,6 +9,20 @@ LUA_FUNCTION(ents_Create)
 	//LUA->PushMetaTable(1);
 
 	return  0; // 1;
+}
+
+LUA_FUNCTION(ents_FindEntityByName)
+{
+	// Use the FindEntityByName function
+    CBaseEntity* entity = gEntList.FindEntityByName(NULL, classname);
+    if (entity != NULL) {
+        // Entity found, do something with it...
+		printf("Entity found: %s\n", entity->GetClassname());
+	} else {
+		// Entity not found
+    }
+
+	return  0;
 }
 
 /* void FileLibThink(ILuaThread* thread)
@@ -36,6 +51,7 @@ void InitEntsLib(ILuaInterface* LUA)
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, ents_Create, "Create");
+			Add_Func(LUA, ents_FindEntityByName, "FindEntityByName");
 			
 		LUA->SetField(-2, "ents");
 	LUA->Pop();

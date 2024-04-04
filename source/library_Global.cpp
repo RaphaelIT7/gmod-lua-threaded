@@ -229,6 +229,9 @@ LUA_FUNCTION(Global_Msg)
 				case Type::Bool:
 					ss << LUA->GetBool(i) ? "true" : "false";
 					break;
+				case Type::Function:
+					ss << "function: " << &LUA->GetFunction(i);
+					break;
 				default:
 					ss << "<Something Unknown. Scary>";
 					break;
