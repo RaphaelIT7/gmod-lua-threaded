@@ -4,8 +4,8 @@ using namespace GarrysMod::Lua;
 
 struct LUA_Entity
 {
-	const char* type[];
-	const char* classname[];
+	const char* type;
+	const char* classname;
 };
 
 extern void InitEntityClass(ILuaInterface*);
