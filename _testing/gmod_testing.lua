@@ -3,6 +3,8 @@ local code = [[local ret, err = pcall(function()
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
 	print("=== Entity ===")
+
+	PrintTable(ents)
 	
 	local meta = FindMetaTable( "Entity" )
 	PrintTable(meta)
