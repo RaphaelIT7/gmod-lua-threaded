@@ -3,9 +3,9 @@ local code = [[local ret, err = pcall(function()
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
 	print("=== Entity ===")
-	local ent = Entity(1)
-	print(ent)
-	print("Entity(1):IsValid ", ent:IsValid())
+	
+	local meta = FindMetaTable( "Entity" )
+	PrintTable(meta)
 
 
 	print("=== File Library ===")

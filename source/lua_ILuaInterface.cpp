@@ -211,6 +211,7 @@ void InitClasses(ILuaInterface* LUA)
 	InitVectorClass(LUA);
 	InitAngleClass(LUA);
 	InitFileClass(LUA);
+	InitEntityClass(LUA);
 
 	//func_InitLuaClasses(LUA);
 }
@@ -253,6 +254,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitHammer(LUA);
 	InitGmodLib(LUA);
 	InitFileLib(LUA);
+	InitEntsLib(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)

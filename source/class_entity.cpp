@@ -175,14 +175,11 @@ void InitEntityClass(ILuaInterface* LUA)
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 
-	// ToDo: Look into what Get_AngleIndex does in Gmod
 	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Entity__gc, "__gc"); // Gmod doesn't have __gc
 		Add_Func(LUA, Entity__eq, "__eq");
 		Add_Func(LUA, Entity__index, "__index");
 		Add_Func(LUA, Entity__newindex, "__newindex");
 		Add_Func(LUA, Entity__tostring, "__tostring");
-	
-		//Add_Func(LUA, Entity_IsEqualTol, "IsEqualTol");
 	LUA->Pop(1);
 }
