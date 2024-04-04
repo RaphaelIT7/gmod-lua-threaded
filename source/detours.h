@@ -105,8 +105,8 @@ typedef bool (*ConCommand_IsBlocked)(const char*);
 extern ConCommand_IsBlocked func_ConCommand_IsBlocked;
 const Symbol ConCommand_IsBlockedSym = Symbol::FromName("_Z20ConCommand_IsBlockedPKc");
 
-typedef void* (*UTIL_GetCommandClient)();
-extern UTIL_GetCommandClient func_UTIL_GetCommandClient;
+typedef void* (*TUTIL_GetCommandClient)();
+extern TUTIL_GetCommandClient func_UTIL_GetCommandClient;
 const Symbol UTIL_GetCommandClientSym = Symbol::FromName("_Z21UTIL_GetCommandClientv");
 
 typedef EditorSendResult_t (*TEditor_SendCommand)(const char*, bool);

@@ -110,8 +110,6 @@ struct lua_State
 #include <vector>
 #include <lua.h>
 
-using namespace GarrysMod::Lua;
-
 enum LuaAction
 {
 	ACT_RunFile,
