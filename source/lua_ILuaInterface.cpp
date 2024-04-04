@@ -558,7 +558,7 @@ void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
 			} else {
 				PushValue(LUA, args);
 			}
-			Msg("Args: %i\n", (args->type != Type::Table ? args->number : 1) + 1);
+			Msg("Args: %i %i\n", (int)((args->type != Type::Table ? args->number : 1) + 1), (int)args->number);
 			LUA->CallFunctionProtected((args->type != Type::Table ? args->number : 1) + 1, 0, true);
 			SafeDelete(args);
 		} else {
@@ -599,6 +599,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 		action->data = name;
 		action->val = hook_tbl;
 
+		Msg("RunHook 2: %i\n", (int)hook_tbl->number);
 		thread->mutex.Lock(); // ToDo: Why does mutex.Lock crash HERE
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
