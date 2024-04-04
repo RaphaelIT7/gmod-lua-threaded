@@ -326,44 +326,47 @@ LUA_FUNCTION(ILuaInterface_InitGmod)
 	return 0;
 }
 
+void RunFile_Intern(ILuaThread* LUA, const char* file, FileHandle_t fh)
+{
+	int file_len = gpFileSystem->Size(fh);
+	char* code = new char[file_len + 1];
+
+	gpFileSystem->Read((void*)code, file_len, fh);
+	code[file_len] = 0;
+
+	gpFileSystem->Close(fh);
+
+	RunString(LUA, code, file);
+
+	delete[] code;
+}
+
 void RunFile(ILuaThread* LUA, const char* file)
 {
 	std::string old_path = LUA->current_path;
 	LUA->current_path = ToPath(file);
 
+	Msg("RunFile: %s\n");
 	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
 	if(fh)
 	{
-		int file_len = gpFileSystem->Size(fh);
-		char* code = new char[file_len + 1];
-
-		gpFileSystem->Read((void*)code, file_len, fh);
-		code[file_len] = 0;
-
-		gpFileSystem->Close(fh);
-
-		RunString(LUA, code, file);
-
-		delete[] code;
+		RunFile_Intern(LUA, file, fh);
 	} else {
 		//Msg("Failed to find Path!. Next try. New path: %s\n", (old_path + file).c_str());
 		LUA->current_path = ToPath(old_path + file);
 		fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
 		if(fh)
 		{
-			int file_len = gpFileSystem->Size(fh);
-			char* code = new char[file_len + 1];
-
-			gpFileSystem->Read((void*)code,file_len,fh);
-			code[file_len] = 0;
-
-			gpFileSystem->Close(fh);
-
-			RunString(LUA, code, file);
-
-			delete[] code;
+			RunFile_Intern(LUA, file, fh);
 		} else {
-			Msg("Failed to find %s! Try 2.\n", file);
+			LUA->current_path = ToPath(old_path + file);
+			fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
+			if(fh)
+			{
+				RunFile_Intern(LUA, file, fh);
+			} else {
+				Msg("Failed to find %s! Try 2.\n", file);
+			}
 		}
 	}
 
