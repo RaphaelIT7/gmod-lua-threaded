@@ -176,9 +176,9 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		LUA->RunStringEx(pFile, "GAME", str, true, true, true, true);
+		int result = LUA->RunString(pFile, "", str, true, true) ? 0 : 1;
 		//int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // ToDo: Find out why it sometimes crashes :< (lj_BC_TGETS)
-		//HandleError(LUA, result, pFile);
+		HandleError(LUA, result, pFile);
 	}
     else
     {
