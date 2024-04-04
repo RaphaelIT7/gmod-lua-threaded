@@ -43,7 +43,7 @@ bool IsFile(ILuaBase* LUA, int index)
 
 void File_CheckType(ILuaBase* LUA, int index)
 {
-	if(!IsFile(LUA, index))
+	if(!LUA->IsType(index, Type::UserData)) // ToDo: Make a better check.
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
