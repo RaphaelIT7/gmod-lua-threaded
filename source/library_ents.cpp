@@ -2,7 +2,7 @@
 
 LUA_FUNCTION(ents_Create)
 {
-	const char* class = LUA->CheckString(1);
+	const char* classname = LUA->CheckString(1);
 	
 	
 	//LUA->PushMetaTable(1);
