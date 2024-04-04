@@ -202,7 +202,9 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		LUA->CallFunctionProtected(0, 0, true); // Verify: Is the third argument showError?
+		//LUA->CallFunctionProtected(0, 0, true);
+		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // Verify: Is the third argument showError?
+		HandleError(LUA, result, pFile);
 	}
     else
     {
