@@ -155,8 +155,8 @@ std::string generateStackTrace(lua_State* L) {
     int level = 0;
     lua_Debug ar;
 
-    while (lua_getstack(L, level, &ar)) {
-        lua_getinfo(L, "Sl", &ar);
+    while (func_lua_getstack(L, level, &ar)) {
+        func_lua_getinfo(L, "Sl", &ar);
 
         if (ar.source[0] == '@') {
             trace << "  " << level + 1 << ". " << ar.source << ":" << ar.currentline;
