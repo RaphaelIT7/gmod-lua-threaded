@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    uses: Equoo/lua_thread/common_compile.yml@workflow
+    uses: Equoo/lua_thread/.github/workflows/common_compile.yml@main
     with:
       PROJECT_NAME: "lua_threaded"
       BUILD_WINDOWS: "false"
