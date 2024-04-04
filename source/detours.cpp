@@ -17,6 +17,7 @@ llua_pushstring func_lua_pushstring;
 llua_setfield func_lua_setfield;
 luaL_loadbuffer func_luaL_loadbuffer;
 GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
+TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 
 TInitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
