@@ -161,21 +161,17 @@ std::string generateStackTrace(lua_State* L) {
 	trace << "Error in: " << ar.source << ":" << ar.currentline << " [" << (ar.name ? ar.name : "main") << "]" << std::endl;
 
 	while (func_lua_getstack(L, level, &ar)) {
-		func_lua_getinfo(L, "Sl", &ar);
+		func_lua_getinfo(L, "nSl", &ar);
 
-		for (int i = 0; i < level; ++i) {
+		for (int i=0; i<level; ++i) {
 			trace << "  ";
 		}
 
-		if (ar.source[0] == '@') {
-			trace << "  " << level + 1 << ". " << ar.source << ":" << ar.currentline;
+		if (ar.name != NULL) {
+			trace << "  " << level << ". " << ar.name << " - [" << ar.source << "]:" << ar.currentline << std::endl;
 		} else {
-			trace << "  " << level + 1 << ". [string " << ar.source << "]";
+			trace << "  " << level << ". unknown - [" << ar.source << "]:" << ar.currentline << std::endl;
 		}
-		if (ar.name) {
-			trace << ": in function '" << ar.name << "'";
-		}
-		trace << std::endl;
 
 		level++;
 	}
@@ -211,9 +207,9 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		//LUA->CallFunctionProtected(0, 0, true);
-		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // Verify: Is the third argument showError?
-		HandleError(LUA, result, pFile);
+		LUA->CallFunctionProtected(0, 0, true); // ToDo: Document that the third argument is showError
+		//int result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
+		//HandleError(LUA, result, pFile);
 	}
     else
     {
