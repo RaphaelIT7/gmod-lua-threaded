@@ -8,7 +8,7 @@ LUA_FUNCTION(include)
 	lua_Debug ar;
 	if (func_lua_getstack(LUA->GetState(), 1, &ar)) {
 		func_lua_getinfo(LUA->GetState(), "S", &ar);
-		RunFile(thread, LUA->CheckString(1), ToPath(ar.source).c_str());
+		RunFile(thread, LUA->CheckString(1), ar.source);
 	} else {
 		RunFile(thread, LUA->CheckString(1), "");
 	}
