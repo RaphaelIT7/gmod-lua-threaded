@@ -5,7 +5,7 @@ static const char metaname[] = "Entity";
 static const char invalid_error[] = "invalid Entity";
 static const char table_name[] = "Entity_object";
 
-void Push_Entity(ILuaBase* LUA, char type[], char classname[])
+void Push_Entity(ILuaBase* LUA, const char* type, const char* classname)
 {
 	LUA_Entity* udata = (LUA_Entity*)LUA->NewUserdata(sizeof(LUA_Entity));
 	udata->type = type;

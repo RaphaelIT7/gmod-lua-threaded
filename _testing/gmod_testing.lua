@@ -2,6 +2,12 @@ local code = [[local ret, err = pcall(function()
 	print(Vector(1, 1, 1), type(Vector(1, 1, 1)), isvector(Vector(1, 1, 1)))
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
+	print("=== Entity ===")
+	local ent = Entity(1)
+	print(ent)
+	print("Entity(1):IsValid ", ent:IsValid())
+
+
 	print("=== File Library ===")
 
 	print("file.Exists (garrysmod.ver) ", file.Exists("garrysmod.ver", "MOD"))
