@@ -171,10 +171,10 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 		lua_Debug ar;
 		lua_State* L = thread->IFace->GetState();
-		lua_getstack(L, 0, &ar);
-		lua_getinfo(L, "Sl", &ar);
-		lua_pushstring(L, pFile);
-		lua_setfield(L, -2, "source");
+		func_lua_getstack(L, 0, &ar);
+		func_lua_getinfo(L, "Sl", &ar);
+		func_lua_pushstring(L, pFile);
+		func_lua_setfield(L, -2, "source");
 	}
     else
     {

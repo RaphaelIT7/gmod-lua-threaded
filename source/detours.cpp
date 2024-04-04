@@ -11,6 +11,10 @@ Tlua_pcall func_lua_pcall;
 Tlua_atpanic func_lua_atpanic;
 luaL_loadstring func_luaL_loadstring;
 lua_tostring func_lua_tostring;
+llua_getstack func_lua_getstack;
+llua_getinfo func_lua_getinfo;
+llua_pushstring func_lua_pushstring;
+llua_setfield func_lua_setfield;
 GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
 
 TInitLuaLibraries func_InitLuaLibraries;
@@ -125,6 +129,18 @@ void Symbols_Init()
 
 	func_lua_tostring = (lua_tostring)FindFunction(lua_shared_loader.GetModule(), lua_tostringSym);
 	CheckFunction(func_lua_tostring, "lua_tostring");
+
+	func_lua_getstack = (llua_getstack)FindFunction(lua_shared_loader.GetModule(), lua_getstackSym);
+	CheckFunction(func_lua_getstack, "lua_getstack");
+
+	func_lua_getinfo = (llua_getinfo)FindFunction(lua_shared_loader.GetModule(), lua_getinfoSym);
+	CheckFunction(func_lua_getinfo, "lua_getinfo");
+
+	func_lua_pushstring = (llua_pushstring)FindFunction(lua_shared_loader.GetModule(), lua_pushstringSym);
+	CheckFunction(func_lua_pushstring, "lua_pushstring");
+
+	func_lua_setfield = (llua_setfield)FindFunction(lua_shared_loader.GetModule(), lua_setfieldSym);
+	CheckFunction(func_lua_setfield, "lua_setfield");
 
 	func_GMOD_LoadBinaryModule = (GMOD_LoadBinaryModule)FindFunction(lua_shared_loader.GetModule(), GMOD_LoadBinaryModuleSym);
 	CheckFunction(func_GMOD_LoadBinaryModule, "GMOD_LoadBinaryModule");
