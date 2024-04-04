@@ -166,7 +166,7 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 {
 	ILuaInterface* LUA = thread->IFace;
 	Msg("1. Top %i\n", LUA->Top());
-	LUA->RunString(pFile, "", str, true, true);
+	LUA->RunStringEx(pFile, "", str, true, true, false, true);
 	Msg("2. Top %i\n", LUA->Top());
 	/*
 	if (setjmp(thread->jumpBuffer) == 0)
