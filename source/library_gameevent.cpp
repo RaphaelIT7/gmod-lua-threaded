@@ -78,6 +78,7 @@ public:
 
 		ILuaValue* val = new ILuaValue;
 		val->type = Type::Table;
+
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 
 		KeyValues* subkey = event->m_pDataKeys->GetFirstSubKey();
