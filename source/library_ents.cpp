@@ -1,5 +1,6 @@
 #include "lua_threaded.h"
-#include "baseentity.h"
+#include <entitylist_base.h>
+#include <baseentity.h>
 
 LUA_FUNCTION(ents_Create)
 {

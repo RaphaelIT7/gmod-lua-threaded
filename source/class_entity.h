@@ -1,5 +1,6 @@
 #include <GarrysMod/Lua/LuaInterface.h>
-#include <baseentity.h>
+/* #include <entitylist_base.h>
+#include <baseentity.h> */
 
 using namespace GarrysMod::Lua;
 
