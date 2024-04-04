@@ -67,6 +67,10 @@ typedef const char* (*llua_setfield)(lua_State*, int, const char*);
 extern llua_setfield func_lua_setfield;
 const Symbol lua_setfieldSym = Symbol::FromName("lua_setfield");
 
+typedef int (*luaL_loadbuffer)(lua_State*, const char*, size_t, const char*);
+extern luaL_loadbuffer func_luaL_loadbuffer;
+const Symbol luaL_loadbufferSym = Symbol::FromName("luaL_loadbuffer");
+
 typedef const char* (*GMOD_LoadBinaryModule)(lua_State*, const char*);
 extern GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
 const Symbol GMOD_LoadBinaryModuleSym = Symbol::FromName("GMOD_LoadBinaryModule");
