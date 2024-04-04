@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.qci": "qc",
+        "chrono": "cpp"
+    }
+}
