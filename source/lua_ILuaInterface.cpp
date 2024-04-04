@@ -153,13 +153,11 @@ void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
-		/*
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
 		Msg("[ERROR] ILuaInterface:RunString: %s (%s)\n", err, pFile);
-		*/
-		func_AdvancedLuaErrorReporter(LUA->GetState());
+		//func_AdvancedLuaErrorReporter(LUA->GetState());
 		return;
 	}
 }
@@ -179,8 +177,7 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // ToDo: Find out why it sometimes crashes :< (lj_BC_TGETS)
-		HandleError(LUA, result, pFile);
+		LUA->CallFunctionProtected(0, 0, false);
 	}
     else
     {
