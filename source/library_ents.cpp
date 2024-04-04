@@ -1,5 +1,5 @@
 #include "lua_threaded.h"
-#include "game/server/entitylist.h"
+#include "baseentity.h"
 
 LUA_FUNCTION(ents_Create)
 {
