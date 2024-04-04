@@ -5,7 +5,13 @@ LUA_FUNCTION(include)
 {
 	ILuaThread* thread = GetValidThread(LUA, NULL);
 
-	RunFile(thread, LUA->CheckString(1));
+	lua_Debug ar;
+	if (lua_getstack(LUA->GetState(), 1, &ar)) {
+		lua_getinfo(LUA->GetState(), "S", &ar);
+		RunFile(thread, LUA->CheckString(1), ToPath(ar.source));
+	} else {
+		RunFile(thread, LUA->CheckString(1), "");
+	}
 
 	return 0;
 }

@@ -22,6 +22,6 @@ extern void DestroyMetaTable(ILuaInterface*);
 
 extern ILuaThread* GetValidThread(ILuaBase*, double);
 
-extern void RunFile(ILuaThread*, const char*);
+extern void RunFile(ILuaThread*, const char*, const char*);
 
 extern void RunCommand(ILuaInterface*, const CCommand&, void*);
