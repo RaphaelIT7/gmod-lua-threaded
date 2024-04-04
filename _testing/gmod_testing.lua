@@ -6,6 +6,8 @@ local code = [[local ret, err = pcall(function()
 
 	PrintTable(ents)
 
+	ents.FindByName("env_soundscape")
+
 	print("ENTITY META")
 	
 	local meta = FindMetaTable( "Entity" )

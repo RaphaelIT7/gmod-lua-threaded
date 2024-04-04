@@ -55,7 +55,7 @@ void InitEntsLib(ILuaInterface* LUA)
 	LUA->PushSpecial(SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, ents_Create, "Create");
-			Add_Func(LUA, ents_FindEntityByName, "FindEntityByName");
+			Add_Func(LUA, ents_FindEntityByName, "FindByName");
 			
 		LUA->SetField(-2, "ents");
 	LUA->Pop();
