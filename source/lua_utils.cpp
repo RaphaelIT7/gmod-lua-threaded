@@ -204,7 +204,7 @@ ILuaInterface* CreateInterface()
 		Msg("Invalid Lua state?!?\n");
 	}
 
-	func_lua_atpanic(IFace->GetState(), LuaPanic);
+	//func_lua_atpanic(IFace->GetState(), LuaPanic);
 #endif
 
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);

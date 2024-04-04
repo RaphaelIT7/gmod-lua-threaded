@@ -168,6 +168,13 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
     {
 		int result = func_luaL_loadstring(LUA->GetState(), str);
 		HandleError(LUA, result, pFile);
+
+		lua_Debug ar;
+		lua_State* L = thread->IFace->GetState();
+		lua_getstack(L, 0, &ar);
+		lua_getinfo(L, "Sl", &ar);
+		lua_pushstring(L, pFile);
+		lua_setfield(L, -2, "source");
 	}
     else
     {
@@ -343,9 +350,6 @@ void RunFile_Intern(ILuaThread* LUA, const char* file, FileHandle_t fh)
 
 void RunFile(ILuaThread* LUA, const char* file)
 {
-	LUA->IFace->FindAndRunScript(file, true, true, "", true);
-
-	/*
 	std::string old_path = LUA->current_path;
 	LUA->current_path = ToPath(file);
 
@@ -374,7 +378,6 @@ void RunFile(ILuaThread* LUA, const char* file)
 	}
 
 	LUA->current_path = old_path;
-	*/
 }
 
 void Autorun(ILuaThread* LUA)
