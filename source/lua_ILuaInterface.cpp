@@ -153,7 +153,6 @@ void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
-		func_AdvancedLuaErrorReporter(LUA->GetState());
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
@@ -177,7 +176,7 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		LUA->CallFunctionProtected(0, 0, false);
+		LUA->CallFunctionProtected(0, 0, true); // Verify: Is the third argument showError?
 	}
     else
     {
