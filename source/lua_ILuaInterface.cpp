@@ -392,7 +392,7 @@ void RunFile(ILuaThread* LUA, const char* file, const char* called)
 
 		path2 = path2 + file;
 
-		Msg("2. RunFile: %s\n", path2.c_str());
+		Msg("2. RunFile: %s %s\n", path2.c_str(), called);
 		fh = gpFileSystem->Open(path2.c_str(), "r", "GAME");
 		if(fh)
 		{
