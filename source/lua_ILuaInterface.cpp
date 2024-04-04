@@ -151,27 +151,36 @@ LUA_FUNCTION_STATIC(newindex)
 }
 
 std::string generateStackTrace(lua_State* L) {
-    std::stringstream trace;
-    int level = 0;
-    lua_Debug ar;
+	std::stringstream trace;
+	int level = 0;
+	lua_Debug ar;
 
-    while (func_lua_getstack(L, level, &ar)) {
-        func_lua_getinfo(L, "Sl", &ar);
+	lua_getstack(L, 0, &ar);
+	lua_getinfo(L, "nSl", &ar);
 
-        if (ar.source[0] == '@') {
-            trace << "  " << level + 1 << ". " << ar.source << ":" << ar.currentline;
-        } else {
-            trace << "  " << level + 1 << ". [" << ar.source << "]";
-        }
-        if (ar.name) {
-            trace << ": in function '" << ar.name << "'";
-        }
-        trace << std::endl;
+	trace << "Error in: " << ar.source << ":" << ar.currentline << " [" << (ar.name ? ar.name : "main") << "]" << std::endl;
 
-        level++;
-    }
+	while (lua_getstack(L, level, &ar)) {
+		lua_getinfo(L, "Sl", &ar);
 
-    return trace.str();
+		for (int i = 0; i < level; ++i) {
+			trace << "  ";
+		}
+
+		if (ar.source[0] == '@') {
+			trace << "  " << level + 1 << ". " << ar.source << ":" << ar.currentline;
+		} else {
+			trace << "  " << level + 1 << ". [string " << ar.source << "]";
+		}
+		if (ar.name) {
+			trace << ": in function '" << ar.name << "'";
+		}
+		trace << std::endl;
+
+		level++;
+	}
+
+	return trace.str();
 }
 
 void HandleError(ILuaInterface* LUA, int result, const char* pFile)
