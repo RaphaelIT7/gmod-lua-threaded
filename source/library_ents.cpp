@@ -12,15 +12,20 @@ LUA_FUNCTION(ents_Create)
 
 LUA_FUNCTION(ents_FindEntityByName)
 {
-	// Use the FindEntityByName function
-    CBaseEntity* entity = gEntList.FindEntityByName(NULL, classname);
-    if (entity != NULL) {
-        // Entity found, do something with it...
-		printf("Entity found: %s\n", entity->GetClassname());
+	if (LUA->CheckString(1)) {
+		const char* classname = LUA->GetString(1);
+		// Use the FindEntityByName function
+		CBaseEntity* entity = gEntList.FindEntityByName(NULL, classname);
+		if (entity != NULL) {
+			// Entity found, do something with it...
+			printf("Entity found: %s\n", entity->GetClassname());
+		} else {
+			// Entity not found
+		}
 	} else {
-		// Entity not found
-    }
-
+		LUA->ThrowError("Invalid classname");
+	}
+	
 	return  0;
 }
 
