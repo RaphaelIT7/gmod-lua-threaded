@@ -1,5 +1,5 @@
 #include <GarrysMod/Lua/LuaInterface.h>
-//#include <baseentity.h>
+#include <player.h>
 
 using namespace GarrysMod::Lua;
 
