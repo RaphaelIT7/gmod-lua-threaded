@@ -1,4 +1,5 @@
 #include "lua_threaded.h"
+#include <ehandle.h>
 #include <entitylist_base.h>
 #include <baseentity.h>
 

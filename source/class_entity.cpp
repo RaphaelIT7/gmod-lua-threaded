@@ -101,7 +101,7 @@ LUA_FUNCTION_STATIC(Entity__tostring)
 	LUA->Pop(2);
 
 	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%c [%i][%c]", name, id, ent->classname);
+	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, id, ent->classname);
 	LUA->PushString(szBuf);
 	return 1;
 }
