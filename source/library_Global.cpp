@@ -6,9 +6,9 @@ LUA_FUNCTION(include)
 	ILuaThread* thread = GetValidThread(LUA, NULL);
 
 	lua_Debug ar;
-	if (lua_getstack(LUA->GetState(), 1, &ar)) {
-		lua_getinfo(LUA->GetState(), "S", &ar);
-		RunFile(thread, LUA->CheckString(1), ToPath(ar.source));
+	if (func_lua_getstack(LUA->GetState(), 1, &ar)) {
+		func_lua_getinfo(LUA->GetState(), "S", &ar);
+		RunFile(thread, LUA->CheckString(1), ToPath(ar.source).c_str());
 	} else {
 		RunFile(thread, LUA->CheckString(1), "");
 	}
