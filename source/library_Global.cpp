@@ -255,6 +255,14 @@ LUA_FUNCTION(RealTime)
 	return 1;
 }
 
+LUA_FUNCTION(RunConsoleCommand) // ToDo: Finish this. This is not how it should work.
+{
+	const char* cmd = LUA->CheckString(1);
+	engine->GMOD_RawServerCommand(cmd);
+
+	return 1;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -264,6 +272,7 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
 		Add_Func(LUA, Global_Msg, "Msg");
+		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
 
 		Add_Func(LUA, CurTime, "CurTime");
 		Add_Func(LUA, RealTime, "RealTime");

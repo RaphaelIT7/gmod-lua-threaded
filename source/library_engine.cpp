@@ -29,7 +29,6 @@ CGlobalVars* GlobalVars()
 	return iface_pointer;
 }
 
-IVEngineServer* engine;
 LUA_FUNCTION(engine_GetAddons)
 {
 	PushValue(LUA, GMOD->addons);

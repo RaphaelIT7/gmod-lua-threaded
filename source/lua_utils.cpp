@@ -19,6 +19,7 @@ GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
 
 IFileSystem* filesystem;
 CGlobalVars* gpGlobal;
+IVEngineServer* engine;
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;

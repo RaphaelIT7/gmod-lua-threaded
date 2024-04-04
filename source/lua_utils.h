@@ -254,3 +254,4 @@ extern void ShutdownInterface(ILuaThread*);
 extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobal;
+extern IVEngineServer* engine;

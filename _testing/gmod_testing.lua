@@ -75,11 +75,11 @@ local code = [[local ret, err = pcall(function()
 		Run = function(name, ...)
 			local args = {...}
 			print("hook.Run called!", name)
-			for k, v in pairs(args) do
-				print(v)
-			end
+			PrintTable(args)
 		end
 	}
+
+	gameevent.Listen("player_spawn")
 
 	error("Error handling test")
 end)
