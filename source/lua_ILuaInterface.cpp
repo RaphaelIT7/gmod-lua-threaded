@@ -153,11 +153,11 @@ void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
+		func_AdvancedLuaErrorReporter(LUA->GetState());
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
 		Msg("[ERROR] ILuaInterface:RunString: %s (%s)\n", err, pFile);
-		//func_AdvancedLuaErrorReporter(LUA->GetState());
 		return;
 	}
 }
@@ -165,12 +165,6 @@ void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 void RunString(ILuaThread* thread, const char* str, const char* pFile)
 {
 	ILuaInterface* LUA = thread->IFace;
-	Msg("1. Top %i\n", LUA->Top());
-	LUA->Push(-2);
-	LUA->Push(-2);
-	LUA->RunStringEx(pFile, "", str, true, true, true, true);
-	Msg("2. Top %i\n", LUA->Top());
-	/*
 	if (setjmp(thread->jumpBuffer) == 0)
     {
 		int result = func_luaL_loadbuffer(LUA->GetState(), str, strlen(str), pFile);
@@ -183,12 +177,13 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		LUA->CallFunctionProtected(0, 0, false);
+		int result = LUA->PCall(0, 0, 0);
+		HandleError(LUA, result, pFile);
 	}
     else
     {
 		HandleError(LUA, -1, pFile); // Could crash if the Lua Panic wan't created by pcall or loadstring.
-    }*/
+    }
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
