@@ -80,6 +80,7 @@ local code = [[local ret, err = pcall(function()
 	}
 
 	gameevent.Listen("player_spawn")
+	RunConsoleCommand("bot")
 
 	error("Error handling test")
 end)
