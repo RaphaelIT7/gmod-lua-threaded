@@ -165,6 +165,8 @@ void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 void RunString(ILuaThread* thread, const char* str, const char* pFile)
 {
 	ILuaInterface* LUA = thread->IFace;
+	LUA->RunString(pFile, "", str, true, true);
+	/*
 	if (setjmp(thread->jumpBuffer) == 0)
     {
 		int result = func_luaL_loadbuffer(LUA->GetState(), str, strlen(str), pFile);
@@ -182,7 +184,7 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
     else
     {
 		HandleError(LUA, -1, pFile); // Could crash if the Lua Panic wan't created by pcall or loadstring.
-    }
+    }*/
 }
 
 LUA_FUNCTION(ILuaInterface_RunString)
