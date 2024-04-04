@@ -579,6 +579,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 	ILuaValue* hook_tbl = new ILuaValue;
 	hook_tbl->type = Type::Nil;
 	hook_tbl->number = LUA->Top() - 2;
+	Msg("RunHook: %i\n", LUA->Top());
 
 	if (hook_tbl->number > 0)
 	{
