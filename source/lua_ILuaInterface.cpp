@@ -717,7 +717,7 @@ unsigned LuaThread(void* data)
 				RunHook(IFace, action->data, action->val);
 			} else if (action->type == LuaAction::ACT_RunHook)
 			{
-				//RunHook(IFace, action->data, action->val);
+				RunHook(IFace, action->data, action->val);
 			}
 
 			delete action;
