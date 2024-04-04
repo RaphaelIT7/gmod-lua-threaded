@@ -549,9 +549,14 @@ void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
 		if (LUA->IsType(-1, Type::Function))
 		{
 			LUA->PushString(name);
-			for(auto&[key, val] : args->tbl)
+			if (args->type != Type::Table)
 			{
-				PushValue(LUA, val);
+				for(auto&[key, val] : args->tbl)
+				{
+					PushValue(LUA, val);
+				}
+			} else {
+				PushValue(LUA, args);
 			}
 			LUA->Call(args->number + 1, 0);
 		} else {
@@ -568,7 +573,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 	const char* name = LUA->CheckString(2);
 
 	ILuaValue* hook_tbl = new ILuaValue;
-	/*hook_tbl->type = Type::Table;
+	hook_tbl->type = Type::Nil;
 	hook_tbl->number = LUA->Top() - 2;
 
 	if (hook_tbl->number > 0)
@@ -580,7 +585,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 
 			hook_tbl->tbl[CreateValue(std::to_string(pos - 2).c_str())] = val;
 		}
-	}*/
+	}
 
 	if (thread->threaded)
 	{
@@ -706,7 +711,7 @@ unsigned LuaThread(void* data)
 				RunCommand(IFace, action->cmd, action->ply);
 			} else if (action->type == LuaAction::ACT_Gameevent)
 			{
-				RunGameevent(IFace, action->data, action->val);
+				RunHook(IFace, action->data, action->val);
 			} else if (action->type == LuaAction::ACT_RunHook)
 			{
 				//RunHook(IFace, action->data, action->val);

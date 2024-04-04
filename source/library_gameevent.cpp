@@ -64,7 +64,10 @@ public:
 class GameEventListener : public IGameEventListener2
 {
 public:
-	GameEventListener() = default;
+	GameEventListener(ILuaThread* tthread)
+	{
+		thread = tthread;	
+	};
 
 	void FireGameEvent(IGameEvent* ev)
 	{
@@ -74,6 +77,7 @@ public:
 		act->data = event->GetName();
 
 		ILuaValue* val = new ILuaValue;
+		val->type = Type::Table;
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 
 		KeyValues* subkey = event->m_pDataKeys->GetFirstSubKey();
@@ -99,7 +103,14 @@ public:
 		}
 		val->tbl = tbl;
 		act->val = val;
+
+		thread->mutex.Lock();
+		thread->actions.push_back(act);
+		thread->mutex.Unlock();
 	}
+
+private:
+	ILuaThread* thread;
 };
 
 LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFunction and see how Gmod does it.
@@ -113,20 +124,6 @@ LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFun
 	return 0;
 }
 
-void RunGameevent(ILuaInterface* LUA, const char* name, ILuaValue* tbl) // ToDo: Check if hook and hook.Run exist before trying to use it
-{
-	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-		LUA->GetField(-1, "hook");
-			LUA->GetField(-1, "Run");
-			LUA->PushString(name);
-			PushValue(LUA, tbl);
-
-			LUA->Call(2, 0);
-	LUA->Pop(2);
-
-	SafeDelete(tbl);
-}
-
 void InitGameevent(ILuaThread* thread)
 {
 	ILuaInterface* LUA = thread->IFace;
@@ -138,7 +135,7 @@ void InitGameevent(ILuaThread* thread)
 		LUA->SetField(-2, "gameevent");
 	LUA->Pop();
 
-	thread->listener = new GameEventListener;
+	thread->listener = new GameEventListener(thread);
 
 	if (eventmanager == nullptr) {
 		SourceSDK::FactoryLoader engine_loader("engine");

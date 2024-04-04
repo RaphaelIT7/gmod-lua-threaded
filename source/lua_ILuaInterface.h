@@ -26,3 +26,4 @@ extern void RunFile(ILuaThread*, const char*, const char*);
 inline void RunFile(ILuaThread* LUA, const char* file) { RunFile(LUA, file, ""); };
 
 extern void RunCommand(ILuaInterface*, const CCommand&, void*);
+extern void RunHook(ILuaInterface*, const char*, ILuaValue*);
