@@ -380,6 +380,7 @@ void RunFile(ILuaThread* LUA, const char* file, const char* called)
 	if (path.substr(0, 4) != "lua/")
 		path = "lua/" + path;
 
+	Msg("1. RunFile: %s\n", path.c_str());
 	FileHandle_t fh = gpFileSystem->Open(path.c_str(), "r", "GAME");
 	if(fh)
 	{
@@ -391,6 +392,7 @@ void RunFile(ILuaThread* LUA, const char* file, const char* called)
 
 		path2 = path2 + file;
 
+		Msg("2. RunFile: %s\n", path2.c_str());
 		fh = gpFileSystem->Open(path2.c_str(), "r", "GAME");
 		if(fh)
 		{
