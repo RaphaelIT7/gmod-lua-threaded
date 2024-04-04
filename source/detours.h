@@ -51,9 +51,33 @@ typedef const char* (*lua_tostring)(lua_State*, int, int);
 extern lua_tostring func_lua_tostring;
 const Symbol lua_tostringSym = Symbol::FromName("lua_tolstring");
 
+typedef const char* (*llua_getstack)(lua_State*, int, lua_Debug*);
+extern llua_getstack func_lua_getstack;
+const Symbol lua_getstackSym = Symbol::FromName("lua_getstack");
+
+typedef const char* (*llua_getinfo)(lua_State*, const char*, lua_Debug*);
+extern llua_getinfo func_lua_getinfo;
+const Symbol lua_getinfoSym = Symbol::FromName("lua_getinfo");
+
+typedef const char* (*llua_pushstring)(lua_State*, const char*);
+extern llua_pushstring func_lua_pushstring;
+const Symbol lua_pushstringSym = Symbol::FromName("lua_pushstring");
+
+typedef const char* (*llua_setfield)(lua_State*, int, const char*);
+extern llua_setfield func_lua_setfield;
+const Symbol lua_setfieldSym = Symbol::FromName("lua_setfield");
+
+typedef int (*luaL_loadbuffer)(lua_State*, const char*, size_t, const char*);
+extern luaL_loadbuffer func_luaL_loadbuffer;
+const Symbol luaL_loadbufferSym = Symbol::FromName("luaL_loadbuffer");
+
 typedef const char* (*GMOD_LoadBinaryModule)(lua_State*, const char*);
 extern GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
 const Symbol GMOD_LoadBinaryModuleSym = Symbol::FromName("GMOD_LoadBinaryModule");
+
+typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
+extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
+const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");
 
 /*
 	server_srv stuff
@@ -81,8 +105,8 @@ typedef bool (*ConCommand_IsBlocked)(const char*);
 extern ConCommand_IsBlocked func_ConCommand_IsBlocked;
 const Symbol ConCommand_IsBlockedSym = Symbol::FromName("_Z20ConCommand_IsBlockedPKc");
 
-typedef void* (*UTIL_GetCommandClient)();
-extern UTIL_GetCommandClient func_UTIL_GetCommandClient;
+typedef void* (*TUTIL_GetCommandClient)();
+extern TUTIL_GetCommandClient func_UTIL_GetCommandClient;
 const Symbol UTIL_GetCommandClientSym = Symbol::FromName("_Z21UTIL_GetCommandClientv");
 
 typedef EditorSendResult_t (*TEditor_SendCommand)(const char*, bool);

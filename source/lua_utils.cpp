@@ -19,6 +19,7 @@ GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
 
 IFileSystem* filesystem;
 CGlobalVars* gpGlobal;
+IVEngineServer* engine;
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
@@ -203,7 +204,7 @@ ILuaInterface* CreateInterface()
 		Msg("Invalid Lua state?!?\n");
 	}
 
-	func_lua_atpanic(IFace->GetState(), LuaPanic);
+	//func_lua_atpanic(IFace->GetState(), LuaPanic);
 #endif
 
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);

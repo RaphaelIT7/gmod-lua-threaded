@@ -110,8 +110,6 @@ struct lua_State
 #include <vector>
 #include <lua.h>
 
-using namespace GarrysMod::Lua;
-
 enum LuaAction
 {
 	ACT_RunFile,
@@ -254,3 +252,4 @@ extern void ShutdownInterface(ILuaThread*);
 extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobal;
+extern IVEngineServer* engine;
