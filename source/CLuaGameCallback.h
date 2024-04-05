@@ -22,8 +22,8 @@ struct CLuaError
 class CLuaGameCallback : public ILuaGameCallback
 {
 public:
-	ILuaObject *CreateLuaObject();
-	void DestroyLuaObject(ILuaObject* pObject);
+	IILuaObject *CreateLuaObject();
+	void DestroyLuaObject(IILuaObject* pObject);
 	void ErrorPrint(const char* error, bool);
 	void Msg(const char* msg, bool);
 	void MsgColour(const char* msg, const Color& color);

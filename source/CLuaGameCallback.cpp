@@ -2,12 +2,12 @@
 #include "Color.h"
 #include "detours.h"
 
-ILuaObject* CLuaGameCallback::CreateLuaObject()
+IILuaObject* CLuaGameCallback::CreateLuaObject()
 {
 	return func_CLuaGameCallback_CreateLuaObject(this);
 }
 
-void CLuaGameCallback::DestroyLuaObject(ILuaObject* pObject)
+void CLuaGameCallback::DestroyLuaObject(IILuaObject* pObject)
 {
 	func_CLuaGameCallback_DestroyLuaObject(this, pObject);
 }

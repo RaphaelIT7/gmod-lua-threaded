@@ -46,7 +46,7 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 				LUA->GetField(-1, "Entity");
 					LUA->PushNumber(value->number);
 					LUA->Call(1, 1);
-					ILuaObject* entity = ILUA->GetObject(-1);
+					IILuaObject* entity = ILUA->GetObject(-1);
 			LUA->Pop(2);
 			*/
 			break;

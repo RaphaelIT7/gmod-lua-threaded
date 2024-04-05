@@ -28,7 +28,7 @@ void Push_Vector(ILuaBase* LUA, float x, float y, float z)
 	LUA->CreateMetaTableType(metaname, metatype);
 	meta->SetFromStack(-1);
 
-	obj->SetMetaTable((ILuaObject*)meta);
+	obj->SetMetaTable((IILuaObject*)meta);
 	obj->SetFromStack(-1);
 
 	obj->Push();*/

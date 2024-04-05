@@ -1,10 +1,10 @@
 #include <GarrysMod/Lua/LuaObject.h>
 #include <GarrysMod/Lua/LuaInterface.h>
 
-class CLuaObject : GarrysMod::Lua::ILuaObject
+class CLuaObject : GarrysMod::Lua::IILuaObject
 {
 public:
-	virtual void Set( ILuaObject *obj );
+	virtual void Set( IILuaObject *obj );
 	virtual void SetFromStack( int i );
 	virtual void UnReference( );
 
@@ -15,7 +15,7 @@ public:
 	virtual void *GetUserData( );
 
 	virtual void SetMember( const char *name );
-	virtual void SetMember( const char *name, ILuaObject *obj );
+	virtual void SetMember( const char *name, IILuaObject *obj );
 	virtual void SetMember( const char *name, float val );
 	virtual void SetMember( const char *name, bool val );
 	virtual void SetMember( const char *name, const char *val );
@@ -27,10 +27,10 @@ public:
 	virtual const char *GetMemberStr( const char *name, const char *s = "" );
 	virtual void *GetMemberUserData( const char *name, void *u = 0 );
 	virtual void *GetMemberUserData( float name, void *u = 0 );
-	virtual ILuaObject *GetMember( const char *name, ILuaObject *obj );
-	virtual ILuaObject *GetMember( ILuaObject *key, ILuaObject *obj );
+	virtual IILuaObject *GetMember( const char *name, IILuaObject *obj );
+	virtual IILuaObject *GetMember( IILuaObject *key, IILuaObject *obj );
 
-	virtual void SetMetaTable( ILuaObject *obj );
+	virtual void SetMetaTable( IILuaObject *obj );
 	virtual void SetUserData( void *obj );
 
 	virtual void Push( );
@@ -42,12 +42,12 @@ public:
 	virtual bool isFunction( );
 	virtual bool isUserData( );
 
-	virtual ILuaObject *GetMember( float fKey, ILuaObject* obj );
+	virtual IILuaObject *GetMember( float fKey, IILuaObject* obj );
 
 	virtual void *Remove_Me_1( const char *name, void * = 0 );
 
 	virtual void SetMember( float fKey );
-	virtual void SetMember( float fKey, ILuaObject *obj );
+	virtual void SetMember( float fKey, IILuaObject *obj );
 	virtual void SetMember( float fKey, float val );
 	virtual void SetMember( float fKey, bool val );
 	virtual void SetMember( float fKey, const char *val );
@@ -55,7 +55,7 @@ public:
 
 	virtual const char *GetMemberStr( float name, const char *s = "" );
 
-	virtual void SetMember( ILuaObject *k, ILuaObject *v );
+	virtual void SetMember( IILuaObject *k, IILuaObject *v );
 	virtual bool GetBool( );
 
 	virtual bool PushMemberFast( int iStackPos );
@@ -68,7 +68,7 @@ public:
 
 	virtual void SetMember_FixKey( const char *, float );
 	virtual void SetMember_FixKey( const char *, const char * );
-	virtual void SetMember_FixKey( const char *, ILuaObject * );
+	virtual void SetMember_FixKey( const char *, IILuaObject * );
 	virtual void SetMember_FixKey( const char *, double );
 	virtual void SetMember_FixKey( const char *, int );
 

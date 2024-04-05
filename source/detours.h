@@ -94,7 +94,7 @@ const std::vector<Symbol> Editor_SendCommandSym = {
 /*
 	CLuaGameCallback stuff
 */
-typedef ILuaObject* (*CLuaGameCallback_CreateLuaObject)(void*);
+typedef IILuaObject* (*CLuaGameCallback_CreateLuaObject)(void*);
 extern CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 const std::vector<Symbol> CLuaGameCallback_CreateLuaObjectSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback15CreateLuaObjectEv"),
@@ -104,7 +104,7 @@ const std::vector<Symbol> CLuaGameCallback_CreateLuaObjectSym = {
 #endif
 };
 
-typedef void (*CLuaGameCallback_DestroyLuaObject)(void*, ILuaObject*);
+typedef void (*CLuaGameCallback_DestroyLuaObject)(void*, IILuaObject*);
 extern CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
 const std::vector<Symbol> CLuaGameCallback_DestroyLuaObjectSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback16DestroyLuaObjectEP10ILuaObject"),
