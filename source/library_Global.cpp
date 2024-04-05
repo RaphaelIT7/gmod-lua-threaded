@@ -169,7 +169,7 @@ LUA_FUNCTION(CreateConVar)
 		}
 	}
 
-	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", 1); // LuaConCommandAutocomplete doesn't have the values gmod uses. Idk but this could cause problems.
+	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", 1); // Crashes for unknown reasons
 	// ToDo: Add support for min & max
 
 	Push_ConVar(LUA, cvar);
@@ -365,7 +365,7 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, Global_Msg, "Msg");
 		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
 		Add_Func(LUA, GetConVar, "GetConVar");
-		Add_Func(LUA, CreateConVar, "CreateConVar");
+		//Add_Func(LUA, CreateConVar, "CreateConVar");
 
 		Add_Func(LUA, CurTime, "CurTime");
 		Add_Func(LUA, RealTime, "RealTime");
