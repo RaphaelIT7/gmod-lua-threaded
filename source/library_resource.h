@@ -1,5 +1,3 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 
-using namespace GarrysMod::Lua;
-
-extern void InitResource(ILuaInterface*);
+extern void InitResource(GarrysMod::Lua::ILuaInterface*);

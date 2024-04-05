@@ -1,6 +1,4 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 
-using namespace GarrysMod::Lua;
-
-extern void InitFileLib(ILuaInterface*);
+extern void InitFileLib(GarrysMod::Lua::ILuaInterface*);
 extern void FileLibThink(ILuaThread*);

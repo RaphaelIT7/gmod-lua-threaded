@@ -1,5 +1,3 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 
-using namespace GarrysMod::Lua;
-
-extern void InitPhysEnv(ILuaInterface*);
+extern void InitPhysEnv(GarrysMod::Lua::ILuaInterface*);

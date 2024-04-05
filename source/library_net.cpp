@@ -18,9 +18,9 @@ LUA_FUNCTION(net_Start)
 	return 0;
 }
 
-void InitNet(ILuaInterface* LUA)
+void InitNet(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			// ToDo
 		LUA->SetField(-2, "net");

@@ -4,7 +4,7 @@
 
 LUA_FUNCTION(LUA_UpdateEngine)
 {
-	UpdateEngine((ILuaInterface*)LUA);
+	UpdateEngine((GarrysMod::Lua::ILuaInterface*)LUA);
 	return 0;
 }
 
@@ -36,7 +36,7 @@ GMOD_MODULE_OPEN()
 		GMOD->versionstr = get->VersionStr();
 		GMOD->branch = "unknown"; // Always unknown
 	} else {
-		LUA->PushSpecial(SPECIAL_GLOB);
+		LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 			LUA->GetField(-1, "VERSION");
 			GMOD->version = LUA->GetNumber(-1);
 			LUA->Pop();
@@ -52,20 +52,20 @@ GMOD_MODULE_OPEN()
 
 	Symbols_Init();
 
-	InitLuaThreaded((ILuaInterface*)LUA);
+	InitLuaThreaded((GarrysMod::Lua::ILuaInterface*)LUA);
 
-	InitMetaTable((ILuaInterface*)LUA);
+	InitMetaTable((GarrysMod::Lua::ILuaInterface*)LUA);
 
-	InitEnums((ILuaInterface*)LUA);
+	InitEnums((GarrysMod::Lua::ILuaInterface*)LUA);
 
 	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine((ILuaInterface*)LUA); // Look into it why it breaks my shit.
+	UpdateEngine((GarrysMod::Lua::ILuaInterface*)LUA); // Look into it why it breaks my shit.
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
-		if (LUA->IsType(-1, Type::Table)) {
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
 			LUA->GetField(-1, "Add");
-			if (LUA->IsType(-1, Type::Function)) {
+			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
 				LUA->PushString("GameContentChanged");
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_UpdateEngine);
@@ -77,11 +77,11 @@ GMOD_MODULE_OPEN()
 	LUA->Pop(2);
 
 	// NOTE: We need to wait until InitPostEntity is called because a bunch of stuff is missing which cause a crash.
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
-		if (LUA->IsType(-1, Type::Table)) {
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
 			LUA->GetField(-1, "Add");
-			if (LUA->IsType(-1, Type::Function)) {
+			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
 				LUA->PushString("InitPostEntity");
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_ReadyThreads);
@@ -99,7 +99,7 @@ GMOD_MODULE_OPEN()
 
 GMOD_MODULE_CLOSE()
 {
-	DestroyMetaTable((ILuaInterface*)LUA);
+	DestroyMetaTable((GarrysMod::Lua::ILuaInterface*)LUA);
 
 	for (auto& [id, thread]: interfaces) {
 		if (thread->threaded) {

@@ -18,9 +18,9 @@ LUA_FUNCTION(hammer_SendCommand)
 	return 1;
 }
 
-void InitHammer(ILuaInterface* LUA)
+void InitHammer(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, hammer_SendCommand, "SendCommand");
 

@@ -27,13 +27,13 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] timer  
 - [x] hammer (useful for Windows later)  
 - [x] engine  
+- [x] gameevent  
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
 - [x] physenv (Mostly implemented)  
 - - [ ] physenv.AddSurfaceData  
 - - [ ] physenv.GetLastSimulationTime  
-- [x] gameevent (untested!)  
 - [x] resource (untested!)  
 - [x] system (untested!)  
 - [x] gmod (untested!)  
@@ -82,9 +82,7 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] drive?  
 - - [ ] duplicator  
 - - [ ] effects  
-- - [ ] engine  
 - - [ ] ents  
-- - [ ] file  
 - - [ ] game  
 - - [ ] gamemode  
 - - [ ] gmsave  
@@ -230,7 +228,6 @@ This function could be renamed in the future!
 ### ILuaInterface:RunHook(string name, args ...)
 Runs the given Hook.  
 (Calls hook.Run with the name and args)  
-NOTE: Loves to crash. Currently broken  
 
 Args:  
 1. Path to the file.  

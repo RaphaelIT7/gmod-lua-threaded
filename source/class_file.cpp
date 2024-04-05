@@ -5,26 +5,26 @@ static const char metaname[] = "File";
 static const char invalid_error[] = "invalid File";
 static const char table_name[] = "File_object";
 
-void Push_File(ILuaBase* LUA, const char* filename, const char* fileMode, const char* path)
+void Push_File(GarrysMod::Lua::ILuaBase* LUA, const char* filename, const char* fileMode, const char* path)
 {
 	LUA_File* udata = (LUA_File*)LUA->NewUserdata(sizeof(LUA_File));
 	udata->filename = filename;
 	udata->handle = gpFileSystem->Open(filename, fileMode, path);
 
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;
 	ILUA->SetType(metatype);
 
 	LUA->CreateMetaTableType(metaname, metatype);
 	LUA->SetMetaTable(-2);
 }
 
-bool IsFile(ILuaBase* LUA, int index)
+bool IsFile(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if (LUA->IsType(index, Type::UserData))
+	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
 	{
 		LUA->GetMetaTable(index);
 		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, Type::String))
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
 		{
 			if (strcmp(LUA->GetString(-1), metaname))
 			{
@@ -41,18 +41,18 @@ bool IsFile(ILuaBase* LUA, int index)
 	return false;
 }
 
-void File_CheckType(ILuaBase* LUA, int index)
+void File_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, Type::UserData)) // ToDo: Make a better check.
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData)) // ToDo: Make a better check.
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-LUA_File* File_GetUserdata(ILuaBase *LUA, int index)
+LUA_File* File_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	return (LUA_File*)LUA->GetUserdata(index);
 }
 
-LUA_File* File_Get(ILuaBase* LUA, int index, bool error)
+LUA_File* File_Get(GarrysMod::Lua::ILuaBase* LUA, int index, bool error)
 {
 	File_CheckType(LUA, index);
 
@@ -66,11 +66,11 @@ LUA_File* File_Get(ILuaBase* LUA, int index, bool error)
 	return file;
 }
 
-void File_Destroy(ILuaBase *LUA, int index)
+void File_Destroy(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	LUA_File* file = File_GetUserdata(LUA, index);
 
-	LUA->GetField(INDEX_REGISTRY, table_name);
+	LUA->GetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 	LUA->PushUserdata(file);
 	LUA->PushNil();
 	LUA->SetTable(-3);
@@ -413,7 +413,7 @@ LUA_FUNCTION(File_WriteUShort)
 	return 0;
 }
 
-void InitFileClass(ILuaInterface* LUA)
+void InitFileClass(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);

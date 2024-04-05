@@ -175,7 +175,7 @@ struct IAsyncFile
 
 struct ILuaThread
 {
-	ILuaInterface* IFace;
+	GarrysMod::Lua::ILuaInterface* IFace;
 	CThreadFastMutex mutex;
 	int shared_tbl_reference = -1;
 
@@ -235,18 +235,18 @@ extern int shared_table_reference;
 extern CThreadFastMutex shared_table_mutex;
 extern std::unordered_map<std::string, ILuaValue*> shared_table;
 
-extern void PushValue(ILuaBase*, ILuaValue*);
+extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
 extern ILuaValue* GetOrCreate(std::string);
-extern void FillValue(ILuaBase*, ILuaValue*, int, int);
+extern void FillValue(GarrysMod::Lua::ILuaBase*, ILuaValue*, int, int);
 
 extern ILuaValue* CreateValue(int);
 extern ILuaValue* CreateValue(const char*);
 
-extern void Add_Func(GarrysMod::Lua::ILuaBase*, CFunc, const char*);
+extern void Add_Func(GarrysMod::Lua::ILuaBase*, GarrysMod::Lua::CFunc, const char*);
 extern ILuaThread* FindThread(int);
 
-extern ILuaInterface* CreateInterface();
+extern GarrysMod::Lua::ILuaInterface* CreateInterface();
 extern void ShutdownInterface(ILuaThread*);
 
 extern std::string ToPath(std::string);

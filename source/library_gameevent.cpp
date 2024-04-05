@@ -10,7 +10,7 @@ IGameEventManager2* eventmanager = nullptr;
 ILuaValue* GetFloat(IGameEvent* event, const char* pKey)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::Number;
+	val->type = GarrysMod::Lua::Type::Number;
 	val->number = event->GetFloat(pKey);
 
 	return val;
@@ -19,7 +19,7 @@ ILuaValue* GetFloat(IGameEvent* event, const char* pKey)
 ILuaValue* GetInt(IGameEvent* event, const char* pKey)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::Number;
+	val->type = GarrysMod::Lua::Type::Number;
 	val->number = event->GetInt(pKey);
 
 	return val;
@@ -28,7 +28,7 @@ ILuaValue* GetInt(IGameEvent* event, const char* pKey)
 ILuaValue* GetString(IGameEvent* event, const char* pKey)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::String;
+	val->type = GarrysMod::Lua::Type::String;
 	val->string = event->GetString(pKey);
 
 	return val;
@@ -77,7 +77,7 @@ public:
 		act->data = event->GetName();
 
 		ILuaValue* val = new ILuaValue;
-		val->type = Type::Table;
+		val->type = GarrysMod::Lua::Type::Table;
 
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 
@@ -127,9 +127,9 @@ LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFun
 
 void InitGameevent(ILuaThread* thread)
 {
-	ILuaInterface* LUA = thread->IFace;
+	GarrysMod::Lua::ILuaInterface* LUA = thread->IFace;
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, gameevent_Listen, "Listen");
 

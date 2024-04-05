@@ -1,7 +1,5 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 
-using namespace GarrysMod::Lua;
-
 struct LUA_Vector
 {
 	float x;
@@ -9,12 +7,12 @@ struct LUA_Vector
 	float z;
 };
 
-extern void InitVectorClass(ILuaInterface*);
+extern void InitVectorClass(GarrysMod::Lua::ILuaInterface*);
 extern int Global_Vector(lua_State*);
 extern int Global_LerpVector(lua_State*);
 extern int Global_OrderVectors(lua_State*);
 
-extern void Push_Vector(ILuaBase* LUA, Vector vec);
-extern bool IsVector(ILuaBase* LUA, int index);
-extern LUA_Vector* Vector_Get(ILuaBase* LUA, int index);
-extern void Vector_CheckType(ILuaBase* LUA, int index);
+extern void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, Vector vec);
+extern bool IsVector(GarrysMod::Lua::ILuaBase* LUA, int index);
+extern LUA_Vector* Vector_Get(GarrysMod::Lua::ILuaBase* LUA, int index);
+extern void Vector_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index);

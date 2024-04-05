@@ -6,15 +6,15 @@ static const char metaname[] = "Vector";
 static const char invalid_error[] = "invalid Vector";
 static const char table_name[] = "Vector_object";
 
-void Push_Vector(ILuaBase* LUA, float x, float y, float z)
+void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, float x, float y, float z)
 {
 	LUA_Vector* udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
 	udata->x = x;
 	udata->y = y;
 	udata->z = z;
 
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
-	ILUA->SetType(Type::Vector);
+	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+	ILUA->SetType(GarrysMod::Lua::Type::Vector);
 
 	LUA->CreateMetaTableType(metaname, metatype);
 	LUA->SetMetaTable(-2);
@@ -34,24 +34,24 @@ void Push_Vector(ILuaBase* LUA, float x, float y, float z)
 	obj->Push();*/
 }
 
-void Push_Vector(ILuaBase* LUA, Vector vec)
+void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, Vector vec)
 {
 	Push_Vector(LUA, vec.x, vec.y, vec.z);
 }
 
-void Vector_CheckType(ILuaBase* LUA, int index)
+void Vector_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, Type::UserData))
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData))
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-bool IsVector(ILuaBase* LUA, int index)
+bool IsVector(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if (LUA->IsType(index, Type::UserData))
+	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
 	{
 		LUA->GetMetaTable(index);
 		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, Type::String))
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
 		{
 			if (strcmp(LUA->GetString(-1), metaname))
 			{
@@ -68,12 +68,12 @@ bool IsVector(ILuaBase* LUA, int index)
 	return false;
 }
 
-LUA_Vector* Vector_GetUserdata(ILuaBase *LUA, int index)
+LUA_Vector* Vector_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	return (LUA_Vector*)LUA->GetUserdata(index);
 }
 
-LUA_Vector* Vector_Get(ILuaBase* LUA, int index)
+LUA_Vector* Vector_Get(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	Vector_CheckType(LUA, index);
 
@@ -84,11 +84,11 @@ LUA_Vector* Vector_Get(ILuaBase* LUA, int index)
 	return vec;
 }
 
-void Vector_Destroy(ILuaBase *LUA, int index)
+void Vector_Destroy(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	LUA_Vector* vec = Vector_GetUserdata(LUA, index);
 
-	LUA->GetField(INDEX_REGISTRY, table_name);
+	LUA->GetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 	LUA->PushUserdata(vec);
 	LUA->PushNil();
 	LUA->SetTable(-3);
@@ -213,7 +213,7 @@ LUA_FUNCTION_STATIC(Vector__mul)
 	Vector_CheckType(LUA, 1);
 	LUA_Vector* vec1 = Vector_Get(LUA, 1);
 
-	if (LUA->IsType(2, Type::Number)) {
+	if (LUA->IsType(2, GarrysMod::Lua::Type::Number)) {
 		int num = LUA->GetNumber(2);
 
 		Push_Vector(LUA, vec1->x * num, vec1->y * num, vec1->z * num);
@@ -232,7 +232,7 @@ LUA_FUNCTION_STATIC(Vector__div)
 	Vector_CheckType(LUA, 1);
 	LUA_Vector* vec1 = Vector_Get(LUA, 1);
 
-	if (LUA->IsType(2, Type::Number)) {
+	if (LUA->IsType(2, GarrysMod::Lua::Type::Number)) {
 		int num = LUA->GetNumber(2);
 
 		Push_Vector(LUA, vec1->x / num, vec1->y / num, vec1->z / num);
@@ -289,7 +289,7 @@ LUA_FUNCTION(Vector_Mul) // Undocumented: Second arg can be a Vector?
 	Vector_CheckType(LUA, 1);
 	LUA_Vector* vec1 = Vector_Get(LUA, 1);
 
-	if (LUA->IsType(2, Type::Number)) {
+	if (LUA->IsType(2, GarrysMod::Lua::Type::Number)) {
 		int num = LUA->GetNumber(2);
 
 		vec1->x *= num;
@@ -312,7 +312,7 @@ LUA_FUNCTION(Vector_Div) // Undocumented: Second arg can be a Vector?
 	Vector_CheckType(LUA, 1);
 	LUA_Vector* vec1 = Vector_Get(LUA, 1);
 
-	if (LUA->IsType(2, Type::Number)) {
+	if (LUA->IsType(2, GarrysMod::Lua::Type::Number)) {
 		int num = LUA->GetNumber(2);
 
 		vec1->x /= num;
@@ -681,12 +681,10 @@ LUA_FUNCTION(Global_OrderVectors)
 	return 0;
 }
 
-void InitVectorClass(ILuaInterface* LUA)
+void InitVectorClass(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
-
-
 
 	LUA->CreateMetaTableType(metaname, metatype);
 		Add_Func(LUA, Vector__gc, "__gc"); // Gmod doesn't have __gc
