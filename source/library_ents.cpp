@@ -31,7 +31,7 @@ LUA_FUNCTION(ents_FindEntityByName)
 
 void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
-    LUA->PushSpecial(SPECIAL_GLOB);
+    LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
         LUA->CreateTable();
             Add_Func(LUA, ents_Create, "Create");
             Add_Func(LUA, ents_FindEntityByName, "FindByName");
