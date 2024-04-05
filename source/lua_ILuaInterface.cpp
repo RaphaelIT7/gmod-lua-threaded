@@ -12,7 +12,7 @@ GMOD_Info* GMOD;
 void ILuaInterface_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, metatype))
-		luaL_typerror(LUA->GetState(), index, metaname);
+		LUA->TypeError(index, metaname);
 }
 
 LUA_ILuaInterface *ILuaInterface_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
