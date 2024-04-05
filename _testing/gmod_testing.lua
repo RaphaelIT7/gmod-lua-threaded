@@ -97,6 +97,8 @@ local code = [[local ret, err = pcall(function()
 	gameevent.Listen("player_connect_client")
 	RunConsoleCommand("bot")
 
+	print("GetConVar: ", GetConVar("hostname"))
+
 	error("Error handling test")
 end)
 
