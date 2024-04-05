@@ -561,8 +561,8 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 					//PushValue(LUA, val);
 				}
 			} else {
-				//++pushed;
-				//PushValue(LUA, args);
+				++pushed;
+				PushValue(LUA, args);
 			}
 
 			LUA->CallFunctionProtected(pushed, 0, true);
