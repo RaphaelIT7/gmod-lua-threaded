@@ -23,7 +23,7 @@ void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, LUA_Entity* ent)
 void Entity_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, GarrysMod::Lua::Type::Entity))
-		LUA->TypeError(LUA->GetState(), index, metaname);
+		LUA->TypeError(index, metaname);
 }
 
 bool IsEntity(GarrysMod::Lua::ILuaBase* LUA, int index)
