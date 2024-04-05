@@ -12,7 +12,7 @@ LUA_FUNCTION(ents_Create)
 
 LUA_FUNCTION(ents_FindEntityByName)
 {
-	/* if (LUA->CheckString(1)) {
+	if (LUA->CheckString(1)) {
 		const char* classname = LUA->GetString(1);
 		// Use the FindEntityByName function
 		CBaseEntity* entity = gEntList.FindEntityByName(NULL, classname);
@@ -24,7 +24,7 @@ LUA_FUNCTION(ents_FindEntityByName)
 		}
 	} else {
 		LUA->ThrowError("Invalid classname");
-	} */
+	}
 	
 	return  0;
 }
