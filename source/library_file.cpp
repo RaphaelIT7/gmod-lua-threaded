@@ -9,7 +9,8 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
-		async->content = static_cast<char*>(request.pData);
+		async->content = new char[nBytesRead];
+		std::memcpy((void*)async->content, request.pData, nBytesRead);
 	} else {
 		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
 	}
@@ -62,6 +63,7 @@ void FileLibThink(ILuaThread* thread)
 	}
 
 	for(IAsyncFile* file : files) {
+		delete file->content;
 		thread->async.erase(find(thread->async.begin(),thread->async.end(), file)); // This is probably shit.
 	}
 }
