@@ -171,6 +171,7 @@ struct IAsyncFile
 	int nBytesRead;
 	int Status;
 	bool finished = false;
+	const char* content;
 };
 
 struct ILuaThread
