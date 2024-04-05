@@ -113,6 +113,14 @@ const std::vector<Symbol> Editor_SendCommandSym = {
 	Symbol::FromName("_Z18Editor_SendCommandPKcb"),
 };
 
+typedef void* (*TGMOD_LoadParticleConfigFile)(const char*, bool);
+extern TGMOD_LoadParticleConfigFile func_GMOD_LoadParticleConfigFile;
+const Symbol GMOD_LoadParticleConfigFileSym = Symbol::FromName("_Z27GMOD_LoadParticleConfigFilePKcb");
+
+typedef void* (*TGetAmmoDef)();
+extern TGetAmmoDef func_GetAmmoDef;
+const Symbol GetAmmoDefSym = Symbol::FromName("_Z10GetAmmoDefv");
+
 /*
 	CLuaGameCallback stuff
 */

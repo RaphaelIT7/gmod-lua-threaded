@@ -291,6 +291,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitHammer(LUA);
 	InitGmodLib(LUA);
 	InitFileLib(LUA);
+	InitGame(LUA);
 }
 
 LUA_FUNCTION(ILuaInterface_InitLibraries)

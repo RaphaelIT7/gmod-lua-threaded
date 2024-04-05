@@ -27,6 +27,8 @@ void* g_pGlobalLuaLibraryFactory;
 ConCommand_IsBlocked func_ConCommand_IsBlocked;
 TUTIL_GetCommandClient func_UTIL_GetCommandClient;
 TEditor_SendCommand func_Editor_SendCommand;
+TGMOD_LoadParticleConfigFile func_GMOD_LoadParticleConfigFile;
+TGetAmmoDef func_GetAmmoDef;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
@@ -183,6 +185,12 @@ void Symbols_Init()
 
 	func_Editor_SendCommand = (TEditor_SendCommand)FindFunction(server_loader.GetModule(), Editor_SendCommandSym);
 	CheckFunction(func_Editor_SendCommand, "Editor_SendCommand");
+
+	func_GMOD_LoadParticleConfigFile = (TGMOD_LoadParticleConfigFile)FindFunction(server_loader.GetModule(), GMOD_LoadParticleConfigFileSym);
+	CheckFunction(func_GMOD_LoadParticleConfigFile, "GMOD_LoadParticleConfigFile");
+
+	func_GetAmmoDef = (TGetAmmoDef)FindFunction(server_loader.GetModule(), GetAmmoDefSym);
+	CheckFunction(func_GetAmmoDef, "GetAmmoDef");
 
 	/*
 		CLuaGameCallback stuff

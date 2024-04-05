@@ -38,6 +38,24 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] resource (untested!)  
 - [x] system (untested!)  
 - [x] gmod (untested!)  
+- [ ] game (untested!)  
+- - [ ] game.AddDecal  
+- - [ ] game.CleanUpMap  
+- - [ ] game.GetGlobalCounter  
+- - [ ] game.GetGlobalState  
+- - [ ] game.GetMapNext  
+- - [ ] game.GetSkillLevel  
+- - [ ] game.GetTimeScale  
+- - [ ] game.GetWorld  
+- - [ ] game.KickID  
+- - [ ] game.LoadNextMap  
+- - [ ] game.MountGMA  
+- - [ ] game.RemoveRagdolls  
+- - [ ] game.SetGlobalCounter  
+- - [ ] game.SetGlobalState  
+- - [ ] game.SetSkillLevel  
+- - [ ] game.SetTimeScale  
+- - [ ] game.StartSpot
 
 ### Classes
 - [x] Angle (untested)
@@ -81,7 +99,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] duplicator  
 - - [ ] effects  
 - - [ ] ents  
-- - [ ] game  
 - - [ ] gamemode  
 - - [ ] gmsave  
 - - [ ] hook  
