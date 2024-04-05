@@ -8,7 +8,7 @@ struct LUA_Entity
 };
 
 extern void InitEntityClass(GarrysMod::Lua::ILuaInterface*);
-extern int Global_Entity(GarrysMod::Lua::lua_State*);
+extern int Global_Entity(lua_State*);
 
 extern void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, const char* type, const char* classname);
 extern bool IsEntity(GarrysMod::Lua::ILuaBase* LUA, int index);

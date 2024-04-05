@@ -161,14 +161,15 @@ LUA_FUNCTION_STATIC(Entity__eq)
 }
 
 
-/* LUA_FUNCTION(Global_Entity)
+LUA_FUNCTION(Global_Entity)
 {
-	double id = LUA->CheckNumber(1);
+	/* double id = LUA->CheckNumber(1);
 
 	Push_Entity(LUA, id);
 
-	return 1;
-} */
+	return 1; */
+	return 0;
+}
 
 void InitEntityClass(GarrysMod::Lua::ILuaInterface* LUA)
 {
