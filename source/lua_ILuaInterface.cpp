@@ -549,17 +549,20 @@ void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
 		if (LUA->IsType(-1, Type::Function))
 		{
 			LUA->PushString(name);
+			int pushed = 1;
 			if (args->type != Type::Table)
 			{
 				for(auto&[key, val] : args->tbl)
 				{
+					++pushed;
 					PushValue(LUA, val);
 				}
 			} else {
+				++pushed;
 				PushValue(LUA, args);
 			}
-			Msg("Args: %i %i\n", (int)((args->type != Type::Table ? args->number : 1) + 1), (int)args->number);
-			LUA->CallFunctionProtected((args->type != Type::Table ? args->number : 1) + 1, 0, true);
+			Msg("Args: %i %i\n", pushed, (int)args->number);
+			LUA->CallFunctionProtected(pushed, 0, true);
 			SafeDelete(args);
 		} else {
 			SafeDelete(args);
