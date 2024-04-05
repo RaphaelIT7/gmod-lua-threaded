@@ -42,7 +42,7 @@ void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, Vector vec)
 void Vector_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData))
-		luaL_typerror(LUA->GetState(), index, metaname);
+		LUA->TypeError(index, metaname);
 }
 
 bool IsVector(GarrysMod::Lua::ILuaBase* LUA, int index)
