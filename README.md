@@ -29,9 +29,9 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] engine  
 - [x] gameevent  
 - [x] file  
+- [x] debug  
 
 #### Unfinished/Untested
-- [x] debug (Missing functions!)  
 - [x] physenv (Mostly implemented)  
 - - [ ] physenv.AddSurfaceData  
 - - [ ] physenv.GetLastSimulationTime  
