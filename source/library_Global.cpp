@@ -245,7 +245,7 @@ LUA_FUNCTION(Global_Msg)
 						{
 							LUA->Push(-3);
 							GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
-							LLUA->CallFunctionProtected(1, 1);
+							LLUA->CallFunctionProtected(1, 1, true);
 							
 							if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
 							{
