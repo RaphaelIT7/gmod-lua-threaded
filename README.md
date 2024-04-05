@@ -28,18 +28,16 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] hammer (useful for Windows later)  
 - [x] engine  
 - [x] gameevent  
+- [x] file  
+- [x] debug  
 
 #### Unfinished/Untested
-- [x] debug (Missing functions!)  
 - [x] physenv (Mostly implemented)  
 - - [ ] physenv.AddSurfaceData  
 - - [ ] physenv.GetLastSimulationTime  
 - [x] resource (untested!)  
 - [x] system (untested!)  
 - [x] gmod (untested!)  
-- [x] file (Mostly implemented & untested!)
-- - [ ] file.AsyncRead
-- - [x] file.Open (Required for file.Read, file.Write and file.Append)
 
 ### Classes
 - [x] Angle (untested)
@@ -315,3 +313,19 @@ Contains module base and manages everything for Init and Shutdown.
 Files:  
 - `lua_threaded.h`
 - `lua_threaded.cpp`
+
+
+## Some notes
+
+### NW
+For the NW System I'm going to need CLuaNetworkedVars.  
+CLuaNetworkedVars::FindEntityVar -- Returns a LuaNetworkedVar_t. GetNW* and GetGlobal functions are gonna require this.  
+CLuaNetworkedVars::SetNetworkedVar -- Give it everything it needs and it'll do the rest. Probably going to need to add a mutex to it.  
+Als going to need LuaNetworkedVarEnts_t and going to recreate BuildNetworkVarTable & BuildEntityNetworkVarTable  
+[This could become useful](https://github.com/11Lee1/gmsv_extra/blob/294dbc1e31eca6f086605767e0495cf64348bd85/gmsv_extra/Garry's%20Mod/GLUA/LuaNetworkedVars.h)  
+
+### NW2
+This is going to be pain.  
+Going to need g_pServerWorldTable, SetDataTableVar, IGMODDataTable, CGMODVariant.  
+Already got: [IGMODDataTable](https://github.com/danielga/sourcesdk-minimal/blob/1cacb57cd36ee5b77c970e91fff374046aa8574d/public/GarrysMod/IGMODDataTable.h#L5)  
+ToDo: Find out what the CGMODVariant is.  

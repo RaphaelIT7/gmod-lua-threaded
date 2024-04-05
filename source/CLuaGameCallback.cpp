@@ -2,12 +2,12 @@
 #include "Color.h"
 #include "detours.h"
 
-ILuaObject* CLuaGameCallback::CreateLuaObject()
+GarrysMod::Lua::ILuaObject* CLuaGameCallback::CreateLuaObject()
 {
 	return func_CLuaGameCallback_CreateLuaObject(this);
 }
 
-void CLuaGameCallback::DestroyLuaObject(ILuaObject* pObject)
+void CLuaGameCallback::DestroyLuaObject(GarrysMod::Lua::ILuaObject* pObject)
 {
 	func_CLuaGameCallback_DestroyLuaObject(this, pObject);
 }
@@ -32,4 +32,4 @@ void CLuaGameCallback::LuaError(const CLuaError* error)
 	func_CLuaGameCallback_LuaError(this, (void*)error);
 }
 
-void CLuaGameCallback::InterfaceCreated(ILuaInterface* iface) {} // Unused
+void CLuaGameCallback::InterfaceCreated(GarrysMod::Lua::ILuaInterface* iface) {} // Unused

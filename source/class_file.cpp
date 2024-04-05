@@ -9,6 +9,8 @@ void Push_File(GarrysMod::Lua::ILuaBase* LUA, const char* filename, const char* 
 {
 	LUA_File* udata = (LUA_File*)LUA->NewUserdata(sizeof(LUA_File));
 	udata->filename = filename;
+	udata->fileMode = fileMode;
+	udata->path = path;
 	udata->handle = gpFileSystem->Open(filename, fileMode, path);
 
 	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;

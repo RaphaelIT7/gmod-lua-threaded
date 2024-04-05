@@ -30,6 +30,7 @@ GMOD_MODULE_OPEN()
 	GMOD->games = new ILuaValue;
 	GMOD->gamemodes = new ILuaValue;
 	GMOD->usercontent = new ILuaValue;
+	GMOD->gamecallback = ((GarrysMod::Lua::CLuaInterface*)LUA)->GetLuaGameCallback();
 	if (get)
 	{
 		GMOD->version = get->Version();

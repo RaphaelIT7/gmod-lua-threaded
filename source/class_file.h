@@ -2,8 +2,10 @@
 
 struct LUA_File
 {
-	const char* filename;
 	FileHandle_t handle;
+	const char* filename;
+	const char* fileMode;
+	const char* path;
 };
 
 extern void InitFileClass(GarrysMod::Lua::ILuaInterface*);

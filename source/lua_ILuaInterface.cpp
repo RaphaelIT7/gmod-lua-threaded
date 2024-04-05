@@ -88,6 +88,11 @@ ILuaThread* GetValidThread(GarrysMod::Lua::ILuaBase* LUA, double index)
 	if (ThreadInMainThread())
 	{
 		LUA_ILuaInterface* IData = ILuaInterface_GetUserdata(LUA, index);
+		if (!IData)
+		{
+			LUA->ThrowError("Something internally broke really hard.");
+			return nullptr;
+		}
 
 		ILuaThread* thread = FindThread(IData->ID);
 		if (!thread)
@@ -543,6 +548,7 @@ LUA_FUNCTION(ILuaInterface_Unlock)
 
 void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* args)
 {
+	std::string error = "";
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 	LUA->GetField(-1, "hook");
 	if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
@@ -566,21 +572,24 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 
 			LUA->CallFunctionProtected(pushed, 0, true);
 
-			if (args->type != GarrysMod::Lua::Type::Table && pushed != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
+			if (args->type != GarrysMod::Lua::Type::Table && (pushed - 1) != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
 			{
 				std::string err_msg = "hook.Run had an Internal error. Report this please";
 				err_msg = err_msg + "(" + name + ")";
-				LUA->ThrowError(err_msg.c_str());
+				error = err_msg;
 			}
-			SafeDelete(args);
 		} else {
-			SafeDelete(args);
-			LUA->ThrowError("hook.Run is missing or not a function!");
+			LUA->Pop(1);
+			error = "hook.Run is missing or not a function!";
 		}
 	} else {
-		SafeDelete(args);
-		LUA->ThrowError("hook table is missing or not a table!");
+		error = "hook table is missing or not a table!";
 	}
+
+	LUA->Pop(2);
+	SafeDelete(args);
+	if (error != "")
+		Msg("[LuaThreaded] %s\n", error.c_str());
 }
 
 LUA_FUNCTION(ILuaInterface_RunHook)
@@ -600,7 +609,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 			ILuaValue* val = new ILuaValue;
 			FillValue(LUA, val, pos, LUA->GetType(pos));
 
-			hook_tbl->tbl[CreateValue(std::to_string(pos - 2).c_str())] = val;
+			hook_tbl->tbl[CreateValue(pos - 2)] = val;
 		}
 	}
 
@@ -731,7 +740,7 @@ unsigned LuaThread(void* data)
 				RunHook(IFace, action->data, action->val);
 			} else if (action->type == LuaAction::ACT_RunHook)
 			{
-				//RunHook(IFace, action->data, action->val);
+				RunHook(IFace, action->data, action->val);
 			}
 
 			delete action;

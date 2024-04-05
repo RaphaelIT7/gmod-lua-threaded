@@ -1,5 +1,6 @@
 #include "lua_threaded.h"
 #include <algorithm>
+#include <cstring>
 
 std::unordered_map<const FileAsyncRequest_t*, IAsyncFile*> async_list;
 void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
@@ -9,7 +10,8 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
-		Msg("Read %i\n", nBytesRead);
+		async->content = new char[nBytesRead];
+		std::memcpy((void*)async->content, request.pData, nBytesRead);
 	} else {
 		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
 	}
@@ -55,13 +57,14 @@ void FileLibThink(ILuaThread* thread)
 		LUA->PushString(file->req->pszFilename);
 		LUA->PushString(file->req->pszPathID);
 		LUA->PushNumber(file->Status);
-		LUA->PushString(static_cast<char*>(file->req->pData));
-		LUA->PCall(4, 0, 0);
+		LUA->PushString(file->content);
+		LUA->CallFunctionProtected(4, 0, true);
 		LUA->ReferenceFree(file->callback);
 		files.push_back(file);
 	}
 
 	for(IAsyncFile* file : files) {
+		delete file->content;
 		thread->async.erase(find(thread->async.begin(),thread->async.end(), file)); // This is probably shit.
 	}
 }

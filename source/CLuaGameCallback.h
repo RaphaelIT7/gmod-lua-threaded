@@ -2,9 +2,6 @@
 #include <GarrysMod/Lua/LuaGameCallback.h>
 #include <string>
 #include <vector>
-
-using namespace GarrysMod::Lua;
-
 struct CLuaError
 {
 	struct StackEntry
@@ -19,14 +16,14 @@ struct CLuaError
 	std::vector<StackEntry> stack;
 };
 
-class CLuaGameCallback : public ILuaGameCallback
+class CLuaGameCallback : public GarrysMod::Lua::ILuaGameCallback
 {
 public:
-	ILuaObject *CreateLuaObject();
-	void DestroyLuaObject(ILuaObject* pObject);
+	GarrysMod::Lua::ILuaObject *CreateLuaObject();
+	void DestroyLuaObject(GarrysMod::Lua::ILuaObject* pObject);
 	void ErrorPrint(const char* error, bool);
 	void Msg(const char* msg, bool);
 	void MsgColour(const char* msg, const Color& color);
 	void LuaError(const CLuaError* error);
-	void InterfaceCreated(ILuaInterface* iface);
+	void InterfaceCreated(GarrysMod::Lua::ILuaInterface* iface);
 };

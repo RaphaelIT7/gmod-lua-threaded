@@ -134,6 +134,7 @@ struct ILuaValue
 	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 	Vector vec;
 	QAngle ang;
+	void* otherstuff = nullptr; // Can be used for LUA_File as an example. Use Copies as everything will be deleted.
 };
 
 struct ILuaAction
@@ -171,6 +172,7 @@ struct IAsyncFile
 	int nBytesRead;
 	int Status;
 	bool finished = false;
+	const char* content;
 };
 
 struct ILuaThread
@@ -211,6 +213,7 @@ struct GMOD_Info
 	const char* branch = "Unknown";
 
 	bool threadready = false;
+	GarrysMod::Lua::ILuaGameCallback* gamecallback;
 
 	// engine library
 	ILuaValue* addons;

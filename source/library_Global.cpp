@@ -230,13 +230,40 @@ LUA_FUNCTION(Global_Msg)
 			ss << arg_str;
 		} else {
 			int type = LUA->GetType(i);
+			bool meta = false;
+			void* ref = nullptr;
 			switch(type)
 			{
 				case GarrysMod::Lua::Type::Bool:
 					ss << (LUA->GetBool(i) ? "true" : "false");
 					break;
+				case GarrysMod::Lua::Type::Function:
+					ss << "function: 0x" << std::hex << LUA->GetUserdata(i);
+					break;
 				default:
-					ss << "<Something Unknown. Scary>";
+					LUA->Push(i);
+					if (LUA->GetMetaTable(-1))
+					{
+						LUA->GetField(-1, "__tostring");
+						if (LUA->IsType(-1, GarrysMod::Lua::Type::Function))
+						{
+							LUA->Push(-3);
+							GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+							LLUA->CallFunctionProtected(1, 1, true);
+							
+							if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
+							{
+								meta = true;
+								ss << LUA->GetString(-1);
+							}
+						}
+						LUA->Pop(2);
+					}
+					LUA->Pop(1);
+
+					if (!meta)
+						ss << "<Something Unknown. Scary>";
+
 					break;
 			}
 		}

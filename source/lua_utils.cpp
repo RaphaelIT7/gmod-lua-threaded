@@ -1,6 +1,6 @@
 #include <GarrysMod/Lua/Interface.h>
-#include <lua_ILuaInterface.h>
 #include "CLuaGameCallback.h"
+#include "lua_threaded.h"
 
 #ifdef SYSTEM_WINDOWS
 #include <GarrysMod/Lua/LuaShared.h>
@@ -28,20 +28,25 @@ int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
 std::unordered_map<std::string, ILuaValue*> shared_table;
 
-void PushValue(ILuaBase* LUA, ILuaValue* value)
+void PushFile(GarrysMod::Lua::ILuaBase* LUA, LUA_File* file)
+{
+	Push_File(LUA, file->filename, file->fileMode, file->path);
+}
+
+void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 {
 	switch (value->type)
 	{
-		case Type::NUMBER:
+		case GarrysMod::Lua::Type::NUMBER:
 			LUA->PushNumber(value->number);
 			break;
-		case Type::BOOL:
+		case GarrysMod::Lua::Type::BOOL:
 			LUA->PushBool(value->number == 1);
 			break;
-		case Type::STRING:
+		case GarrysMod::Lua::Type::STRING:
 			LUA->PushString(value->string);
 			break;
-		case Type::ENTITY:
+		case GarrysMod::Lua::Type::ENTITY:
 			/*
 			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 				LUA->GetField(-1, "Entity");
@@ -51,13 +56,22 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 			LUA->Pop(2);
 			*/
 			break;
-		case Type::VECTOR:
-			LUA->PushVector(value->vec);
+		case GarrysMod::Lua::Type::VECTOR:
+			Push_Vector(LUA, value->vec);
 			break;
-		case Type::ANGLE:
-			LUA->PushAngle(value->ang);
+		case GarrysMod::Lua::Type::ANGLE:
+			Push_Angle(LUA, value->ang);
 			break;
-		case Type::Table:
+		case GarrysMod::Lua::Type::File:
+			if (ThreadInMainThread()) // We cannot push a File from a our module to GMod.
+			{
+				LUA->PushNil();
+				break;
+			}
+
+			PushFile(LUA, (LUA_File*)value->otherstuff);
+			break;
+		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();
 			for (auto& [key, val] : value->tbl)
 			{
@@ -74,13 +88,13 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 
 void SafeDelete(ILuaValue* value)
 {
-	if (value->type == Type::Table)
+	for (auto& [key, val] : value->tbl)
 	{
-		for (auto& [key, val] : value->tbl)
-		{
-			SafeDelete(val);
-		}
+		SafeDelete(val);
 	}
+
+	if (value->otherstuff != nullptr)
+		delete value->otherstuff;
 
 	delete value;
 }
@@ -93,7 +107,7 @@ ILuaValue* GetOrCreate(std::string key)
 		ILuaValue* val = it->second;
 
 		if (val) {
-			if (val->type == Type::Table)
+			if (val->type == GarrysMod::Lua::Type::Table)
 			{
 				for (auto& [key2, val2] : val->tbl)
 				{
@@ -108,33 +122,45 @@ ILuaValue* GetOrCreate(std::string key)
 	return new ILuaValue;
 }
 
-void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
+void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 {
-	if (type == Type::Number)
+	if (type == GarrysMod::Lua::Type::Number)
 	{
 		val->type = type;
 		val->number = LUA->GetNumber(iStackPos);
-	} else if (type == Type::Bool)
+	} else if (type == GarrysMod::Lua::Type::Bool)
 	{
 		val->type = type;
 		val->number = LUA->GetBool(iStackPos) ? 1 : 0;
-	} else if (type == Type::String)
+	} else if (type == GarrysMod::Lua::Type::String)
 	{
 		val->type = type;
 		val->string = LUA->GetString(iStackPos);
-	} else if (type == Type::Entity)
+	} else if (type == GarrysMod::Lua::Type::Entity)
 	{
 		//val->type = type;
 		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
-	} else if (type == Type::Vector)
+	} else if (type == GarrysMod::Lua::Type::Vector)
 	{
 		val->type = type;
-		val->vec = LUA->GetVector(iStackPos);
-	} else if (type == Type::Angle)
+		if (ThreadInMainThread())
+		{
+			val->vec = LUA->GetVector(iStackPos);
+		} else {
+			LUA_Vector* vec = Vector_Get(LUA, iStackPos);
+			val->vec = Vector(vec->x, vec->y, vec->z);
+		}
+	} else if (type == GarrysMod::Lua::Type::Angle)
 	{
 		val->type = type;
-		val->ang = LUA->GetAngle(iStackPos);
-	} else if (type == Type::Table)
+		if (ThreadInMainThread())
+		{
+			val->ang = LUA->GetAngle(iStackPos);
+		} else {
+			LUA_Angle* ang = Angle_Get(LUA, iStackPos);
+			val->ang = QAngle(ang->x, ang->y, ang->z);
+		}
+	} else if (type == GarrysMod::Lua::Type::Table)
 	{
 		val->type = type;
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
@@ -157,10 +183,25 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 		LUA->Pop(1);
 
 		val->tbl = tbl;
+	} else if (type == GarrysMod::Lua::Type::File)
+	{
+		if (ThreadInMainThread()) // We cannot push a File from GMod to our module.
+		{
+			return;
+		}
+
+		LUA_File* file = File_Get(LUA, iStackPos);
+		LUA_File* copy = new LUA_File;
+		copy->fileMode = file->fileMode;
+		copy->filename = file->filename;
+		copy->path = file->path;
+		//copy->handle = file->handle // Should we really share the handle?
+		val->type = type;
+		val->otherstuff = copy;
 	}
 }
 
-void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
+void Add_Func(GarrysMod::Lua::ILuaBase* LUA, GarrysMod::Lua::CFunc Func, const char* Name) {
 	LUA->PushCFunction(Func);
 	LUA->SetField(-2, Name);
 }
@@ -186,15 +227,15 @@ LUA_FUNCTION(LuaPanic)
 	return 0;
 }
 
-ILuaInterface* CreateInterface()
+GarrysMod::Lua::ILuaInterface* CreateInterface()
 {
 #ifdef SYSTEM_WINDOWS
-	ILuaInterface* IFace = Win_CreateInterface();
+	GarrysMod::Lua::ILuaInterface* IFace = Win_CreateInterface();
 #else
-	ILuaInterface* IFace = func_CreateLuaInterface(true);
+	GarrysMod::Lua::ILuaInterface* IFace = func_CreateLuaInterface(true);
 #endif
-
-	IFace->Init(new CLuaGameCallback(), true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+	// new CLuaGameCallback()
+	IFace->Init(GMOD->gamecallback, true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
 #ifndef SYSTEM_WINDOWS
 	//lua_State* state = func_luaL_newstate();
@@ -204,7 +245,7 @@ ILuaInterface* CreateInterface()
 		Msg("Invalid Lua state?!?\n");
 	}
 
-	//func_lua_atpanic(IFace->GetState(), LuaPanic);
+	func_lua_atpanic(IFace->GetState(), LuaPanic); // NOTE for myself: NEVER remove THIS line. NEVER. It'll cause unknown crashes that will never give you any useful information!
 #endif
 
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
@@ -215,7 +256,7 @@ ILuaInterface* CreateInterface()
 
 
 	// Push VERSION, VERSIONSTR, BRANCH, SERVER and CLIENT. Gmod does this inside CLuaManager::Startup();
-	IFace->PushSpecial(SPECIAL_GLOB); // (Windows) ToDo: Why do u crash here :<
+	IFace->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB); // (Windows) ToDo: Why do u crash here :<
 		IFace->PushNumber(GMOD->version);
 		IFace->SetField(-2, "VERSION");
 
@@ -261,7 +302,7 @@ std::string ToPath(std::string path)
 ILuaValue* CreateValue(int value)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::Number;
+	val->type = GarrysMod::Lua::Type::Number;
 	val->number = value;
 
 	return val;
@@ -270,7 +311,7 @@ ILuaValue* CreateValue(int value)
 ILuaValue* CreateValue(const char* value)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::String;
+	val->type = GarrysMod::Lua::Type::String;
 	val->string = value;
 
 	return val;
