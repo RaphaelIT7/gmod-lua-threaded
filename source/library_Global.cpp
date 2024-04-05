@@ -231,10 +231,14 @@ LUA_FUNCTION(Global_Msg)
 		} else {
 			int type = LUA->GetType(i);
 			bool meta = false;
+			void* ref = nullptr;
 			switch(type)
 			{
 				case GarrysMod::Lua::Type::Bool:
 					ss << (LUA->GetBool(i) ? "true" : "false");
+					break;
+				case GarrysMod::Lua::Type::Function:
+					ss << "function: 0x" << std::hex << LUA->GetUserdata(i);
 					break;
 				default:
 					LUA->Push(i);
