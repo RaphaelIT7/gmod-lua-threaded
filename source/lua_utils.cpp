@@ -93,7 +93,7 @@ void SafeDelete(ILuaValue* value)
 		SafeDelete(val);
 	}
 
-	if (value->otherstuff)
+	if (value->otherstuff != nullptr)
 		delete value->otherstuff;
 
 	delete value;
