@@ -28,6 +28,11 @@ int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
 std::unordered_map<std::string, ILuaValue*> shared_table;
 
+void PushFile(GarrysMod::Lua::ILuaBase* LUA, LUA_File* file)
+{
+	Push_File(LUA, file->filename, file->fileMode, file->path);
+}
+
 void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 {
 	switch (value->type)
@@ -64,8 +69,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 				break;
 			}
 
-			LUA_File* file = (LUA_File*)value->otherstuff;
-			Push_File(LUA, file->filename, file->fileMode, file->path);
+			PushFile(LUA, (LUA_File*)value->otherstuff);
 			break;
 		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();
