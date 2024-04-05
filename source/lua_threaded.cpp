@@ -50,16 +50,18 @@ GMOD_MODULE_OPEN()
 		LUA->Pop(2); // Global, BRANCH
 	}
 
+	GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+
 	Symbols_Init();
 
-	InitLuaThreaded((GarrysMod::Lua::ILuaInterface*)LUA);
+	InitLuaThreaded(LLUA);
 
-	InitMetaTable((GarrysMod::Lua::ILuaInterface*)LUA);
+	InitMetaTable(LLUA);
 
-	InitEnums((GarrysMod::Lua::ILuaInterface*)LUA);
+	InitEnums(LLUA);
 
 	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine((GarrysMod::Lua::ILuaInterface*)LUA); // Look into it why it breaks my shit.
+	UpdateEngine(LLUA); // Look into it why it breaks my shit.
 
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
@@ -69,7 +71,7 @@ GMOD_MODULE_OPEN()
 				LUA->PushString("GameContentChanged");
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_UpdateEngine);
-				LUA->Call(3, 0);
+				LLUA->CallFunctionProtected(3, 0, true);
 			} else {
 				LUA->Pop();
 			}
@@ -85,7 +87,7 @@ GMOD_MODULE_OPEN()
 				LUA->PushString("InitPostEntity");
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_ReadyThreads);
-				LUA->Call(3, 0);
+				LLUA->CallFunctionProtected(3, 0, true);
 			} else {
 				LUA->Pop();
 			}
