@@ -20,7 +20,7 @@ LUA_FUNCTION(file_AsyncRead)
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* fileName = LUA->CheckString(1);
 	const char* gamePath = LUA->CheckString(2);
-	LUA->CheckType(3, Type::Function);
+	LUA->CheckType(3, GarrysMod::Lua::Type::Function);
 	LUA->Push(3);
 	int reference = LUA->ReferenceCreate();
 	LUA->Pop();
@@ -48,7 +48,7 @@ LUA_FUNCTION(file_AsyncRead)
 void FileLibThink(ILuaThread* thread)
 {
 	std::vector<IAsyncFile*> files;
-	ILuaInterface* LUA = thread->IFace;
+	GarrysMod::Lua::ILuaInterface* LUA = thread->IFace;
 	for(IAsyncFile* file : thread->async) {
 		if (!file->finished) { continue; }
 		LUA->ReferencePush(file->callback);
@@ -236,9 +236,9 @@ LUA_FUNCTION(file_Time)
 	return 1;
 }
 
-void InitFileLib(ILuaInterface* LUA)
+void InitFileLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, file_AsyncRead, "AsyncRead");
 			Add_Func(LUA, file_CreateDir, "CreateDir");

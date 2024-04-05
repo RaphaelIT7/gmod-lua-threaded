@@ -5,9 +5,9 @@ LUA_FUNCTION(sql_Query) // ToDo: Use sqlite3. Should this use a different db tha
 	return 0;
 }
 
-void InitSql(ILuaInterface* LUA)
+void InitSql(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, sql_Query, "Query");
 			

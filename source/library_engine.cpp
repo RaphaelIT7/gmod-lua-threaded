@@ -105,16 +105,16 @@ LUA_FUNCTION(engine_LightStyle)
 	return 0;
 }
 
-bool PushEngineFunction(ILuaInterface* LUA, const char* eng)
+bool PushEngineFunction(GarrysMod::Lua::ILuaInterface* LUA, const char* eng)
 {
 	int ref = -1;
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "engine");
-		if (LUA->IsType(-1, Type::Table))
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
 			LUA->GetField(-1, eng);
-			if (LUA->IsType(-1, Type::Function))
+			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function))
 			{
 				ref = LUA->ReferenceCreate();
 			} else {
@@ -136,7 +136,7 @@ bool PushEngineFunction(ILuaInterface* LUA, const char* eng)
 	return ref != -1;
 }
 
-void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
+void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
 {
 	if (GMOD->addons)
 	{
@@ -187,7 +187,7 @@ void UpdateEngine(ILuaInterface* LUA) // We need to get all of this stuff on the
 	}
 }
 
-void InitEngine(ILuaInterface* LUA)
+void InitEngine(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	if (engine == nullptr)
 	{
@@ -199,7 +199,7 @@ void InitEngine(ILuaInterface* LUA)
 		gpGlobal = GlobalVars();
 	}
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, engine_GetAddons, "GetAddons");
 			Add_Func(LUA, engine_GetUserContent, "GetUserContent");

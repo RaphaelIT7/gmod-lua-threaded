@@ -1,5 +1,3 @@
 #include <GarrysMod/Lua/LuaInterface.h>
 
-using namespace GarrysMod::Lua;
-
-extern void InitHammer(ILuaInterface*);
+extern void InitHammer(GarrysMod::Lua::ILuaInterface*);

@@ -2853,26 +2853,26 @@ void PrepareEnums()
 	enums[2841] = "FSASYNC_STATUS_UNSERVICED";
 }
 
-void InitEnums(ILuaInterface* LUA)
+void InitEnums(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	PrepareEnums();
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 	for (std::string gmod_enum : enums)
 	{
 		LUA->GetField(-1, gmod_enum.c_str());
 
 		int type = LUA->GetType(-1);
 		ILuaValue* val = new ILuaValue;
-		if (type == Type::Number)
+		if (type == GarrysMod::Lua::Type::Number)
 		{
 			val->type = type;
 			val->number = LUA->GetNumber(-1);
-		} else if (type == Type::Bool)
+		} else if (type == GarrysMod::Lua::Type::Bool)
 		{
 			val->type = type;
 			val->number = LUA->GetBool(-1) ? 1 : 0;
-		} else if (type == Type::String)
+		} else if (type == GarrysMod::Lua::Type::String)
 		{
 			val->type = type;
 			val->string = LUA->GetString(-1);
@@ -2895,7 +2895,7 @@ void InitEnums(ILuaInterface* LUA)
 	*/
 	{
 		ILuaValue* val = new ILuaValue;
-		val->type = Type::Table;
+		val->type = GarrysMod::Lua::Type::Table;
 		
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 		tbl[CreateValue("HIP")]				= CreateValue(0);
@@ -2929,7 +2929,7 @@ void InitEnums(ILuaInterface* LUA)
 	*/
 	{
 		ILuaValue* val = new ILuaValue;
-		val->type = Type::Table;
+		val->type = GarrysMod::Lua::Type::Table;
 		
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 		tbl[CreateValue("NONE")]		= CreateValue(0);
@@ -2947,7 +2947,7 @@ void InitEnums(ILuaInterface* LUA)
 	*/
 	{
 		ILuaValue* val = new ILuaValue;
-		val->type = Type::Table;
+		val->type = GarrysMod::Lua::Type::Table;
 		
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 		tbl[CreateValue("IN")]		= CreateValue(1);
@@ -2963,9 +2963,9 @@ void InitEnums(ILuaInterface* LUA)
 	LUA->Pop(1);
 }
 
-void PushEnums(ILuaInterface* LUA)
+void PushEnums(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 	for (auto& [key, value] : fullenums)
 	{
 		PushValue(LUA, value);
