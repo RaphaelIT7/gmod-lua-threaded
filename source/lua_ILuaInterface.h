@@ -2,28 +2,26 @@
 #include "lua_utils.h" // We need to include utils here because of ILuaThread. ToDo: Look into it and maybe change it later.
 #include <cstdint>
 
-using namespace GarrysMod::Lua;
-
 struct LUA_ILuaInterface
 {
-	ILuaInterface* IFace;
+	GarrysMod::Lua::ILuaInterface* IFace;
 	int ID;
 };
 
-extern void ILuaInterface_CheckType(ILuaBase*, int);
-extern LUA_ILuaInterface* ILuaInterface_GetUserdata(ILuaBase*, int);
-extern ILuaInterface* ILuaInterface_Get(ILuaBase*, int);
-extern void ILuaInterface_Push(ILuaBase*, ILuaInterface*, int);
-extern void ILuaInterface_Destroy(ILuaBase*, int);
+extern void ILuaInterface_CheckType(GarrysMod::Lua::ILuaBase*, int);
+extern LUA_ILuaInterface* ILuaInterface_GetUserdata(GarrysMod::Lua::ILuaBase*, int);
+extern GarrysMod::Lua::ILuaInterface* ILuaInterface_Get(GarrysMod::Lua::ILuaBase*, int);
+extern void ILuaInterface_Push(GarrysMod::Lua::ILuaBase*, GarrysMod::Lua::ILuaInterface*, int);
+extern void ILuaInterface_Destroy(GarrysMod::Lua::ILuaBase*, int);
 
 extern unsigned LuaThread(void*);
-extern void InitMetaTable(ILuaInterface*);
-extern void DestroyMetaTable(ILuaInterface*);
+extern void InitMetaTable(GarrysMod::Lua::ILuaInterface*);
+extern void DestroyMetaTable(GarrysMod::Lua::ILuaInterface*);
 
-extern ILuaThread* GetValidThread(ILuaBase*, double);
+extern ILuaThread* GetValidThread(GarrysMod::Lua::ILuaBase*, double);
 
 extern void RunFile(ILuaThread*, const char*, const char*);
 inline void RunFile(ILuaThread* LUA, const char* file) { RunFile(LUA, file, ""); };
 
-extern void RunCommand(ILuaInterface*, const CCommand&, void*);
-extern void RunHook(ILuaInterface*, const char*, ILuaValue*);
+extern void RunCommand(GarrysMod::Lua::ILuaInterface*, const CCommand&, void*);
+extern void RunHook(GarrysMod::Lua::ILuaInterface*, const char*, ILuaValue*);

@@ -561,8 +561,15 @@ void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
 				++pushed;
 				PushValue(LUA, args);
 			}
-			Msg("Args: %i %i\n", pushed, (int)args->number);
+
 			LUA->CallFunctionProtected(pushed, 0, true);
+
+			if (args->type != Type::Table && pushed != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
+			{
+				std::string err_msg = "hook.Run had an Internal error. Report this please";
+				err_msg = err_msg + "(" + name + ")";
+				LUA->ThrowError(err_msg.c_str());
+			}
 			SafeDelete(args);
 		} else {
 			SafeDelete(args);
@@ -582,11 +589,11 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 	ILuaValue* hook_tbl = new ILuaValue;
 	hook_tbl->type = Type::Nil;
 	hook_tbl->number = LUA->Top() - 2;
-	Msg("RunHook: %i\n", LUA->Top());
 
 	if (hook_tbl->number > 0)
 	{
-		for(int pos = 3; pos < hook_tbl->number; ++pos)
+		int top = LUA->Top();
+		for(int pos=3; pos<=top; ++pos)
 		{
 			ILuaValue* val = new ILuaValue;
 			FillValue(LUA, val, pos, LUA->GetType(pos));
@@ -602,7 +609,6 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 		action->data = name;
 		action->val = hook_tbl;
 
-		Msg("RunHook 2: %i\n", (int)hook_tbl->number);
 		thread->mutex.Lock(); // ToDo: Why does mutex.Lock crash HERE
 		thread->actions.push_back(action);
 		thread->mutex.Unlock();
