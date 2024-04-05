@@ -2,6 +2,7 @@
 /* #include <entitylist_base.h>
 #include <baseentity.h> */
 
+using namespace GarrysMod::Lua;
 struct LUA_Entity
 {
 	const char* type;
