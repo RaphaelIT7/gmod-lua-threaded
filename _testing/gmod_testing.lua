@@ -103,7 +103,7 @@ local ret, err = pcall(function()
 	iFace:InitGmod()
 	iFace:RunFile("includes/init.lua")
 	iFace:RunString(code)
-	iFace:RunHook("ExampleHook", "ExampleArg", 1234, Vector(1, 2, 3))
+	iFace:RunHook("ExampleHook", "ExampleArg", 1234, true)
 end)
 
 if err then

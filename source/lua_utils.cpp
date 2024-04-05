@@ -74,12 +74,9 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 
 void SafeDelete(ILuaValue* value)
 {
-	if (value->type == GarrysMod::Lua::Type::Table)
+	for (auto& [key, val] : value->tbl)
 	{
-		for (auto& [key, val] : value->tbl)
-		{
-			SafeDelete(val);
-		}
+		SafeDelete(val);
 	}
 
 	delete value;
@@ -129,11 +126,23 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 	} else if (type == GarrysMod::Lua::Type::Vector)
 	{
 		val->type = type;
-		val->vec = LUA->GetVector(iStackPos);
+		if (ThreadInMainThread())
+		{
+			val->vec = LUA->GetVector(iStackPos);
+		} else {
+			LUA_Vector* vec = Vector_Get(LUA, iStackPos);
+			val->vec = Vector(vec->x, vec->y, vec->z);
+		}
 	} else if (type == GarrysMod::Lua::Type::Angle)
 	{
 		val->type = type;
-		val->ang = LUA->GetAngle(iStackPos);
+		if (ThreadInMainThread())
+		{
+			val->ang = LUA->GetAngle(iStackPos);
+		} else {
+			LUA_Angle* ang = Angle_Get(LUA, iStackPos);
+			val->ang = QAngle(ang->x, ang->y, ang->z);
+		}
 	} else if (type == GarrysMod::Lua::Type::Table)
 	{
 		val->type = type;
