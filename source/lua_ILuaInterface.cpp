@@ -555,8 +555,8 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 			{
 				for(auto&[key, val] : args->tbl)
 				{
-					//++pushed;
-					//PushValue(LUA, val);
+					++pushed;
+					PushValue(LUA, val);
 				}
 			} else {
 				++pushed;
