@@ -1,5 +1,6 @@
 #include "lua_threaded.h"
 #include <algorithm>
+#include <cstring>
 
 std::unordered_map<const FileAsyncRequest_t*, IAsyncFile*> async_list;
 void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncStatus_t err)
