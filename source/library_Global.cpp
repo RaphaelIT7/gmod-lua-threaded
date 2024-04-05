@@ -1,5 +1,7 @@
+#include <GarrysMod/InterfacePointers.hpp>
 #include "lua_threaded.h"
 #include <sstream>
+#include "convar.h"
 
 LUA_FUNCTION(include)
 {
@@ -131,8 +133,7 @@ LUA_FUNCTION(AddConsoleCommand)
 		luaconvars = luashared_loader.GetInterface<ILuaConVars>("LUACONVARS001");
 
 		if (!luaconvars) {
-			Msg("Failed to get ILuaConVars!\n");
-			ThreadSleep(100);
+			LUA->ThrowError("Failed to get ILuaConVars");
 		}
 	}
 
@@ -140,6 +141,63 @@ LUA_FUNCTION(AddConsoleCommand)
 	Msg("Added concommand %s\n", name);
 
 	return 0;
+}
+
+LUA_FUNCTION(CreateConVar)
+{
+	const char* name = LUA->CheckString(1);
+	const char* value = LUA->CheckString(2);
+	const char* helpText = LUA->GetString(4);
+	int flags = 0;
+	if (LUA->IsType(3, GarrysMod::Lua::Type::Number)) {
+		flags = LUA->CheckNumber(3);
+	} else if (LUA->IsType(3, GarrysMod::Lua::Type::Table)) {
+		flags = 131072; // Seems to always be FCVAR_DONTRECORD
+	} else {
+		LUA->ArgError(3, ((std::string)"number expected, got " + LUA->GetTypeName(LUA->GetType(3))).c_str()); // ToDo: Make it better someday.
+	}
+
+	if (helpText == NULL)
+		helpText = "";
+
+	if (!luaconvars) {
+		SourceSDK::FactoryLoader luashared_loader("lua_shared");
+		luaconvars = luashared_loader.GetInterface<ILuaConVars>("LUACONVARS001");
+
+		if (!luaconvars) {
+			LUA->ThrowError("Failed to get ILuaConVars");
+		}
+	}
+
+	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", 1); // LuaConCommandAutocomplete doesn't have the values gmod uses. Idk but this could cause problems.
+	// ToDo: Add support for min & max
+
+	Push_ConVar(LUA, cvar);
+
+	return 1;
+}
+
+ICvar* Icvar;
+LUA_FUNCTION(GetConVar)
+{
+	if (!Icvar)
+	{
+		Icvar = InterfacePointers::Cvar();
+		if (!Icvar)
+			LUA->ThrowError("Failed to get ICvar!");
+	}
+
+	const char* var = LUA->CheckString(1);
+	ConVar* cvar = Icvar->FindVar(var);
+
+	if (cvar)
+	{
+		Push_ConVar(LUA, cvar);
+	} else {
+		LUA->PushNil();
+	}
+
+	return 1;
 }
 
 LUA_FUNCTION(AddCSLuaFile) // Implemented so that Gmod won't complain. ToDo: How should I get the current file it's called from?!? IDK
@@ -306,6 +364,8 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
 		Add_Func(LUA, Global_Msg, "Msg");
 		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
+		Add_Func(LUA, GetConVar, "GetConVar");
+		Add_Func(LUA, CreateConVar, "CreateConVar");
 
 		Add_Func(LUA, CurTime, "CurTime");
 		Add_Func(LUA, RealTime, "RealTime");

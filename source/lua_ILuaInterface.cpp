@@ -248,6 +248,7 @@ void InitClasses(GarrysMod::Lua::ILuaInterface* LUA)
 	InitVectorClass(LUA);
 	InitAngleClass(LUA);
 	InitFileClass(LUA);
+	InitConVarClass(LUA);
 
 	//func_InitLuaClasses(LUA);
 }
