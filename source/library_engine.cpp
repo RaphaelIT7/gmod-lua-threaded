@@ -149,7 +149,7 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 	if (PushEngineFunction(LUA, "GetAddons"))
 	{
-		LUA->Call(0, 1);
+		LUA->CallFunctionProtected(0, 1, true);
 
 		GMOD->addons = new ILuaValue;
 		FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
@@ -157,7 +157,7 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 	if (PushEngineFunction(LUA, "GetGames"))
 	{
-		LUA->Call(0, 1);
+		LUA->CallFunctionProtected(0, 1, true);
 
 		GMOD->games = new ILuaValue;
 		FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
@@ -165,7 +165,7 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 	if (PushEngineFunction(LUA, "GetGamemodes"))
 	{
-		LUA->Call(0, 1);
+		LUA->CallFunctionProtected(0, 1, true);
 
 		GMOD->gamemodes = new ILuaValue;
 		FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
@@ -173,7 +173,7 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 	if (PushEngineFunction(LUA, "GetUserContent"))
 	{
-		LUA->Call(0, 1);
+		LUA->CallFunctionProtected(0, 1, true);
 
 		GMOD->usercontent = new ILuaValue;
 		FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
@@ -181,7 +181,7 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 	if (PushEngineFunction(LUA, "ActiveGamemode"))
 	{
-		LUA->Call(0, 1);
+		LUA->CallFunctionProtected(0, 1, true);
 
 		GMOD->active_gamemode = LUA->GetString(-1);
 		LUA->Pop(1);

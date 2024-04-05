@@ -229,6 +229,13 @@ This function could be renamed in the future!
 Runs the given Hook.  
 (Calls hook.Run with the name and args)  
 
+### ILuaInterface:Lock()
+Locks the Thread / doesn't allow it to execute any task.  
+Also waits until the Thread is finished executing all tasks.  
+
+### ILuaInterface:Unlock()
+Unlocks the Thread / allows it to execute all tasks  
+
 Args:  
 1. Path to the file.  
 NOTE: This will use the `GAME` search path!  
