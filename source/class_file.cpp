@@ -44,7 +44,7 @@ bool IsFile(GarrysMod::Lua::ILuaBase* LUA, int index)
 void File_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData)) // ToDo: Make a better check.
-		luaL_typerror(LUA->GetState(), index, metaname);
+		LUA->TypeError(index, metaname);
 }
 
 LUA_File* File_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
