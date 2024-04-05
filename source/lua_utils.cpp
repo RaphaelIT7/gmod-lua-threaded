@@ -1,5 +1,4 @@
 #include <GarrysMod/Lua/Interface.h>
-#include <lua_ILuaInterface.h>
 #include "CLuaGameCallback.h"
 #include "lua_threaded.h"
 
