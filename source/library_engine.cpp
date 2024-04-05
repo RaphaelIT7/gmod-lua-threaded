@@ -1,6 +1,5 @@
 #include <GarrysMod/InterfacePointers.hpp>
 #include "lua_threaded.h"
-#include <player.h>
 #include <icommandline.h>
 #include <eiface.h>
 
