@@ -568,7 +568,7 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 			{
 				std::string err_msg = "hook.Run had an Internal error. Report this please";
 				err_msg = err_msg + "(" + name + ")";
-				LUA->ThrowError(err_msg.c_str());
+				//LUA->ThrowError(err_msg.c_str());
 			}
 			SafeDelete(args);
 		} else {
@@ -729,7 +729,7 @@ unsigned LuaThread(void* data)
 				RunHook(IFace, action->data, action->val);
 			} else if (action->type == LuaAction::ACT_RunHook)
 			{
-				//RunHook(IFace, action->data, action->val);
+				RunHook(IFace, action->data, action->val);
 			}
 
 			delete action;
