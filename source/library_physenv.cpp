@@ -103,7 +103,7 @@ LUA_FUNCTION(physenv_SetPerformanceSettings)
 	if (!physenv)
 		return 0;
 
-	LUA->CheckType(Type::Table, 1);
+	LUA->CheckType(GarrysMod::Lua::Type::Table, 1);
 
 	physics_performanceparams_t settings;
 	LUA->GetField(1, "MaxCollisionsPerObjectPerTimestep");
@@ -143,7 +143,7 @@ LUA_FUNCTION(physenv_SetPerformanceSettings)
 	return 0;
 }
 
-void InitPhysEnv(ILuaInterface* LUA) // BUG: If this is called before InitPostEntity was called we could crash for some reason.
+void InitPhysEnv(GarrysMod::Lua::ILuaInterface* LUA) // BUG: If this is called before InitPostEntity was called we could crash for some reason.
 {
 	if (physenv == nullptr) {
 		phys = (IPhysics*)physics_loader.GetFactory()(VPHYSICS_INTERFACE_VERSION, nullptr);
@@ -156,7 +156,7 @@ void InitPhysEnv(ILuaInterface* LUA) // BUG: If this is called before InitPostEn
 		}
 	}
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, physenv_AddSurfaceData, "AddSurfaceData");
 			Add_Func(LUA, physenv_GetAirDensity, "GetAirDensity");

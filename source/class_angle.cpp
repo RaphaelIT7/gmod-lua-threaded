@@ -5,7 +5,7 @@ static const char metaname[] = "Angle";
 static const char invalid_error[] = "invalid Angle";
 static const char table_name[] = "Angle_object";
 
-void Push_Angle(ILuaBase* LUA, int pitch, int yaw, int roll)
+void Push_Angle(GarrysMod::Lua::ILuaBase* LUA, int pitch, int yaw, int roll)
 {
 	LUA_Angle* udata = (LUA_Angle*)LUA->NewUserdata(sizeof(LUA_Angle));
 	udata->x = pitch;
@@ -16,24 +16,24 @@ void Push_Angle(ILuaBase* LUA, int pitch, int yaw, int roll)
 	LUA->SetMetaTable(-2);
 }
 
-void Push_Angle(ILuaBase* LUA, QAngle ang)
+void Push_Angle(GarrysMod::Lua::ILuaBase* LUA, QAngle ang)
 {
 	Push_Angle(LUA, ang.x, ang.y, ang.z);
 }
 
-void Angle_CheckType(ILuaBase* LUA, int index)
+void Angle_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, Type::UserData))
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData))
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-bool IsAngle(ILuaBase* LUA, int index)
+bool IsAngle(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if (LUA->IsType(index, Type::UserData))
+	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
 	{
 		LUA->GetMetaTable(index);
 		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, Type::String))
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
 		{
 			if (strcmp(LUA->GetString(-1), metaname))
 			{
@@ -50,12 +50,12 @@ bool IsAngle(ILuaBase* LUA, int index)
 	return false;
 }
 
-LUA_Angle* Angle_GetUserdata(ILuaBase *LUA, int index)
+LUA_Angle* Angle_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	return (LUA_Angle*)LUA->GetUserdata(index);
 }
 
-LUA_Angle* Angle_Get(ILuaBase* LUA, int index)
+LUA_Angle* Angle_Get(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	Angle_CheckType(LUA, index);
 
@@ -64,11 +64,11 @@ LUA_Angle* Angle_Get(ILuaBase* LUA, int index)
 	return ang;
 }
 
-void Angle_Destroy(ILuaBase *LUA, int index)
+void Angle_Destroy(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	LUA_Angle* ang = Angle_GetUserdata(LUA, index);
 
-	LUA->GetField(INDEX_REGISTRY, table_name);
+	LUA->GetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 	LUA->PushUserdata(ang);
 	LUA->PushNil();
 	LUA->SetTable(-3);
@@ -398,8 +398,8 @@ LUA_FUNCTION(Angle_Random)
 {
 	Angle_CheckType(LUA, 1);
 	LUA_Angle* ang = Angle_Get(LUA, 1);
-	int min = LUA->IsType(2, Type::Number) ? LUA->GetNumber(2) : -360;
-	int max = LUA->IsType(3, Type::Number) ? LUA->GetNumber(3) : 360;
+	int min = LUA->IsType(2, GarrysMod::Lua::Type::Number) ? LUA->GetNumber(2) : -360;
+	int max = LUA->IsType(3, GarrysMod::Lua::Type::Number) ? LUA->GetNumber(3) : 360;
 
 	ang->x = std::rand() % max + min;
 	ang->y = std::rand() % max + min;
@@ -462,7 +462,7 @@ LUA_FUNCTION(Global_LerpAngle)
 	return 1;
 }
 
-void InitAngleClass(ILuaInterface* LUA)
+void InitAngleClass(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);

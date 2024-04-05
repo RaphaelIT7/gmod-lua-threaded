@@ -6,12 +6,10 @@
 #include <filesystem.h>
 #include <vector>
 
-using namespace GarrysMod::Lua;
-
 /*
 	lua_shared Symbols
 */
-typedef ILuaInterface* (*CreateLuaInterface)(bool);
+typedef GarrysMod::Lua::ILuaInterface* (*CreateLuaInterface)(bool);
 extern CreateLuaInterface func_CreateLuaInterface;
 const std::vector<Symbol> CreateLuaInterfaceSym = {
 	Symbol::FromName("_Z18CreateLuaInterfaceb"),
@@ -21,7 +19,7 @@ const std::vector<Symbol> CreateLuaInterfaceSym = {
 #endif
 };
 
-typedef void (*CloseLuaInterface)(ILuaInterface*);
+typedef void (*CloseLuaInterface)(GarrysMod::Lua::ILuaInterface*);
 extern CloseLuaInterface func_CloseLuaInterface;
 const std::vector<Symbol> CloseLuaInterfaceSym = {
 	Symbol::FromName("_Z17CloseLuaInterfaceP13ILuaInterface"),
@@ -35,7 +33,7 @@ typedef int (*TLuaPanic)(lua_State*);
 extern TLuaPanic func_LuaPanic;
 const Symbol LuaPanicSym = Symbol::FromName("_ZL8LuaPanicP9lua_State");
 
-typedef void (*Tlua_atpanic)(lua_State*, CFunc);
+typedef void (*Tlua_atpanic)(lua_State*, GarrysMod::Lua::CFunc);
 extern Tlua_atpanic func_lua_atpanic;
 const Symbol lua_atpanicSym = Symbol::FromName("lua_atpanic");
 
@@ -82,22 +80,22 @@ const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErro
 /*
 	server_srv stuff
 */
-typedef void (*TInitLuaLibraries)(ILuaInterface*);
+typedef void (*TInitLuaLibraries)(GarrysMod::Lua::ILuaInterface*);
 extern TInitLuaLibraries func_InitLuaLibraries;
 const Symbol InitLuaLibrariesSym = Symbol::FromName("_Z16InitLuaLibrariesP13ILuaInterface");
 
-typedef void (*InitLuaClasses)(ILuaInterface*);
+typedef void (*InitLuaClasses)(GarrysMod::Lua::ILuaInterface*);
 extern InitLuaClasses func_InitLuaClasses;
 const Symbol InitLuaClassesSym = Symbol::FromName("_Z14InitLuaClassesP13ILuaInterface");
 
 extern void* g_pGlobalLuaLibraryFactory;
 const Symbol g_pGlobalLuaLibraryFactorySym = Symbol::FromName("_ZL26g_pGlobalLuaLibraryFactory");
 
-typedef void (*CLuaGlobalLibrary_InitLibraries)(void*, ILuaInterface*);
+typedef void (*CLuaGlobalLibrary_InitLibraries)(void*, GarrysMod::Lua::ILuaInterface*);
 extern CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
 const Symbol CLuaGlobalLibrary_InitLibrariesSym = Symbol::FromName("_ZN17CLuaGlobalLibrary13InitLibrariesEP13ILuaInterface");
 
-typedef void (*CLuaGameEnums_InitLibraries)(void*, ILuaInterface*);
+typedef void (*CLuaGameEnums_InitLibraries)(void*, GarrysMod::Lua::ILuaInterface*);
 extern CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
 const Symbol CLuaGameEnums_InitLibrariesSym = Symbol::FromName("_ZN13CLuaGameEnums13InitLibrariesEP13ILuaInterface");
 
@@ -118,7 +116,7 @@ const std::vector<Symbol> Editor_SendCommandSym = {
 /*
 	CLuaGameCallback stuff
 */
-typedef ILuaObject* (*CLuaGameCallback_CreateLuaObject)(void*);
+typedef GarrysMod::Lua::ILuaObject* (*CLuaGameCallback_CreateLuaObject)(void*);
 extern CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
 const std::vector<Symbol> CLuaGameCallback_CreateLuaObjectSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback15CreateLuaObjectEv"),
@@ -128,7 +126,7 @@ const std::vector<Symbol> CLuaGameCallback_CreateLuaObjectSym = {
 #endif
 };
 
-typedef void (*CLuaGameCallback_DestroyLuaObject)(void*, ILuaObject*);
+typedef void (*CLuaGameCallback_DestroyLuaObject)(void*, GarrysMod::Lua::ILuaObject*);
 extern CLuaGameCallback_DestroyLuaObject func_CLuaGameCallback_DestroyLuaObject;
 const std::vector<Symbol> CLuaGameCallback_DestroyLuaObjectSym = {
 	Symbol::FromName("_ZN16CLuaGameCallback16DestroyLuaObjectEP10ILuaObject"),

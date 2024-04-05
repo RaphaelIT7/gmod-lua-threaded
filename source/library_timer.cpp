@@ -44,11 +44,11 @@ LUA_FUNCTION(timer_Adjust)
 	ILuaTimer* timer = FindTimer(thread, name);
 	if (timer) {
 		timer->delay = delay;
-		if (LUA->IsType(3, Type::Number)) {
+		if (LUA->IsType(3, GarrysMod::Lua::Type::Number)) {
 			timer->repetitions = LUA->GetNumber(3);
 		}
 
-		if (LUA->IsType(4, Type::Function)) {
+		if (LUA->IsType(4, GarrysMod::Lua::Type::Function)) {
 			LUA->ReferenceFree(timer->function);
 			LUA->Push(4);
 			timer->function = LUA->ReferenceCreate();
@@ -74,7 +74,7 @@ LUA_FUNCTION(timer_Create)
 	const char* name = LUA->CheckString(1);
 	double delay = LUA->CheckNumber(2);
 	double repetitions = LUA->CheckNumber(3);
-	LUA->CheckType(4, Type::Function);
+	LUA->CheckType(4, GarrysMod::Lua::Type::Function);
 
 	ILuaTimer* timer = FindTimer(thread, name); // Reuse existing timer
 	if (!timer)
@@ -163,7 +163,7 @@ LUA_FUNCTION(timer_Simple)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	double delay = LUA->CheckNumber(1);
-	LUA->CheckType(2, Type::Function);
+	LUA->CheckType(2, GarrysMod::Lua::Type::Function);
 
 	ILuaTimer* timer = new ILuaTimer;
 	LUA->Push(2);
@@ -271,9 +271,9 @@ LUA_FUNCTION(timer_UnPause)
 	return 1;
 }
 
-void InitTimer(ILuaInterface* LUA)
+void InitTimer(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, timer_Adjust, "Adjust");
 			Add_Func(LUA, timer_Check, "Check");
@@ -297,7 +297,7 @@ void InitTimer(ILuaInterface* LUA)
 void TimerThink(ILuaThread* thread)
 {
 	double time = GetTime();
-	ILuaInterface* LUA = thread->IFace;
+	GarrysMod::Lua::ILuaInterface* LUA = thread->IFace;
 	for (ILuaTimer* timer : thread->timers)
 	{
 		if (!timer->active) { continue; }

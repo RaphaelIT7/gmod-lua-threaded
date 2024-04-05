@@ -75,7 +75,7 @@ LUA_FUNCTION(resource_AddWorkshop)
 	return 0;
 }
 
-void InitResource(ILuaInterface* LUA)
+void InitResource(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	if (networkstringtables == nullptr) {
 		SourceSDK::FactoryLoader engine_loader("engine");
@@ -86,7 +86,7 @@ void InitResource(ILuaInterface* LUA)
 
 	func_AddResource = (AddResource)GetFunction(server_loader, "AddResource", AddResourceSym);
 
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, resource_AddFile, "AddFile"); // ToDo: Doesn't seem to work? Maybe add it manually
 			Add_Func(LUA, resource_AddSingleFile, "AddSingleFile"); // ToDo: Same as above

@@ -38,10 +38,10 @@ LUA_FUNCTION(FindMetaTable)
 	const char* meta = LUA->CheckString(1);
 
 	int reference = -1;
-	LUA->PushSpecial(SPECIAL_REG);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_REG);
 		LUA->GetField(-1, meta);
 
-		if (LUA->IsType(-1, Type::Table))
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
 			reference = LUA->ReferenceCreate();
 		}
@@ -99,9 +99,9 @@ LUA_FUNCTION(AddConsoleCommand)
 	const char* name = LUA->CheckString(1);
 	const char* helpText = LUA->CheckString(2);
 	int flags = 0;
-	if (LUA->IsType(3, Type::Number)) {
+	if (LUA->IsType(3, GarrysMod::Lua::Type::Number)) {
 		flags = LUA->CheckNumber(3);
-	} else if (LUA->IsType(3, Type::Table)) {
+	} else if (LUA->IsType(3, GarrysMod::Lua::Type::Table)) {
 		flags = 131072; // Seems to always be FCVAR_DONTRECORD
 	} else {
 		LUA->ArgError(3, ((std::string)"number expected, got " + LUA->GetTypeName(LUA->GetType(3))).c_str()); // ToDo: Make it better someday.
@@ -158,56 +158,56 @@ LUA_FUNCTION(isangle)
 
 LUA_FUNCTION(isbool)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Bool));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Bool));
 
 	return 1;
 }
 
 LUA_FUNCTION(isfunction)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Function));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Function));
 
 	return 1;
 }
 
 LUA_FUNCTION(isentity)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Entity));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Entity));
 
 	return 1;
 }
 
 LUA_FUNCTION(ismatrix)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Matrix));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Matrix));
 
 	return 1;
 }
 
 LUA_FUNCTION(isnumber)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Number));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Number));
 
 	return 1;
 }
 
 LUA_FUNCTION(ispanel)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Panel));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Panel));
 
 	return 1;
 }
 
 LUA_FUNCTION(isstring)
 {
-	LUA->PushBool(LUA->IsType(1, Type::String));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::String));
 
 	return 1;
 }
 
 LUA_FUNCTION(istable)
 {
-	LUA->PushBool(LUA->IsType(1, Type::Table));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Table));
 
 	return 1;
 }
@@ -232,7 +232,7 @@ LUA_FUNCTION(Global_Msg)
 			int type = LUA->GetType(i);
 			switch(type)
 			{
-				case Type::Bool:
+				case GarrysMod::Lua::Type::Bool:
 					ss << (LUA->GetBool(i) ? "true" : "false");
 					break;
 				default:
@@ -269,9 +269,9 @@ LUA_FUNCTION(RunConsoleCommand) // ToDo: Finish this. This is not how it should 
 	return 1;
 }
 
-void InitGlobal(ILuaInterface* LUA)
+void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		Add_Func(LUA, include, "include");
 		Add_Func(LUA, require, "require");
 		Add_Func(LUA, FindMetaTable, "FindMetaTable");

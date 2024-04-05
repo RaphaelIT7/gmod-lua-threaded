@@ -100,9 +100,9 @@ LUA_FUNCTION(system_GetCountry)
 #endif
 }
 
-void InitSystem(ILuaInterface* LUA)
+void InitSystem(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, system_IsWindows, "IsWindows");
 			Add_Func(LUA, system_IsOSX, "IsOSX");

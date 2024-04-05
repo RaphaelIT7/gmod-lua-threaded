@@ -4,16 +4,16 @@
 LUA_FUNCTION(gmod_GetGamemode)
 {
 	int reference = -1;
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "GM");
-			if (LUA->IsType(1, Type::Table))
+			if (LUA->IsType(1, GarrysMod::Lua::Type::Table))
 			{
 				reference = LUA->ReferenceCreate();
 				LUA->Pop();
 			} else {
 				LUA->Pop();
 				LUA->GetField(-1, "GAMEMODE");
-				if (LUA->IsType(1, Type::Table))
+				if (LUA->IsType(1, GarrysMod::Lua::Type::Table))
 				{
 					reference = LUA->ReferenceCreate();
 				}
@@ -32,9 +32,9 @@ LUA_FUNCTION(gmod_GetGamemode)
 	return 1;
 }
 
-void InitGmodLib(ILuaInterface* LUA)
+void InitGmodLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, gmod_GetGamemode, "GetGamemode");
 			
