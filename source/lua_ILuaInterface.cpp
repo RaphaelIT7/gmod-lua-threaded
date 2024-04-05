@@ -541,6 +541,7 @@ LUA_FUNCTION(ILuaInterface_Unlock)
 
 void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* args)
 {
+	const char* error = nullptr;
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 	LUA->GetField(-1, "hook");
 	if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
@@ -568,20 +569,20 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 			{
 				std::string err_msg = "hook.Run had an Internal error. Report this please";
 				err_msg = err_msg + "(" + name + ")";
-				LUA->ThrowError(err_msg.c_str());
+				Msg(err_msg.c_str());
 			}
-			SafeDelete(args);
 		} else {
 			LUA->Pop(1);
-			SafeDelete(args);
-			LUA->ThrowError("hook.Run is missing or not a function!");
+			error = "hook.Run is missing or not a function!";
 		}
-		LUA->Pop(2);
 	} else {
-		LUA->Pop(2);
-		SafeDelete(args);
-		LUA->ThrowError("hook table is missing or not a table!");
+		error = "hook table is missing or not a table!";
 	}
+
+	LUA->Pop(2);
+	SafeDelete(args);
+	if (error)
+		LUA->ThrowError(error);
 }
 
 LUA_FUNCTION(ILuaInterface_RunHook)
