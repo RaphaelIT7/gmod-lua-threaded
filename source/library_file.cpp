@@ -10,8 +10,10 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
-		async->content = new char[nBytesRead];
-		std::memcpy((void*)async->content, request.pData, nBytesRead);
+		char* content = new char[nBytesRead + 1];
+		std::memcpy(static_cast<void*>(content), request.pData, nBytesRead);
+		content[nBytesRead] = '\0';
+		async->content = content;
 	} else {
 		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
 	}
