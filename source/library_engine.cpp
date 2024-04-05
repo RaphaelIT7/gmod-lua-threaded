@@ -1,17 +1,18 @@
 #include <GarrysMod/InterfacePointers.hpp>
 #include "lua_threaded.h"
+#include <player.h>
 #include <icommandline.h>
 #include <eiface.h>
 
 class IPlayerInfo;
 class edict_t;
 static const char playerinfomanager_name[] = "PlayerInfoManager002";
-class IPlayerInfoManager
+/* class IPlayerInfoManager
 {
 public:
 	virtual IPlayerInfo *GetPlayerInfo( edict_t *pEdict ) = 0;
 	virtual CGlobalVars *GetGlobalVars( ) = 0;
-};
+}; */
 
 CGlobalVars* GlobalVars()
 {
