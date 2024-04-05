@@ -235,9 +235,6 @@ LUA_FUNCTION(Global_Msg)
 				case GarrysMod::Lua::Type::Bool:
 					ss << (LUA->GetBool(i) ? "true" : "false");
 					break;
-				case GarrysMod::Lua::Type::Function:
-					ss << "function: " << reinterpret_cast<void*>(LUA->GetCFunction(i));
-					break;
 				default:
 					ss << "<Something Unknown. Scary>";
 					break;
