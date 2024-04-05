@@ -178,7 +178,7 @@ LUA_FUNCTION(CreateConVar)
 }
 
 ICvar* Icvar;
-LUA_FUNCTION(GetConVar)
+LUA_FUNCTION(GetConVar_Internal)
 {
 	if (!Icvar)
 	{
@@ -364,7 +364,7 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
 		Add_Func(LUA, Global_Msg, "Msg");
 		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
-		Add_Func(LUA, GetConVar, "GetConVar");
+		Add_Func(LUA, GetConVar_Internal, "GetConVar_Internal");
 		//Add_Func(LUA, CreateConVar, "CreateConVar");
 
 		Add_Func(LUA, CurTime, "CurTime");
