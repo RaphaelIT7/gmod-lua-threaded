@@ -61,7 +61,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			if (ThreadInMainThread()) // We cannot push a File from a our module to GMod.
 			{
 				LUA->PushNil();
-				return;
+				break;
 			}
 
 			LUA_File* file = (LUA_File*)value->otherstuff;
