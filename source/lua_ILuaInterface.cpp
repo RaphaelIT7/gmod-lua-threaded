@@ -554,14 +554,15 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 			Msg("1. Top %i\n", LUA->Top());
 			if (args->type != GarrysMod::Lua::Type::Table)
 			{
+				int pre = LUA->Top();
 				for(auto&[key, val] : args->tbl)
 				{
 					Msg("Type: %i\n", val->type);
 					Msg("Top %i\n", LUA->Top());
-					++pushed;
 					PushValue(LUA, val);
 					Msg("Top %i\n", LUA->Top());
 				}
+				pushed += LUA->Top() - pre;
 			} else {
 				++pushed;
 				PushValue(LUA, args);
