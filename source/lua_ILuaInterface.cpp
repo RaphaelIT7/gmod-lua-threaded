@@ -570,7 +570,7 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 
 			LUA->CallFunctionProtected(pushed, 0, true);
 
-			if (args->type != GarrysMod::Lua::Type::Table && pushed != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
+			if (args->type != GarrysMod::Lua::Type::Table && (pushed - 1) != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
 			{
 				std::string err_msg = "hook.Run had an Internal error. Report this please";
 				err_msg = err_msg + "(" + name + ")";
