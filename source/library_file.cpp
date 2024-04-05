@@ -56,7 +56,7 @@ void FileLibThink(ILuaThread* thread)
 		LUA->PushString(file->req->pszPathID);
 		LUA->PushNumber(file->Status);
 		LUA->PushString(static_cast<char*>(file->req->pData));
-		LUA->PCall(4, 0, 0);
+		LUA->CallFunctionProtected(4, 0, true);
 		LUA->ReferenceFree(file->callback);
 		files.push_back(file);
 	}
