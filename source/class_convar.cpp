@@ -132,11 +132,52 @@ LUA_FUNCTION_STATIC(ConVar_GetDefault)
 	return 1;
 }
 
+class ConCommandBasee // How else should I get access to m_nFlags?
+{
+	friend class CCvar;
+	friend class ConVar;
+	friend class ConCommand;
+	friend void ConVar_Register( int nCVarFlag, IConCommandBaseAccessor *pAccessor );
+	friend void ConVar_PublishToVXConsole();
+	friend class CDefaultCvar;
+public:
+								ConCommandBasee( void );
+								ConCommandBasee( const char *pName, const char *pHelpString = 0, 
+									int flags = 0 );
+	virtual						~ConCommandBasee( void );
+	virtual	bool				IsCommand( void ) const;
+	virtual bool				IsFlagSet( int flag ) const;
+	virtual void				AddFlags( int flags );
+	virtual const char			*GetName( void ) const;
+	virtual const char			*GetHelpText( void ) const;
+	const ConCommandBase		*GetNext( void ) const;
+	ConCommandBase				*GetNext( void );
+	virtual bool				IsRegistered( void ) const;
+	virtual CVarDLLIdentifier_t	GetDLLIdentifier() const;
+
+protected:
+	virtual void				CreateBase( const char *pName, const char *pHelpString = 0, 
+									int flags = 0 );
+	virtual void				Init();
+	void						Shutdown();
+	char						*CopyString( const char *from );
+public:
+	ConCommandBase				*m_pNext;
+	bool						m_bRegistered;
+	const char 					*m_pszName;
+	const char 					*m_pszHelpString;
+	int							m_nFlags;
+protected:
+	static ConCommandBase		*s_pConCommandBases;
+	static IConCommandBaseAccessor	*s_pAccessor;
+};
+
 LUA_FUNCTION_STATIC(ConVar_GetFlags)
 {
 	LUA_ConVar* cvar = ConVar_Get(LUA, 1, true);
 
-	LUA->PushNumber(0); // ToDo
+	ConCommandBasee* base = (ConCommandBasee*)cvar->cvar;
+	LUA->PushNumber(base->m_nFlags); // ToDo
 
 	return 1;
 }
