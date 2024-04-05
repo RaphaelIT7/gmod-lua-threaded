@@ -28,6 +28,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] hammer (useful for Windows later)  
 - [x] engine  
 - [x] gameevent  
+- [x] file  
 
 #### Unfinished/Untested
 - [x] debug (Missing functions!)  
@@ -37,9 +38,6 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] resource (untested!)  
 - [x] system (untested!)  
 - [x] gmod (untested!)  
-- [x] file (Mostly implemented & untested!)
-- - [ ] file.AsyncRead
-- - [x] file.Open (Required for file.Read, file.Write and file.Append)
 
 ### Classes
 - [x] Angle (untested)
