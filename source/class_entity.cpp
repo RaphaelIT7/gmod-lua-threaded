@@ -5,7 +5,7 @@ static const char metaname[] = "Entity";
 static const char invalid_error[] = "invalid Entity";
 static const char table_name[] = "Entity_object";
 
-void Push_Entity(ILuaBase* LUA, const char* type, const char* classname)
+void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, const char* type, const char* classname)
 {
 	LUA_Entity* udata = (LUA_Entity*)LUA->NewUserdata(sizeof(LUA_Entity));
 	udata->type = type;
@@ -15,18 +15,18 @@ void Push_Entity(ILuaBase* LUA, const char* type, const char* classname)
 	LUA->SetMetaTable(-2);
 }
 
-void Push_Entity(ILuaBase* LUA, LUA_Entity* ent)
+void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, LUA_Entity* ent)
 {
 	Push_Entity(LUA, ent->type, ent->classname);
 }
 
-void Entity_CheckType(ILuaBase* LUA, int index)
+void Entity_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if(!LUA->IsType(index, Type::Entity))
 		luaL_typerror(LUA->GetState(), index, metaname);
 }
 
-bool IsEntity(ILuaBase* LUA, int index)
+bool IsEntity(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	if (LUA->IsType(index, Type::Entity))
 	{
@@ -49,12 +49,12 @@ bool IsEntity(ILuaBase* LUA, int index)
 	return false;
 }
 
-LUA_Entity* Entity_GetUserdata(ILuaBase *LUA, int index)
+LUA_Entity* Entity_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	return (LUA_Entity*)LUA->GetUserdata(index);
 }
 
-LUA_Entity* Entity_Get(ILuaBase* LUA, int index)
+LUA_Entity* Entity_Get(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
 	Entity_CheckType(LUA, index);
 
@@ -63,7 +63,7 @@ LUA_Entity* Entity_Get(ILuaBase* LUA, int index)
 	return ent;
 }
 
-void Entity_Destroy(ILuaBase *LUA, int index)
+void Entity_Destroy(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	LUA_Entity* ent = Entity_GetUserdata(LUA, index);
 
@@ -170,7 +170,7 @@ LUA_FUNCTION_STATIC(Entity__eq)
 	return 1;
 } */
 
-void InitEntityClass(ILuaInterface* LUA)
+void InitEntityClass(GarrysMod::Lua::ILuaInterface* LUA)
 {
 	LUA->CreateTable();
 	LUA->SetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
