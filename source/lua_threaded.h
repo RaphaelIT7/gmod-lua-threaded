@@ -1,5 +1,3 @@
-#include "player.h"
-
 #include "lua_utils.h"
 
 #include "lua_ILuaInterface.h"
