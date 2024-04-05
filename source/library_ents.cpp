@@ -1,5 +1,5 @@
 #include "lua_threaded.h"
-#include "itoolentity.h"
+#include "toolframework/itoolentity.h"
 #include "player.h"
 
 
