@@ -28,20 +28,20 @@ int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
 std::unordered_map<std::string, ILuaValue*> shared_table;
 
-void PushValue(ILuaBase* LUA, ILuaValue* value)
+void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 {
 	switch (value->type)
 	{
-		case Type::NUMBER:
+		case GarrysMod::Lua::Type::NUMBER:
 			LUA->PushNumber(value->number);
 			break;
-		case Type::BOOL:
+		case GarrysMod::Lua::Type::BOOL:
 			LUA->PushBool(value->number == 1);
 			break;
-		case Type::STRING:
+		case GarrysMod::Lua::Type::STRING:
 			LUA->PushString(value->string);
 			break;
-		case Type::ENTITY:
+		case GarrysMod::Lua::Type::ENTITY:
 			/*
 			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 				LUA->GetField(-1, "Entity");
@@ -51,13 +51,13 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 			LUA->Pop(2);
 			*/
 			break;
-		case Type::VECTOR:
+		case GarrysMod::Lua::Type::VECTOR:
 			LUA->PushVector(value->vec);
 			break;
-		case Type::ANGLE:
+		case GarrysMod::Lua::Type::ANGLE:
 			LUA->PushAngle(value->ang);
 			break;
-		case Type::Table:
+		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();
 			for (auto& [key, val] : value->tbl)
 			{
@@ -74,7 +74,7 @@ void PushValue(ILuaBase* LUA, ILuaValue* value)
 
 void SafeDelete(ILuaValue* value)
 {
-	if (value->type == Type::Table)
+	if (value->type == GarrysMod::Lua::Type::Table)
 	{
 		for (auto& [key, val] : value->tbl)
 		{
@@ -93,7 +93,7 @@ ILuaValue* GetOrCreate(std::string key)
 		ILuaValue* val = it->second;
 
 		if (val) {
-			if (val->type == Type::Table)
+			if (val->type == GarrysMod::Lua::Type::Table)
 			{
 				for (auto& [key2, val2] : val->tbl)
 				{
@@ -108,33 +108,33 @@ ILuaValue* GetOrCreate(std::string key)
 	return new ILuaValue;
 }
 
-void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
+void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 {
-	if (type == Type::Number)
+	if (type == GarrysMod::Lua::Type::Number)
 	{
 		val->type = type;
 		val->number = LUA->GetNumber(iStackPos);
-	} else if (type == Type::Bool)
+	} else if (type == GarrysMod::Lua::Type::Bool)
 	{
 		val->type = type;
 		val->number = LUA->GetBool(iStackPos) ? 1 : 0;
-	} else if (type == Type::String)
+	} else if (type == GarrysMod::Lua::Type::String)
 	{
 		val->type = type;
 		val->string = LUA->GetString(iStackPos);
-	} else if (type == Type::Entity)
+	} else if (type == GarrysMod::Lua::Type::Entity)
 	{
 		//val->type = type;
 		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
-	} else if (type == Type::Vector)
+	} else if (type == GarrysMod::Lua::Type::Vector)
 	{
 		val->type = type;
 		val->vec = LUA->GetVector(iStackPos);
-	} else if (type == Type::Angle)
+	} else if (type == GarrysMod::Lua::Type::Angle)
 	{
 		val->type = type;
 		val->ang = LUA->GetAngle(iStackPos);
-	} else if (type == Type::Table)
+	} else if (type == GarrysMod::Lua::Type::Table)
 	{
 		val->type = type;
 		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
@@ -160,7 +160,7 @@ void FillValue(ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 	}
 }
 
-void Add_Func(GarrysMod::Lua::ILuaBase* LUA, CFunc Func, const char* Name) {
+void Add_Func(GarrysMod::Lua::ILuaBase* LUA, GarrysMod::Lua::CFunc Func, const char* Name) {
 	LUA->PushCFunction(Func);
 	LUA->SetField(-2, Name);
 }
@@ -186,12 +186,12 @@ LUA_FUNCTION(LuaPanic)
 	return 0;
 }
 
-ILuaInterface* CreateInterface()
+GarrysMod::Lua::ILuaInterface* CreateInterface()
 {
 #ifdef SYSTEM_WINDOWS
-	ILuaInterface* IFace = Win_CreateInterface();
+	GarrysMod::Lua::ILuaInterface* IFace = Win_CreateInterface();
 #else
-	ILuaInterface* IFace = func_CreateLuaInterface(true);
+	GarrysMod::Lua::ILuaInterface* IFace = func_CreateLuaInterface(true);
 #endif
 	// new CLuaGameCallback()
 	IFace->Init(GMOD->gamecallback, true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
@@ -215,7 +215,7 @@ ILuaInterface* CreateInterface()
 
 
 	// Push VERSION, VERSIONSTR, BRANCH, SERVER and CLIENT. Gmod does this inside CLuaManager::Startup();
-	IFace->PushSpecial(SPECIAL_GLOB); // (Windows) ToDo: Why do u crash here :<
+	IFace->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB); // (Windows) ToDo: Why do u crash here :<
 		IFace->PushNumber(GMOD->version);
 		IFace->SetField(-2, "VERSION");
 
@@ -261,7 +261,7 @@ std::string ToPath(std::string path)
 ILuaValue* CreateValue(int value)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::Number;
+	val->type = GarrysMod::Lua::Type::Number;
 	val->number = value;
 
 	return val;
@@ -270,7 +270,7 @@ ILuaValue* CreateValue(int value)
 ILuaValue* CreateValue(const char* value)
 {
 	ILuaValue* val = new ILuaValue;
-	val->type = Type::String;
+	val->type = GarrysMod::Lua::Type::String;
 	val->string = value;
 
 	return val;

@@ -100,7 +100,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 	std::string key = (std::string)LUA->CheckString(1);
 	int type = LUA->GetType(2);
 
-	if (type == Type::Nil)
+	if (type == GarrysMod::Lua::Type::Nil)
 	{
 		shared_table_mutex.Lock();
 		if (shared_table.find(key) == shared_table.end())
@@ -156,7 +156,7 @@ int LuaThread_Msg(lua_State* L)
 
 LUA_FUNCTION(LuaThread_IsMainThread)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 	LUA->GetField(-1, "__InterfaceID");
 	
 	LUA->PushBool(LUA->GetNumber(0) == 0);
@@ -174,9 +174,9 @@ LUA_FUNCTION(LuaThread_ReadyThreads)
     return 1;
 }
 
-void InitLuaThreaded(ILuaInterface* LUA, int id)
+void InitLuaThreaded(GarrysMod::Lua::ILuaInterface* LUA, int id)
 {
-	LUA->PushSpecial(SPECIAL_GLOB);
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->PushNumber(id);
 		LUA->SetField(-2, "__InterfaceID"); // Someone could change the __InterfaceID var but if someone would do this, it could break a bunch of stuff. So don't.
 

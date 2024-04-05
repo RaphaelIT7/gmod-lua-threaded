@@ -551,18 +551,22 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 		{
 			LUA->PushString(name);
 			int pushed = 1;
+			Msg("1. Top %i\n", LUA->Top());
 			if (args->type != GarrysMod::Lua::Type::Table)
 			{
 				for(auto&[key, val] : args->tbl)
 				{
-					Msg("Type: %i", val->type);
-					//++pushed;
-					//PushValue(LUA, val);
+					Msg("Type: %i\n", val->type);
+					Msg("Top %i\n", LUA->Top());
+					++pushed;
+					PushValue(LUA, val);
+					Msg("Top %i\n", LUA->Top());
 				}
 			} else {
 				++pushed;
 				PushValue(LUA, args);
 			}
+			Msg("2. Top %i\n", LUA->Top());
 
 			LUA->CallFunctionProtected(pushed, 0, true);
 
