@@ -11,7 +11,13 @@ Tlua_pcall func_lua_pcall;
 Tlua_atpanic func_lua_atpanic;
 luaL_loadstring func_luaL_loadstring;
 lua_tostring func_lua_tostring;
+llua_getstack func_lua_getstack;
+llua_getinfo func_lua_getinfo;
+llua_pushstring func_lua_pushstring;
+llua_setfield func_lua_setfield;
+luaL_loadbuffer func_luaL_loadbuffer;
 GMOD_LoadBinaryModule func_GMOD_LoadBinaryModule;
+TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 
 TInitLuaLibraries func_InitLuaLibraries;
 InitLuaClasses func_InitLuaClasses;
@@ -19,7 +25,7 @@ CLuaGlobalLibrary_InitLibraries func_CLuaGlobalLibrary_InitLibraries;
 CLuaGameEnums_InitLibraries func_CLuaGameEnums_InitLibraries;
 void* g_pGlobalLuaLibraryFactory;
 ConCommand_IsBlocked func_ConCommand_IsBlocked;
-UTIL_GetCommandClient func_UTIL_GetCommandClient;
+TUTIL_GetCommandClient func_UTIL_GetCommandClient;
 TEditor_SendCommand func_Editor_SendCommand;
 
 CLuaGameCallback_CreateLuaObject func_CLuaGameCallback_CreateLuaObject;
@@ -55,6 +61,8 @@ void* FindFunction(void* loader, const std::vector<Symbol> symbols)
 		if (func)
 			return func;
 	}
+
+	return nullptr;
 }
 
 void* FindSymbol(std::string name)
@@ -124,8 +132,26 @@ void Symbols_Init()
 	func_lua_tostring = (lua_tostring)FindFunction(lua_shared_loader.GetModule(), lua_tostringSym);
 	CheckFunction(func_lua_tostring, "lua_tostring");
 
+	func_lua_getstack = (llua_getstack)FindFunction(lua_shared_loader.GetModule(), lua_getstackSym);
+	CheckFunction(func_lua_getstack, "lua_getstack");
+
+	func_lua_getinfo = (llua_getinfo)FindFunction(lua_shared_loader.GetModule(), lua_getinfoSym);
+	CheckFunction(func_lua_getinfo, "lua_getinfo");
+
+	func_lua_pushstring = (llua_pushstring)FindFunction(lua_shared_loader.GetModule(), lua_pushstringSym);
+	CheckFunction(func_lua_pushstring, "lua_pushstring");
+
+	func_lua_setfield = (llua_setfield)FindFunction(lua_shared_loader.GetModule(), lua_setfieldSym);
+	CheckFunction(func_lua_setfield, "lua_setfield");
+
+	func_luaL_loadbuffer = (luaL_loadbuffer)FindFunction(lua_shared_loader.GetModule(), luaL_loadbufferSym);
+	CheckFunction(func_luaL_loadbuffer, "luaL_loadbuffer");
+
 	func_GMOD_LoadBinaryModule = (GMOD_LoadBinaryModule)FindFunction(lua_shared_loader.GetModule(), GMOD_LoadBinaryModuleSym);
 	CheckFunction(func_GMOD_LoadBinaryModule, "GMOD_LoadBinaryModule");
+
+	func_AdvancedLuaErrorReporter = (TAdvancedLuaErrorReporter)FindFunction(lua_shared_loader.GetModule(), AdvancedLuaErrorReporterSym);
+	CheckFunction(func_AdvancedLuaErrorReporter, "AdvancedLuaErrorReporter");
 
 	/*
 		Server suff
@@ -152,7 +178,7 @@ void Symbols_Init()
 	func_ConCommand_IsBlocked = (ConCommand_IsBlocked)FindFunction(server_loader.GetModule(), ConCommand_IsBlockedSym);
 	CheckFunction(func_ConCommand_IsBlocked, "ConCommand_IsBlocked");
 
-	func_UTIL_GetCommandClient = (UTIL_GetCommandClient)FindFunction(server_loader.GetModule(), UTIL_GetCommandClientSym);
+	func_UTIL_GetCommandClient = (TUTIL_GetCommandClient)FindFunction(server_loader.GetModule(), UTIL_GetCommandClientSym);
 	CheckFunction(func_UTIL_GetCommandClient, "UTIL_GetCommandClient");
 
 	func_Editor_SendCommand = (TEditor_SendCommand)FindFunction(server_loader.GetModule(), Editor_SendCommandSym);

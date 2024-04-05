@@ -1,6 +1,7 @@
 #include <GarrysMod/Lua/Interface.h>
 #include <GarrysMod/Lua/LuaObject.h>
 #include "lua_threaded.h"
+#include <sstream>
 
 static int32_t metatype = GarrysMod::Lua::Type::NONE;
 static const char metaname[] = "ILuaInterface";
@@ -149,14 +150,44 @@ LUA_FUNCTION_STATIC(newindex)
 	return 0;
 }
 
+std::string generateStackTrace(lua_State* L) {
+	std::stringstream trace;
+	int level = 0;
+	lua_Debug ar;
+
+	func_lua_getstack(L, 0, &ar);
+	func_lua_getinfo(L, "nSl", &ar);
+
+	trace << "Error in: " << ar.source << ":" << ar.currentline << " [" << (ar.name ? ar.name : "main") << "]" << std::endl;
+
+	while (func_lua_getstack(L, level, &ar)) {
+		func_lua_getinfo(L, "nSl", &ar);
+
+		for (int i=0; i<level; ++i) {
+			trace << "  ";
+		}
+
+		if (ar.name != NULL) {
+			trace << "  " << level << ". " << ar.name << " - [" << ar.source << "]:" << ar.currentline << std::endl;
+		} else {
+			trace << "  " << level << ". unknown - [" << ar.source << "]:" << ar.currentline << std::endl;
+		}
+
+		level++;
+	}
+
+	return trace.str();
+}
+
 void HandleError(ILuaInterface* LUA, int result, const char* pFile)
 {
 	if (result != 0)
 	{
+		std::string stack = generateStackTrace(LUA->GetState());
 		const char* err = func_lua_tostring(LUA->GetState(), -1, NULL);
 		LUA->Pop();
 
-		Msg("[ERROR] ILuaInterface:RunString: %s (%s)\n", err, pFile);
+		Msg("[ERROR] ILuaInterface:RunString: %s\n%s", err, stack.c_str());
 		return;
 	}
 }
@@ -166,7 +197,7 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 	ILuaInterface* LUA = thread->IFace;
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		int result = func_luaL_loadstring(LUA->GetState(), str);
+		int result = func_luaL_loadbuffer(LUA->GetState(), str, strlen(str), pFile);
 		HandleError(LUA, result, pFile);
 	}
     else
@@ -176,8 +207,9 @@ void RunString(ILuaThread* thread, const char* str, const char* pFile)
 
 	if (setjmp(thread->jumpBuffer) == 0)
     {
-		int result = func_lua_pcall(LUA->GetState(), 0, 0, 0); // ToDo: Find out why it sometimes crashes :< (lj_BC_TGETS)
-		HandleError(LUA, result, pFile);
+		LUA->CallFunctionProtected(0, 0, true); // ToDo: Document that the third argument is showError
+		//int result = func_lua_pcall(LUA->GetState(), 0, 0, 0);
+		//HandleError(LUA, result, pFile);
 	}
     else
     {
@@ -328,59 +360,57 @@ LUA_FUNCTION(ILuaInterface_InitGmod)
 	return 0;
 }
 
-void RunFile(ILuaThread* LUA, const char* file)
+void RunFile_Intern(ILuaThread* LUA, const char* file, FileHandle_t fh)
 {
-	std::string old_path = LUA->current_path;
-	LUA->current_path = ToPath(file);
+	int file_len = gpFileSystem->Size(fh);
+	char* code = new char[file_len + 1];
 
-	FileHandle_t fh = gpFileSystem->Open(file, "r", "GAME");
+	gpFileSystem->Read((void*)code, file_len, fh);
+	code[file_len] = 0;
+
+	gpFileSystem->Close(fh);
+
+	RunString(LUA, code, file);
+
+	delete[] code;
+}
+
+void RunFile(ILuaThread* LUA, const char* file, const char* called)
+{
+	std::string path = file;
+	if (path.substr(0, 4) != "lua/")
+		path = "lua/" + path;
+
+	FileHandle_t fh = gpFileSystem->Open(path.c_str(), "r", "GAME");
 	if(fh)
 	{
-		int file_len = gpFileSystem->Size(fh);
-		char* code = new char[file_len + 1];
-
-		gpFileSystem->Read((void*)code, file_len, fh);
-		code[file_len] = 0;
-
-		gpFileSystem->Close(fh);
-
-		RunString(LUA, code, file);
-
-		delete[] code;
+		RunFile_Intern(LUA, path.c_str(), fh);
 	} else {
-		Msg("Failed to find Path!. Next try. New path: %s\n", (old_path + file).c_str());
-		LUA->current_path = ToPath(old_path + file);
-		fh = gpFileSystem->Open((old_path + file).c_str(), "r", "GAME");
+		std::string path2 = ToPath(called);
+		if (path2.substr(0, 4) != "lua/")
+			path2 = "lua/" + path2;
+
+		path2 = path2 + file;
+
+		fh = gpFileSystem->Open(path2.c_str(), "r", "GAME");
 		if(fh)
 		{
-			int file_len = gpFileSystem->Size(fh);
-			char* code = new char[file_len + 1];
-
-			gpFileSystem->Read((void*)code,file_len,fh);
-			code[file_len] = 0;
-
-			gpFileSystem->Close(fh);
-
-			RunString(LUA, code, file);
-
-			delete[] code;
+			RunFile_Intern(LUA, path2.c_str(), fh);
 		} else {
-			Msg("Failed to find %s! Try 2.\n", file);
+			LUA->IFace->ThrowError(((std::string)"Failed to find " + file).c_str());
 		}
 	}
-
-	LUA->current_path = old_path;
 }
 
 void Autorun(ILuaThread* LUA)
 {
-	RunFile(LUA, "lua/includes/init.lua");
+	RunFile(LUA, "includes/init.lua");
 
 	FileFindHandle_t findHandle;
 	const char *pFilename = gpFileSystem->FindFirstEx("lua/autorun/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(LUA, (((std::string)"lua/autorun/") + pFilename).c_str()); // Kill me later.
+		RunFile(LUA, (((std::string)"autorun/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
@@ -388,7 +418,7 @@ void Autorun(ILuaThread* LUA)
 	pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(LUA, (((std::string)"lua/autorun/server/") + pFilename).c_str()); // Kill me later.
+		RunFile(LUA, (((std::string)"autorun/server/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
@@ -399,7 +429,7 @@ void Autorun(ILuaThread* LUA)
 	pFilename = gpFileSystem->FindFirstEx("lua/autorun/server/sensorbones/*.lua", "GAME", &findHandle);
 	while (pFilename)
 	{
-		RunFile(LUA, (((std::string)"lua/autorun/server/sensorbones/") + pFilename).c_str()); // Kill me later.
+		RunFile(LUA, (((std::string)"autorun/server/sensorbones/") + pFilename).c_str()); // Kill me later.
 
 		pFilename = gpFileSystem->FindNext(findHandle);
 	}
@@ -521,15 +551,24 @@ void RunHook(ILuaInterface* LUA, const char* name, ILuaValue* args)
 		if (LUA->IsType(-1, Type::Function))
 		{
 			LUA->PushString(name);
-			for(auto&[key, val] : args->tbl)
+			if (args->type != Type::Table)
 			{
-				PushValue(LUA, val);
+				for(auto&[key, val] : args->tbl)
+				{
+					PushValue(LUA, val);
+				}
+			} else {
+				PushValue(LUA, args);
 			}
-			LUA->Call(args->number + 1, 0);
+			Msg("Args: %i\n", (args->type != Type::Table ? args->number : 1) + 1);
+			LUA->CallFunctionProtected((args->type != Type::Table ? args->number : 1) + 1, 0, true);
+			SafeDelete(args);
 		} else {
+			SafeDelete(args);
 			LUA->ThrowError("hook.Run is missing or not a function!");
 		}
 	} else {
+		SafeDelete(args);
 		LUA->ThrowError("hook table is missing or not a table!");
 	}
 }
@@ -540,8 +579,9 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 	const char* name = LUA->CheckString(2);
 
 	ILuaValue* hook_tbl = new ILuaValue;
-	/*hook_tbl->type = Type::Table;
+	hook_tbl->type = Type::Nil;
 	hook_tbl->number = LUA->Top() - 2;
+	Msg("RunHook: %i\n", LUA->Top());
 
 	if (hook_tbl->number > 0)
 	{
@@ -552,7 +592,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 
 			hook_tbl->tbl[CreateValue(std::to_string(pos - 2).c_str())] = val;
 		}
-	}*/
+	}
 
 	if (thread->threaded)
 	{
@@ -678,10 +718,10 @@ unsigned LuaThread(void* data)
 				RunCommand(IFace, action->cmd, action->ply);
 			} else if (action->type == LuaAction::ACT_Gameevent)
 			{
-				RunGameevent(IFace, action->data, action->val);
+				RunHook(IFace, action->data, action->val);
 			} else if (action->type == LuaAction::ACT_RunHook)
 			{
-				//RunHook(IFace, action->data, action->val);
+				RunHook(IFace, action->data, action->val);
 			}
 
 			delete action;

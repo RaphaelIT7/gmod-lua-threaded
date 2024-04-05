@@ -139,13 +139,13 @@ LUA_FUNCTION(file_Find)
 	filesystem->FindClose(findHandle);
 
 	if (files.size() > 0) {
-		if (sorting == "namedesc") { // sort the files descending by name.
+		if (strcmp(sorting, "namedesc") == 0) { // sort the files descending by name.
 			std::sort(files.begin(), files.end(), std::greater<std::string>());
 			std::sort(folders.begin(), folders.end(), std::greater<std::string>());
-		} else if (sorting == "dateasc") { // sort the files ascending by date.
+		} else if (strcmp(sorting, "dateasc") == 0) { // sort the files ascending by date.
 			SortByDate(files, filepath, path, true);
 			SortByDate(folders, filepath, path, true);
-		} else if (sorting == "datedesc") { // sort the files descending by date.
+		} else if (strcmp(sorting, "datedesc") == 0) { // sort the files descending by date.
 			SortByDate(files, filepath, path, false);
 			SortByDate(folders, filepath, path, false);
 		} else { // Fallback to default: nameasc | sort the files ascending by name.

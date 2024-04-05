@@ -7,9 +7,9 @@ void CLuaObject::Init()
 	Error("What called this?");
 }
 
-void CLuaObject::Init(ILuaInterface* LUA)
+void CLuaObject::Init(ILuaInterface* LLUA)
 {
-	this->LUA = LUA;
+	LUA = LLUA;
 }
 
 void CLuaObject::UnReference()
@@ -458,6 +458,7 @@ IILuaObject* CLuaObject::GetMember(float name, IILuaObject* b)
 void* CLuaObject::Remove_Me_1(const char* name, void*)
 {
 	Error("Now u made me Angry :< (Don't call IILuaObject->Remove_Me_1)");
+	return nullptr;
 }
 
 void CLuaObject::SetMember(float name)
@@ -734,7 +735,7 @@ void CLuaObject::SetFromGlobal(const char*)
 
 int CLuaObject::GetStringLen(unsigned int* idk)
 {
-	Error("Look into it later. (IILuaObject::GetStringLen)");
+	Error("Look into it later. (ILuaObject::GetStringLen)");
 }
 
 unsigned int CLuaObject::GetMemberUInt(const char* name, unsigned int b)
@@ -1000,6 +1001,7 @@ Vector* CLuaObject::GetVector()
 	LUA->ReferencePush(m_reference);
 	Vector vec = LUA->GetVector();
 	LUA->Pop(1);
+
 	return &vec;
 }
 
@@ -1059,9 +1061,10 @@ bool CLuaObject::isAngle()
 QAngle* CLuaObject::GetAngle()
 {
 	LUA->ReferencePush(m_reference);
-	QAngle vec = LUA->GetAngle();
+	QAngle ang = LUA->GetAngle();
 	LUA->Pop(1);
-	return &vec;
+
+	return &ang;
 }
 
 void CLuaObject::SetMemberMatrix(const char* name, const VMatrix* val)

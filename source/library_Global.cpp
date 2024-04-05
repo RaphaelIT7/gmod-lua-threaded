@@ -5,7 +5,13 @@ LUA_FUNCTION(include)
 {
 	ILuaThread* thread = GetValidThread(LUA, NULL);
 
-	RunFile(thread, LUA->CheckString(1));
+	lua_Debug ar;
+	if (func_lua_getstack(LUA->GetState(), 1, &ar)) {
+		func_lua_getinfo(LUA->GetState(), "S", &ar);
+		RunFile(thread, LUA->CheckString(1), ar.source);
+	} else {
+		RunFile(thread, LUA->CheckString(1), "");
+	}
 
 	return 0;
 }
@@ -82,7 +88,7 @@ void LuaConCommand(const CCommand& cmd)
 	ToDo: Look someday again to these values. They seem to be raised in Gmod.
 	I won't implement this for now.
 */
-int LuaConCommandAutocomplete(const char *partial, char commands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ])
+int LuaConCommandAutocomplete(const char *partial, char ccommands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ])
 {
 	return 0;
 }
@@ -227,7 +233,7 @@ LUA_FUNCTION(Global_Msg)
 			switch(type)
 			{
 				case Type::Bool:
-					ss << LUA->GetBool(i) ? "true" : "false";
+					ss << (LUA->GetBool(i) ? "true" : "false");
 					break;
 				case Type::Function:
 					ss << "function: " << reinterpret_cast<void*>(LUA->GetCFunction(i));
@@ -258,6 +264,14 @@ LUA_FUNCTION(RealTime)
 	return 1;
 }
 
+LUA_FUNCTION(RunConsoleCommand) // ToDo: Finish this. This is not how it should work.
+{
+	const char* cmd = LUA->CheckString(1);
+	engine->GMOD_RawServerCommand(cmd);
+
+	return 1;
+}
+
 void InitGlobal(ILuaInterface* LUA)
 {
 	LUA->PushSpecial(SPECIAL_GLOB);
@@ -267,6 +281,7 @@ void InitGlobal(ILuaInterface* LUA)
 		Add_Func(LUA, AddConsoleCommand, "AddConsoleCommand");
 		Add_Func(LUA, AddCSLuaFile, "AddCSLuaFile");
 		Add_Func(LUA, Global_Msg, "Msg");
+		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
 
 		Add_Func(LUA, CurTime, "CurTime");
 		Add_Func(LUA, RealTime, "RealTime");
