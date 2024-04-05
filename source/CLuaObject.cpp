@@ -26,7 +26,7 @@ void CLuaObject::SetReference(int reference)
 	m_reference = reference;
 }
 
-void CLuaObject::Set(IILuaObject* obj)
+void CLuaObject::Set(ILuaObject* obj)
 {
 	UnReference();
 	SetReference(((CLuaObject*)obj)->m_reference);
@@ -151,7 +151,7 @@ void CLuaObject::SetMember(const char* name)
 	}
 }
 
-void CLuaObject::SetMember(const char* name, IILuaObject *obj)
+void CLuaObject::SetMember(const char* name, ILuaObject *obj)
 {
 	if (m_reference != -1)
 	{
@@ -342,9 +342,9 @@ void* CLuaObject::GetMemberUserData(float name, void* b)
 	return val;
 }
 
-IILuaObject* CLuaObject::GetMember(const char* name, IILuaObject* b)
+ILuaObject* CLuaObject::GetMember(const char* name, ILuaObject* b)
 {
-	IILuaObject* val = b;
+	ILuaObject* val = b;
 	if (m_reference != -1)
 	{
 		LUA->ReferencePush(m_reference);
@@ -365,9 +365,9 @@ IILuaObject* CLuaObject::GetMember(const char* name, IILuaObject* b)
 	return val;
 }
 
-IILuaObject* CLuaObject::GetMember(IILuaObject* name, IILuaObject* b)
+ILuaObject* CLuaObject::GetMember(ILuaObject* name, ILuaObject* b)
 {
-	IILuaObject* val = b;
+	ILuaObject* val = b;
 	if (m_reference != -1)
 	{
 		LUA->ReferencePush(m_reference);
@@ -389,7 +389,7 @@ IILuaObject* CLuaObject::GetMember(IILuaObject* name, IILuaObject* b)
 	return val;
 }
 
-void CLuaObject::SetMetaTable(IILuaObject* meta)
+void CLuaObject::SetMetaTable(ILuaObject* meta)
 {
 	m_metatable = ((CLuaObject*)meta)->m_reference;
 }
@@ -431,9 +431,9 @@ bool CLuaObject::isUserData()
 	return GetType() == Type::UserData;
 }
 
-IILuaObject* CLuaObject::GetMember(float name, IILuaObject* b)
+ILuaObject* CLuaObject::GetMember(float name, ILuaObject* b)
 {
-	IILuaObject* val = b;
+	ILuaObject* val = b;
 	if (m_reference != -1)
 	{
 		LUA->ReferencePush(m_reference);
@@ -457,7 +457,7 @@ IILuaObject* CLuaObject::GetMember(float name, IILuaObject* b)
 
 void* CLuaObject::Remove_Me_1(const char* name, void*)
 {
-	Error("Now u made me Angry :< (Don't call IILuaObject->Remove_Me_1)");
+	Error("Now u made me Angry :< (Don't call ILuaObject->Remove_Me_1)");
 	return nullptr;
 }
 
@@ -476,7 +476,7 @@ void CLuaObject::SetMember(float name)
 	}
 }
 
-void CLuaObject::SetMember(float name, IILuaObject *obj)
+void CLuaObject::SetMember(float name, ILuaObject *obj)
 {
 	if (m_reference != -1)
 	{
@@ -587,7 +587,7 @@ const char* CLuaObject::GetMemberStr(float name, const char* b)
 	return val;
 }
 
-void CLuaObject::SetMember(IILuaObject* name, IILuaObject* val)
+void CLuaObject::SetMember(ILuaObject* name, ILuaObject* val)
 {
 	if (m_reference != -1)
 	{
@@ -660,7 +660,7 @@ void CLuaObject::SetMember_FixKey(const char* key, const char* val)
 	Error("No.2");
 }
 
-void CLuaObject::SetMember_FixKey(const char* key, IILuaObject* val)
+void CLuaObject::SetMember_FixKey(const char* key, ILuaObject* val)
 {
 	Error("No.3");
 }
@@ -730,7 +730,7 @@ bool CLuaObject::RemoveMe()
 
 void CLuaObject::SetFromGlobal(const char*)
 {
-	Error("Look into it later. (IILuaObject::SetFromGlobal)");
+	Error("Look into it later. (ILuaObject::SetFromGlobal)");
 }
 
 int CLuaObject::GetStringLen(unsigned int* idk)

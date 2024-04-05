@@ -626,7 +626,7 @@ void RunCommand(ILuaInterface* LUA, const CCommand& cmd, void* ply)
 						4. string argumentstring
 					*/
 
-					IILuaObject* obj = LUA->CreateObject();
+					ILuaObject* obj = LUA->CreateObject();
 					obj->SetEntity((BaseEntity*)ply);
 					obj->Push();
 
