@@ -1,5 +1,4 @@
 #include "lua_threaded.h"
-#include "player.h"
 
 LUA_FUNCTION(ents_Create)
 {
