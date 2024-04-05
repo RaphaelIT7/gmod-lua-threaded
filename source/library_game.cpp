@@ -1,6 +1,5 @@
 #include "lua_threaded.h"
 #include "source_ammodef.h"
-#include "iserver.h"
 
 LUA_FUNCTION(game_AddDecal)
 {
@@ -285,40 +284,9 @@ LUA_FUNCTION(game_IsDedicated)
 	return 1;
 }
 
-LUA_FUNCTION(game_KickID) // ToDo: Improve this. There is probably a far better way
+LUA_FUNCTION(game_KickID)
 {
-	const char* id = LUA->CheckString(1);
-	const char* reason = LUA->CheckString(2);
-
-	CSteamID steamid = CSteamID(id, k_EUniversePublic);
-	IClient* client = nullptr;
-	if (steamid.IsValid())
-	{
-		for (int i = 1; i <= iServer->GetMaxClients(); ++i)
-		{
-			INetChannelInfo* channel = engine->GetPlayerNetInfo(i);
-			if (channel == nullptr) { continue; }; // We skip bots and empty slots with this.
-
-			const CSteamID* steamid2 = engine->GetClientSteamIDByPlayerIndex(i);
-			if (steamid2->operator==(steamid))
-			{
-				client = iServer->GetClient(i);
-				break;
-			}
-		}
-	} else {
-		int index = std::stoi(id);
-		INetChannelInfo* channel = engine->GetPlayerNetInfo(index);
-		if (channel != nullptr) 
-		{
-			client = iServer->GetClient(index);
-		}
-	}
-
-	if (client != nullptr)
-	{
-		client->Disconnect(reason);
-	}
+	// ToDo
 
 	return 0;
 }
@@ -448,7 +416,7 @@ void InitGame(GarrysMod::Lua::ILuaInterface* LUA)
 			//Add_Func(LUA, game_GetTimeScale, "GetTimeScale");
 			//Add_Func(LUA, game_GetWorld, "GetWorld");
 			Add_Func(LUA, game_IsDedicated, "IsDedicated");
-			Add_Func(LUA, game_KickID, "KickID");
+			//Add_Func(LUA, game_KickID, "KickID");
 			//Add_Func(LUA, game_LoadNextMap, "LoadNextMap");
 			Add_Func(LUA, game_MapLoadType, "MapLoadType");
 			Add_Func(LUA, game_MaxPlayers, "MaxPlayers");

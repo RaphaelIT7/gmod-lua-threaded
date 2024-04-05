@@ -105,8 +105,6 @@ struct lua_State
 #include <unordered_map>
 #include "ILuaConVars.h"
 #include "detours.h"
-#include <iserver.h>
-#include <iclient.h>
 #include <setjmp.h>
 #include <eiface.h>
 #include <vector>
@@ -258,4 +256,3 @@ extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobal;
 extern IVEngineServer* engine;
-extern IServer* iServer;

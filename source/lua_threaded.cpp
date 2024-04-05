@@ -23,8 +23,6 @@ GMOD_MODULE_OPEN()
 	get = ResolveSymbol<IGet>(
 		engine_loader, IGet_Sym
 	);
-
-	iServer = InterfacePointers::Server();
 	
 	GMOD = new GMOD_Info;
 	GMOD->active_gamemode = "";
