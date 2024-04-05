@@ -1,6 +1,7 @@
 #include <GarrysMod/Lua/Interface.h>
 #include <lua_ILuaInterface.h>
 #include "CLuaGameCallback.h"
+#include "lua_threaded.h"
 
 #ifdef SYSTEM_WINDOWS
 #include <GarrysMod/Lua/LuaShared.h>
@@ -52,10 +53,10 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			*/
 			break;
 		case GarrysMod::Lua::Type::VECTOR:
-			LUA->PushVector(value->vec);
+			Push_Vector(LUA, value->vec);
 			break;
 		case GarrysMod::Lua::Type::ANGLE:
-			LUA->PushAngle(value->ang);
+			Push_Angle(LUA, value->ang);
 			break;
 		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();

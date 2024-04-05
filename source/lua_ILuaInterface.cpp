@@ -541,7 +541,7 @@ LUA_FUNCTION(ILuaInterface_Unlock)
 
 void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* args)
 {
-	const char* error = nullptr;
+	std::string error = "";
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 	LUA->GetField(-1, "hook");
 	if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
@@ -551,34 +551,26 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 		{
 			LUA->PushString(name);
 			int pushed = 1;
-			Msg("1. Top %i\n", LUA->Top());
 			if (args->type != GarrysMod::Lua::Type::Table)
 			{
-				int pre = LUA->Top();
 				for(auto&[key, val] : args->tbl)
 				{
-					Msg("Type: %i\n", val->type);
-					Msg("Top %i\n", LUA->Top());
+					++pushed;
 					PushValue(LUA, val);
-					Msg("Top %i\n", LUA->Top());
 				}
-				pushed += LUA->Top() - pre;
 			} else {
 				++pushed;
 				PushValue(LUA, args);
 			}
-			Msg("2. Top %i\n", LUA->Top());
 
-			ThreadSleep(3000);
-			LUA->Pop(pushed + 1);
-			//LUA->CallFunctionProtected(pushed, 0, true);
+			LUA->CallFunctionProtected(pushed, 0, true);
 
-			/*if (args->type != GarrysMod::Lua::Type::Table && pushed != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
+			if (args->type != GarrysMod::Lua::Type::Table && pushed != args->number) // We use pushed as a safeguard if something somehow breaks stuff.
 			{
 				std::string err_msg = "hook.Run had an Internal error. Report this please";
 				err_msg = err_msg + "(" + name + ")";
-				Msg(err_msg.c_str());
-			}*/
+				error = err_msg;
+			}
 		} else {
 			LUA->Pop(1);
 			error = "hook.Run is missing or not a function!";
@@ -589,8 +581,8 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 
 	LUA->Pop(2);
 	SafeDelete(args);
-	if (error)
-		LUA->ThrowError(error);
+	if (error != "")
+		LUA->ThrowError(error.c_str());
 }
 
 LUA_FUNCTION(ILuaInterface_RunHook)
