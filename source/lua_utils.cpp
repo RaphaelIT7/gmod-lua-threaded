@@ -51,12 +51,6 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			LUA->Pop(2);
 			*/
 			break;
-		case GarrysMod::Lua::Type::VECTOR:
-			Push_Vector(LUA, value->vec);
-			break;
-		case GarrysMod::Lua::Type::ANGLE:
-			Push_Angle(LUA, value->ang);
-			break;
 		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();
 			for (auto& [key, val] : value->tbl)
