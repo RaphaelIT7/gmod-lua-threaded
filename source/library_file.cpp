@@ -10,7 +10,6 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
 		async->content = static_cast<char*>(request.pData);
-		Msg("Read %i %s\n", nBytesRead, async->content);
 	} else {
 		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
 	}
@@ -56,7 +55,7 @@ void FileLibThink(ILuaThread* thread)
 		LUA->PushString(file->req->pszFilename);
 		LUA->PushString(file->req->pszPathID);
 		LUA->PushNumber(file->Status);
-		LUA->PushString(static_cast<char*>(file->req->pData));
+		LUA->PushString(file->content);
 		LUA->CallFunctionProtected(4, 0, true);
 		LUA->ReferenceFree(file->callback);
 		files.push_back(file);
