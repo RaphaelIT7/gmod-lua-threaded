@@ -51,6 +51,22 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			LUA->Pop(2);
 			*/
 			break;
+		case GarrysMod::Lua::Type::VECTOR:
+			Push_Vector(LUA, value->vec);
+			break;
+		case GarrysMod::Lua::Type::ANGLE:
+			Push_Angle(LUA, value->ang);
+			break;
+		case GarrysMod::Lua::Type::File:
+			if (ThreadInMainThread()) // We cannot push a File from a our module to GMod.
+			{
+				LUA->PushNil();
+				return;
+			}
+
+			LUA_File* file = (LUA_File*)value->otherstuff;
+			Push_File(LUA, file->filename, file->fileMode, file->path);
+			break;
 		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();
 			for (auto& [key, val] : value->tbl)
@@ -72,6 +88,9 @@ void SafeDelete(ILuaValue* value)
 	{
 		SafeDelete(val);
 	}
+
+	if (value->otherstuff)
+		delete value->otherstuff;
 
 	delete value;
 }
@@ -160,6 +179,21 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 		LUA->Pop(1);
 
 		val->tbl = tbl;
+	} else if (type == GarrysMod::Lua::Type::File)
+	{
+		if (ThreadInMainThread()) // We cannot push a File from GMod to our module.
+		{
+			return;
+		}
+
+		LUA_File* file = File_Get(LUA, iStackPos);
+		LUA_File* copy = new LUA_File;
+		copy->fileMode = file->fileMode;
+		copy->filename = file->filename;
+		copy->path = file->path;
+		//copy->handle = file->handle // Should we really share the handle?
+		val->type = type;
+		val->otherstuff = copy;
 	}
 }
 
@@ -207,7 +241,7 @@ GarrysMod::Lua::ILuaInterface* CreateInterface()
 		Msg("Invalid Lua state?!?\n");
 	}
 
-	//func_lua_atpanic(IFace->GetState(), LuaPanic);
+	func_lua_atpanic(IFace->GetState(), LuaPanic);
 #endif
 
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);

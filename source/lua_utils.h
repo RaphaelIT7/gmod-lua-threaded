@@ -134,6 +134,7 @@ struct ILuaValue
 	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 	Vector vec;
 	QAngle ang;
+	void* otherstuff; // Can be used for LUA_File as an example. Use Copies as everything will be deleted.
 };
 
 struct ILuaAction

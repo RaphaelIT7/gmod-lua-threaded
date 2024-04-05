@@ -88,6 +88,11 @@ ILuaThread* GetValidThread(GarrysMod::Lua::ILuaBase* LUA, double index)
 	if (ThreadInMainThread())
 	{
 		LUA_ILuaInterface* IData = ILuaInterface_GetUserdata(LUA, index);
+		if (!IData)
+		{
+			LUA->ThrowError("Something internally broke really hard.");
+			return nullptr;
+		}
 
 		ILuaThread* thread = FindThread(IData->ID);
 		if (!thread)
@@ -582,7 +587,7 @@ void RunHook(GarrysMod::Lua::ILuaInterface* LUA, const char* name, ILuaValue* ar
 	LUA->Pop(2);
 	SafeDelete(args);
 	if (error != "")
-		LUA->ThrowError(error.c_str());
+		Msg("[LuaThreaded] %s\n", error.c_str());
 }
 
 LUA_FUNCTION(ILuaInterface_RunHook)
@@ -602,7 +607,7 @@ LUA_FUNCTION(ILuaInterface_RunHook)
 			ILuaValue* val = new ILuaValue;
 			FillValue(LUA, val, pos, LUA->GetType(pos));
 
-			hook_tbl->tbl[CreateValue(std::to_string(pos - 2).c_str())] = val;
+			hook_tbl->tbl[CreateValue(pos - 2)] = val;
 		}
 	}
 
