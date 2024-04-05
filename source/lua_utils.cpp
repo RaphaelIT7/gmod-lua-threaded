@@ -245,7 +245,7 @@ GarrysMod::Lua::ILuaInterface* CreateInterface()
 		Msg("Invalid Lua state?!?\n");
 	}
 
-	func_lua_atpanic(IFace->GetState(), LuaPanic);
+	func_lua_atpanic(IFace->GetState(), LuaPanic); // NOTE for myself: NEVER remove THIS line. NEVER. It'll cause unknown crashes that will never give you any useful information!
 #endif
 
 	// lua_pushcclosure(state, AdvancedLuaErrorReporter, 0);
