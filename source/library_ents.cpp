@@ -1,4 +1,6 @@
 #include "lua_threaded.h"
+#include "edict.h"
+#include "player.h"
 
 LUA_FUNCTION(ents_Create)
 {
