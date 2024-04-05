@@ -193,8 +193,8 @@ ILuaInterface* CreateInterface()
 #else
 	ILuaInterface* IFace = func_CreateLuaInterface(true);
 #endif
-
-	IFace->Init(new CLuaGameCallback(), true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+	// new CLuaGameCallback()
+	IFace->Init(GMOD->gamecallback, true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
 
 #ifndef SYSTEM_WINDOWS
 	//lua_State* state = func_luaL_newstate();

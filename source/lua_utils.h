@@ -211,6 +211,7 @@ struct GMOD_Info
 	const char* branch = "Unknown";
 
 	bool threadready = false;
+	GarrysMod::Lua::ILuaGameCallback* gamecallback;
 
 	// engine library
 	ILuaValue* addons;
