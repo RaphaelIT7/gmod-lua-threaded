@@ -22,17 +22,17 @@ void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, LUA_Entity* ent)
 
 void Entity_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, Type::Entity))
-		luaL_typerror(LUA->GetState(), index, metaname);
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::Entity))
+		LUA->TypeError(LUA->GetState(), index, metaname);
 }
 
 bool IsEntity(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if (LUA->IsType(index, Type::Entity))
+	if (LUA->IsType(index, GarrysMod::Lua::Type::Entity))
 	{
 		LUA->GetMetaTable(index);
 		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, Type::String))
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
 		{
 			if (strcmp(LUA->GetString(-1), metaname))
 			{
@@ -67,7 +67,7 @@ void Entity_Destroy(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
 	LUA_Entity* ent = Entity_GetUserdata(LUA, index);
 
-	LUA->GetField(INDEX_REGISTRY, table_name);
+	LUA->GetField(GarrysMod::Lua::INDEX_REGISTRY, table_name);
 	LUA->PushUserdata(ent);
 	LUA->PushNil();
 	LUA->SetTable(-3);
