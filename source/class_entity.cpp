@@ -11,7 +11,7 @@ void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, CBaseEntity* ent)
 	LUA_Entity* udata = (LUA_Entity*)LUA->NewUserdata(sizeof(LUA_Entity));
 	udata->entity = ent;
 
-	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;
     ILUA->SetType(metatype);
 
 	LUA->CreateMetaTableType(metaname, metatype);
@@ -98,7 +98,7 @@ LUA_FUNCTION_STATIC(Entity__tostring)
 	LUA->Pop(1);
 
 	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, ent->entity->entindex(), ent->entity->GetClassname();
+	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, ent->entity->entindex(), ent->entity->GetClassname());
 	LUA->PushString(szBuf);
 	return 1;
 }
