@@ -2,5 +2,3 @@
 
 extern void InitEntsLib(GarrysMod::Lua::ILuaInterface*);
 //extern void FileLibThink(ILuaThread*);
-extern CGlobalEntityList gEntList;
-

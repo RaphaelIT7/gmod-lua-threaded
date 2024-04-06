@@ -10,6 +10,8 @@ LUA_FUNCTION(ents_Create)
     return  0; // 1;
 }
 
+extern CGlobalEntityList gEntList;
+
 LUA_FUNCTION(ents_FindEntityByName)
 {
     if (LUA->CheckString(1)) {
