@@ -56,7 +56,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 					ILuaObject* entity = ILUA->GetObject(-1);
 			LUA->Pop(2);
 			*/
-			Push_Entity(LUA, value->ent);
+			// TODO - Push_Entity(LUA, value->ent);
 			break;
 		case GarrysMod::Lua::Type::VECTOR:
 			Push_Vector(LUA, value->vec);
@@ -142,6 +142,7 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 	{
 		//val->type = type;
 		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
+		// TODO - FillValue entity
 	} else if (type == GarrysMod::Lua::Type::Vector)
 	{
 		val->type = type;
