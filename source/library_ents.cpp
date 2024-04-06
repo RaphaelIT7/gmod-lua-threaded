@@ -15,7 +15,7 @@ LUA_FUNCTION(ents_FindEntityByName)
     if (LUA->CheckString(1)) {
         const char* classname = LUA->GetString(1);
         // Use the FindEntityByName function
-        CBaseEntity* entity = gEntList.FindEntityByName(NULL, classname);
+        CBaseEntity* entity = gpEntList.FindEntityByName(NULL, classname);
         if (entity != NULL) {
             // Entity found, do something with it...
             printf("Entity found: %s\n", entity->GetClassname());
