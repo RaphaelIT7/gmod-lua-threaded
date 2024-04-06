@@ -10,14 +10,14 @@ LUA_FUNCTION(ents_Create)
     return  0; // 1;
 }
 
-extern CGlobalEntityList gEntList;
+extern CGlobalEntityList* gEntList;
 
 LUA_FUNCTION(ents_FindEntityByName)
 {
     if (LUA->CheckString(1)) {
         const char* classname = LUA->GetString(1);
         // Use the FindEntityByName function
-        CBaseEntity* entity = gEntList.FindEntityByName(NULL, classname);
+        CBaseEntity* entity = gEntList->FindEntityByName(NULL, classname);
         if (entity != NULL) {
             // Entity found, do something with it...
             printf("Entity found: %s\n", entity->GetClassname());
