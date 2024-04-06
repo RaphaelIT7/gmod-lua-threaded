@@ -5,9 +5,9 @@
 /* class IEntityInfo; */
 static const char entityinfomanager_name[] = "EntityInfoManager001";
 
-CGlobalEntityList* GlobalEntityList()
+IEntityInfoManager* entityInfoManager()
 {
-	static CGlobalEntityList *ientityinfo_pointer = nullptr;
+	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr)
 	{
 		SourceSDK::FactoryLoader server_loader("server");
@@ -38,7 +38,7 @@ LUA_FUNCTION(ents_FindEntityByName)
     if (LUA->CheckString(1)) {
         const char* classname = LUA->GetString(1);
         // Use the FindEntityByName function
-        CBaseEntity* entity = gpEntList->FindEntityByName(NULL, classname);
+        CBaseEntity* entity = entityInfoManager->FindEntityByName(NULL, classname);
         if (entity != NULL) {
             // Entity found, do something with it...
             printf("Entity found: %s\n", entity->GetClassname());
