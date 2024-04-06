@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
-#include <ientityinfo.h>
 #include <player.h>
+#include <ientityinfo.h>
 
 /* class IEntityInfo; */
 static const char entityinfomanager_name[] = "EntityInfoManager001";
@@ -14,8 +14,11 @@ CGlobalEntityList* GlobalEntityList()
 		auto entity_info_manager = server_loader.GetInterface<IEntityInfoManager>(
 			entityinfomanager_name
 		);
-		if (entity_info_manager != nullptr)
-			ientityinfo_pointer = entity_info_manager->GetGlobalVars();
+
+        if (entity_info_manager != nullptr)
+            ientityinfo_pointer = entity_info_manager
+		/* if (entity_info_manager != nullptr)
+			ientityinfo_pointer = entity_info_manager->GetGlobalVars(); */
 	}
 
 	return ientityinfo_pointer;
@@ -51,6 +54,11 @@ LUA_FUNCTION(ents_FindEntityByName)
 
 void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
+    if (gpEntList == nullptr)
+	{
+		gpEntList = GlobalEntityList();
+	}
+
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
         LUA->CreateTable();
             Add_Func(LUA, ents_Create, "Create");
