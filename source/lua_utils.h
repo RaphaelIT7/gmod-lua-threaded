@@ -107,7 +107,7 @@ struct lua_State
 #include "detours.h"
 #include <setjmp.h>
 #include <eiface.h>
-#include <game/ientityinfo.h>
+#include <game/server/ientityinfo.h>
 #include <player.h>
 #include <vector>
 #include <lua.h>

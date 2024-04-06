@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 #include <player.h>
-#include <ientityinfo.h>
+#include <game/server/ientityinfo.h>
 
 /* class IEntityInfo; */
 static const char entityinfomanager_name[] = "EntityInfoManager001";
