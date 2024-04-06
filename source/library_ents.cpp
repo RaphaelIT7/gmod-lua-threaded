@@ -1,6 +1,7 @@
 #include "lua_threaded.h"
 #include "igameevents.h"
 #include "baseentity.h"
+#include "entitylist.h"
 #include <player.h>
 
 LUA_FUNCTION(ents_Create)
