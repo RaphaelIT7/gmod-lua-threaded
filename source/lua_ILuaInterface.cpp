@@ -292,6 +292,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitHammer(LUA);
 	InitGmodLib(LUA);
 	InitFileLib(LUA);
+	InitGame(LUA);
 	InitEntsLib(LUA);
 }
 
