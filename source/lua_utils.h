@@ -259,4 +259,4 @@ extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobal;
 extern IVEngineServer* engine;
-extern IEntityInfoManager entityInfoManager;
+extern IEntityInfoManager* entityInfoManager;
