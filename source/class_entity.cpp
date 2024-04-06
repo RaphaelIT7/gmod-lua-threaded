@@ -1,15 +1,18 @@
 #include "lua_threaded.h"
+#include <player.h>
 
 static int32_t metatype = GarrysMod::Lua::Type::Entity;
 static const char metaname[] = "Entity";
 static const char invalid_error[] = "invalid Entity";
 static const char table_name[] = "Entity_object";
 
-void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, const char* type, const char* classname)
+void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, CBaseEntity* ent)
 {
 	LUA_Entity* udata = (LUA_Entity*)LUA->NewUserdata(sizeof(LUA_Entity));
-	udata->type = type;
-	udata->classname = classname;
+	udata->entity = ent;
+
+	ILuaInterface* ILUA = (ILuaInterface*)LUA;
+    ILUA->SetType(metatype);
 
 	LUA->CreateMetaTableType(metaname, metatype);
 	LUA->SetMetaTable(-2);
@@ -17,7 +20,7 @@ void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, const char* type, const char* cl
 
 void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, LUA_Entity* ent)
 {
-	Push_Entity(LUA, ent->type, ent->classname);
+	Push_Entity(LUA, ent->entity);
 }
 
 void Entity_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
@@ -94,14 +97,8 @@ LUA_FUNCTION_STATIC(Entity__tostring)
 	const char* name = LUA->GetString(-1);
 	LUA->Pop(1);
 
-	LUA->GetField(-1, "EntIndex");
-	LUA->Call( 0, 1 );
-	int id = (int)LUA->GetNumber(-1);
-
-	LUA->Pop(2);
-
 	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, id, ent->classname);
+	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, ent->entity->entindex(), ent->entity->GetClassname();
 	LUA->PushString(szBuf);
 	return 1;
 }
@@ -163,12 +160,19 @@ LUA_FUNCTION_STATIC(Entity__eq)
 
 LUA_FUNCTION(Global_Entity)
 {
-	/* double id = LUA->CheckNumber(1);
+	double id = LUA->CheckNumber(1);
 
-	Push_Entity(LUA, id);
+	CBaseEntity* ent = CBaseEntity::Instance(id);
 
-	return 1; */
-	return 0;
+	if (ent == NULL)
+	{
+		LUA->PushNil();
+		return 1;
+	}
+
+	Push_Entity(LUA, ent);
+
+	return 1;
 }
 
 void InitEntityClass(GarrysMod::Lua::ILuaInterface* LUA)
