@@ -20,6 +20,7 @@ GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
 IFileSystem* filesystem;
 CGlobalVars* gpGlobal;
 IVEngineServer* engine;
+CGlobalEntityList* gpEntList;
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;
@@ -55,6 +56,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 					ILuaObject* entity = ILUA->GetObject(-1);
 			LUA->Pop(2);
 			*/
+			Push_Entity(LUA, value->ent);
 			break;
 		case GarrysMod::Lua::Type::VECTOR:
 			Push_Vector(LUA, value->vec);
