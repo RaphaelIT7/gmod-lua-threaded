@@ -6,6 +6,8 @@
 class IPlayerInfo;
 class edict_t;
 static const char playerinfomanager_name[] = "PlayerInfoManager002";
+
+// include <player.h> defined it already
 /* class IPlayerInfoManager
 {
 public:
