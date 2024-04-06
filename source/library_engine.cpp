@@ -3,8 +3,8 @@
 #include <icommandline.h>
 #include <eiface.h>
 
-class IPlayerInfo;
-class edict_t;
+/* class IPlayerInfo;
+class edict_t; */
 static const char playerinfomanager_name[] = "PlayerInfoManager002";
 
 // include <player.h> defined it already

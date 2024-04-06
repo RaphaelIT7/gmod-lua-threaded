@@ -1,5 +1,25 @@
 #include "lua_threaded.h"
+#include <ientityinfo.h>
 #include <player.h>
+
+/* class IEntityInfo; */
+static const char entityinfomanager_name[] = "EntityInfoManager001";
+
+CGlobalEntityList* GlobalEntityList()
+{
+	static CGlobalEntityList *ientityinfo_pointer = nullptr;
+	if (ientityinfo_pointer == nullptr)
+	{
+		SourceSDK::FactoryLoader server_loader("server");
+		auto entity_info_manager = server_loader.GetInterface<IEntityInfoManager>(
+			entityinfomanager_name
+		);
+		if (entity_info_manager != nullptr)
+			ientityinfo_pointer = entity_info_manager->GetGlobalVars();
+	}
+
+	return ientityinfo_pointer;
+}
 
 LUA_FUNCTION(ents_Create)
 {
@@ -10,14 +30,12 @@ LUA_FUNCTION(ents_Create)
     return  0; // 1;
 }
 
-extern CGlobalEntityList* gEntList;
-
 LUA_FUNCTION(ents_FindEntityByName)
 {
     if (LUA->CheckString(1)) {
         const char* classname = LUA->GetString(1);
         // Use the FindEntityByName function
-        CBaseEntity* entity = gEntList->FindEntityByName(NULL, classname);
+        CBaseEntity* entity = gpEntList->FindEntityByName(NULL, classname);
         if (entity != NULL) {
             // Entity found, do something with it...
             printf("Entity found: %s\n", entity->GetClassname());

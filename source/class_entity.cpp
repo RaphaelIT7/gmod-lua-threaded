@@ -98,7 +98,7 @@ LUA_FUNCTION_STATIC(Entity__tostring)
 	LUA->Pop(1);
 
 	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, ent->entity->entindex(), ent->entity->GetClassname());
+	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, ent->entity->entindex(), ent->entity->GetClassname()); // EntityIndex
 	LUA->PushString(szBuf);
 	return 1;
 }
