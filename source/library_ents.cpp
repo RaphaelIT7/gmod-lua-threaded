@@ -5,7 +5,7 @@
 /* class IEntityInfo; */
 static const char entityinfomanager_name[] = "EntityInfoManager001";
 
-IEntityInfoManager* entityInfoManager()
+IEntityInfoManager* GetInfoManager()
 {
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr)
@@ -54,7 +54,7 @@ void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
     if (gpEntList == nullptr)
 	{
-		gpEntList = GlobalEntityList();
+		gpEntList = GetInfoManager();
 	}
 
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
