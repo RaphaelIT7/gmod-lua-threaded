@@ -16,9 +16,7 @@ IEntityInfoManager* entityInfoManager()
 		);
 
         if (entity_info_manager != nullptr)
-            ientityinfo_pointer = entity_info_manager
-		/* if (entity_info_manager != nullptr)
-			ientityinfo_pointer = entity_info_manager->GetGlobalVars(); */
+            ientityinfo_pointer = entity_info_manager;
 	}
 
 	return ientityinfo_pointer;
