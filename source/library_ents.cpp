@@ -35,13 +35,18 @@ LUA_FUNCTION(ents_FindEntityByName)
 {
     if (LUA->CheckString(1)) {
         const char* classname = LUA->GetString(1);
-        // Use the FindEntityByName function
-        CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByName(NULL, classname));
-        if (entity != NULL) {
-            // Entity found, do something with it...
-            printf("Entity found: %s\n", entity->GetClassname());
+        // Check if entityInfoManager is not NULL
+        if (entityInfoManager != NULL) {
+            // Use the FindEntityByName function
+            CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByName(NULL, classname));
+            if (entity != NULL) {
+                // Entity found, do something with it...
+                printf("Entity found: %s\n", entity->GetClassname());
+            } else {
+                // Entity not found
+            }
         } else {
-            // Entity not found
+            LUA->ThrowError("entityInfoManager is NULL");
         }
     } else {
         LUA->ThrowError("Invalid classname");
