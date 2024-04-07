@@ -52,9 +52,9 @@ LUA_FUNCTION(ents_FindEntityByName)
 
 void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
-    if (gpEntList == nullptr)
+    if (entityInfoManager == nullptr)
 	{
-		gpEntList = GetInfoManager();
+		entityInfoManager = GetInfoManager();
 	}
 
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
