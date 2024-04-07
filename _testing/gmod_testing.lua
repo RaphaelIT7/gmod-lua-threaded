@@ -107,22 +107,24 @@ if err then
 	--file.Write("error.txt", err)
 end]]
 
-print("Testing Started")
+hook.Add("InitPostEntity", "ExampleHook", function()
+	print("Testing Started")
 
-local ret, err = pcall(function()
-	require("lua_threaded")
-	LuaThreaded.ReadyThreads()
-	
-	iFace = LuaThreaded.CreateInterface()
-	iFace:InitGmod()
-	iFace:RunFile("includes/init.lua")
-	iFace:RunString(code)
-	iFace:RunHook("ExampleHook", "ExampleArg", 1234, true, Vector(1, 2, 3), Angle(4, 5, 6))
+	local ret, err = pcall(function()
+		require("lua_threaded")
+		LuaThreaded.ReadyThreads()
+		
+		iFace = LuaThreaded.CreateInterface()
+		iFace:InitGmod()
+		iFace:RunFile("includes/init.lua")
+		iFace:RunString(code)
+		iFace:RunHook("ExampleHook", "ExampleArg", 1234, true, Vector(1, 2, 3), Angle(4, 5, 6))
+	end)
+
+	if err then
+		print("[ERROR] " .. err)
+		file.Write("error.txt", err)
+	end
+
+	print("Testing Finished")
 end)
-
-if err then
-	print("[ERROR] " .. err)
-	file.Write("error.txt", err)
-end
-
-print("Testing Finished")

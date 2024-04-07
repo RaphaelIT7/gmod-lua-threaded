@@ -46,7 +46,7 @@ LUA_FUNCTION(ents_FindEntityByName)
                 // Entity not found
             }
         } else {
-            LUA->ThrowError("entityInfoManager is NULL");
+            printf("entityInfoManager is NULL");
         }
     } else {
         LUA->ThrowError("Invalid classname");
@@ -60,6 +60,11 @@ void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
     if (entityInfoManager == nullptr)
 	{
 		entityInfoManager = GetInfoManager();
+        if (entityInfoManager == nullptr)
+        {
+            LUA->ThrowError("Failed to get IEntityInfoManager");
+            return;
+        }
 	}
 
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
