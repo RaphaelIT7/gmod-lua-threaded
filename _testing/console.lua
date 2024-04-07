@@ -163,7 +163,7 @@ local function Sleep(time)
 	while time > os.time() do end
 end
 
-Sleep(10)
+Sleep(20)
 
 HTTP({
 	method = "POST",
