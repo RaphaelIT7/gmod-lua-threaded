@@ -62,7 +62,7 @@ void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 		entityInfoManager = GetInfoManager();
         if (entityInfoManager == nullptr)
         {
-            LUA->ThrowError("Failed to get IEntityInfoManager");
+            printf("Failed to get IEntityInfoManager");
             return;
         }
 	}
