@@ -3,7 +3,7 @@
 #include <game/server/ientityinfo.h>
 
 /* class IEntityInfo; */
-static const char entityinfomanager_name[] = "EntityInfoManager001";
+static const char entityinfomanager_name[] = "EntityInfoManager002";
 
 IEntityInfoManager* GetInfoManager()
 {
@@ -60,11 +60,6 @@ void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
     if (entityInfoManager == nullptr)
 	{
 		entityInfoManager = GetInfoManager();
-        if (entityInfoManager == nullptr)
-        {
-            printf("Failed to get IEntityInfoManager");
-            return;
-        }
 	}
 
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
