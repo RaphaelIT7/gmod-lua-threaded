@@ -34,24 +34,51 @@ LUA_FUNCTION(ents_Create)
 LUA_FUNCTION(ents_FindEntityByName)
 {
     if (LUA->CheckString(1)) {
-        const char* classname = LUA->GetString(1);
-        // Check if entityInfoManager is not NULL
+        const char* name = LUA->GetString(1);
         if (entityInfoManager != NULL) {
-            // Use the FindEntityByName function
-            CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByName(NULL, classname));
+            CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByName(NULL, name));
             if (entity != NULL) {
-                // Entity found, do something with it...
-                printf("Entity found: %s\n", entity->GetClassname());
+                Push_Entity(LUA, entity);
+                
+                return 1;
             } else {
                 // Entity not found
             }
-        } else {
-            printf("entityInfoManager is NULL");
         }
+    } else {
+        LUA->ThrowError("Invalid name");
+    }
+    
+    Push_Entity(LUA, NULL);
+
+    return  1;
+}
+
+LUA_FUNCTION(ents_FindByClass)
+{
+    if (LUA->CheckString(1)) {
+        LUA->CreateTable();
+
+        const char* classname = LUA->GetString(1);
+        if (entityInfoManager != NULL) {
+            CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByClassname(NULL, classname));
+
+            int i = 1;
+            while (entity != NULL) {
+                Push_Entity(LUA, entity);
+                LUA->SetField(-2, i);
+                i++;
+                entity = CBaseEntity::Instance(entityInfoManager->FindEntityByClassname(entity, classname));
+            }
+
+            return 1;
+        }
+
+        return 1;
     } else {
         LUA->ThrowError("Invalid classname");
     }
-    
+
     return  0;
 }
 
