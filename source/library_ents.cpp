@@ -93,6 +93,7 @@ void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
         LUA->CreateTable();
             Add_Func(LUA, ents_Create, "Create");
             Add_Func(LUA, ents_FindEntityByName, "FindByName");
+            Add_Func(LUA, ents_FindByClass, "FindByClass");
             
         LUA->SetField(-2, "ents");
     LUA->Pop();
