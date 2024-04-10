@@ -61,14 +61,14 @@ LUA_FUNCTION(ents_FindByClass)
 
         const char* classname = LUA->GetString(1);
         if (entityInfoManager != NULL) {
-            CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByClassname(NULL, classname));
+            edict_t* entity = entityInfoManager->FindEntityByClassname(NULL, classname);
 
             int i = 1;
             while (entity != NULL) {
-                Push_Entity(LUA, entity);
+                Push_Entity(LUA, CBaseEntity::Instance(entity));
                 LUA->SetField(-2, i);
                 i++;
-                entity = CBaseEntity::Instance(entityInfoManager->FindEntityByClassname(entity, classname));
+                entity = entityInfoManager->FindEntityByClassname(entity, classname);
             }
 
             return 1;
