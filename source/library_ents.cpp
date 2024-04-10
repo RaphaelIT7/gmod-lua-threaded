@@ -66,7 +66,7 @@ LUA_FUNCTION(ents_FindByClass)
             int i = 1;
             while (entity != NULL) {
                 Push_Entity(LUA, CBaseEntity::Instance(entity));
-                LUA->SetField(-2, std::to_string(i));
+                //LUA->SetField(-2, i);
                 i++;
                 entity = entityInfoManager->FindEntityByClassname(entity, classname);
             }
