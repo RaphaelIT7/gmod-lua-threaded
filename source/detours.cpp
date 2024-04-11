@@ -84,7 +84,7 @@ void* FindSymbol(std::string name)
 void* GetFunction(SourceSDK::ModuleLoader loader, const char* name, Symbol sym)
 {
 	void* func = FindFunction(loader.GetModule(), sym);
-	CheckFunction(func_CreateLuaInterface, name);
+	CheckFunction(func, name);
 
 	return func;
 }
@@ -92,7 +92,7 @@ void* GetFunction(SourceSDK::ModuleLoader loader, const char* name, Symbol sym)
 void* GetFunction(SourceSDK::ModuleLoader loader, const char* name, std::vector<Symbol> sym)
 {
 	void* func = FindFunction(loader.GetModule(), sym);
-	CheckFunction(func_CreateLuaInterface, name);
+	CheckFunction(func, name);
 
 	return func;
 }
