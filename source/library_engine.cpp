@@ -131,9 +131,10 @@ bool PushEngineFunction(GarrysMod::Lua::ILuaInterface* LUA, const char* eng)
 	{
 		LUA->ReferencePush(ref);
 		LUA->ReferenceFree(ref);
+		return true;
 	}
 
-	return ref != -1;
+	return false;
 }
 
 void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
