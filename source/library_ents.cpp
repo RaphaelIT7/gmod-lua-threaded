@@ -3,10 +3,12 @@
 #include <game/server/ientityinfo.h>
 
 /* class IEntityInfo; */
-static const char entityinfomanager_name[] = "EntityInfoManager002";
+static const char entityinfomanager_name[] = "EntityInfoManager001";
 
 IEntityInfoManager* GetInfoManager()
 {
+            Msg("WILL DEFINE VARS ###############\n")
+
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr)
 	{
@@ -15,8 +17,15 @@ IEntityInfoManager* GetInfoManager()
 			entityinfomanager_name
 		);
 
-        if (entity_info_manager != nullptr)
+        if (entity_info_manager != nullptr) {
+            Msg("EntityInfoManager found\n")
             ientityinfo_pointer = entity_info_manager;
+
+        }
+        else
+        {
+            Msg("EntityInfoManager not found\n");
+        }
 	}
 
 	return ientityinfo_pointer;
