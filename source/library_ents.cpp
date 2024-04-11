@@ -76,6 +76,9 @@ LUA_FUNCTION(ents_FindByClass)
             return 1;
         }
 
+        Msg("no entity info manager\n");
+
+
         return 1;
     } else {
         LUA->ThrowError("Invalid classname");
