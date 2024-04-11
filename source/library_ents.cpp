@@ -63,11 +63,13 @@ LUA_FUNCTION(ents_FindByClass)
         if (entityInfoManager != NULL) {
             edict_t* entity = entityInfoManager->FindEntityByClassname(NULL, classname);
 
+            Msg("iterating through entities\n");
             int i = 1;
             while (entity != NULL) {
                 Push_Entity(LUA, CBaseEntity::Instance(entity));
                 //LUA->SetField(-2, i);
                 i++;
+                Msg("iterating through entities\n", entity->GetClassName());
                 entity = entityInfoManager->FindEntityByClassname(entity, classname);
             }
 

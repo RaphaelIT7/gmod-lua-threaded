@@ -296,7 +296,7 @@ LUA_FUNCTION(Global_Msg)
 					ss << (LUA->GetBool(i) ? "true" : "false");
 					break;
 				case GarrysMod::Lua::Type::Function:
-					ss << "function: 0x" << std::hex << LUA->GetUserdata(i);
+					ss << "function " << std::hex << LUA->Top() - i + 1;
 					break;
 				default:
 					LUA->Push(i);
