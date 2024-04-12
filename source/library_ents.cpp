@@ -18,7 +18,7 @@ IEntityInfoManager* GetInfoManager()
 		);
 
         if (entity_info_manager != nullptr) {
-            Msg("EntityInfoManager found\n")
+            Msg("EntityInfoManager found\n");
             ientityinfo_pointer = entity_info_manager;
 
         }
