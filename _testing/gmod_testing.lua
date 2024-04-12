@@ -6,9 +6,9 @@ local code = [[local ret, err = pcall(function()
 
 	PrintTable(ents)
 
-	print("=== Get env_soundscape ===")
+	print("=== Get info_player_start ===")
 
-	PrintTable(ents.FindByClass("env_soundscape"))
+	PrintTable(ents.FindByClass("info_player_start"))
 
 	print("ENTITY META")
 	
