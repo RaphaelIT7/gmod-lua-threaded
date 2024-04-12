@@ -78,7 +78,9 @@ LUA_FUNCTION(ents_FindByClass)
                 Push_Entity(LUA, CBaseEntity::Instance(entity));
                 //LUA->SetField(-2, i);
                 i++;
-                Msg("iterating through entities" << entity->GetClassName() << "\n");
+                Msg("iterating through entities");
+                Msg(entity->GetClassName());
+                Msg("\n");
                 entity = entityInfoManager->FindEntityByClassname(entity, classname);
             }
 
