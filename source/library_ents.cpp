@@ -7,7 +7,7 @@ static const char entityinfomanager_name[] = "EntityInfoManager001";
 
 IEntityInfoManager* GetInfoManager()
 {
-            Msg("WILL DEFINE VARS ###############\n")
+    Msg("WILL DEFINE VARS ###############\n");
 
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr)
@@ -78,7 +78,7 @@ LUA_FUNCTION(ents_FindByClass)
                 Push_Entity(LUA, CBaseEntity::Instance(entity));
                 //LUA->SetField(-2, i);
                 i++;
-                Msg("iterating through entities\n", entity->GetClassName());
+                Msg("iterating through entities" << entity->GetClassName() << "\n");
                 entity = entityInfoManager->FindEntityByClassname(entity, classname);
             }
 
