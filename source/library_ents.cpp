@@ -12,7 +12,7 @@ IEntityInfoManager* GetInfoManager()
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr)
 	{
-		SourceSDK::FactoryLoader server_loader("lua_shared");
+		SourceSDK::FactoryLoader server_loader("engine");
 		auto entity_info_manager = server_loader.GetInterface<IEntityInfoManager>(
 			entityinfomanager_name
 		);
