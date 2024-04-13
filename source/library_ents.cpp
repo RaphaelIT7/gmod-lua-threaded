@@ -12,10 +12,9 @@ IEntityInfoManager* GetInfoManager()
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr)
 	{
-		SourceSDK::FactoryLoader server_loader("entity");
-		auto entity_info_manager = server_loader.GetInterface<IEntityInfoManager>(
-			entityinfomanager_name
-		);
+		SourceSDK::FactoryLoader server_loader("server");
+        
+		auto entity_info_manager = (IEntityInfoManager *)server_loader(INTERFACEVERSION_ENTITYINFOMANAGER,NULL);
 
         if (entity_info_manager != nullptr) {
             Msg("EntityInfoManager found\n");
