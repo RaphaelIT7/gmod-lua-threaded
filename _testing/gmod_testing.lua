@@ -4,6 +4,8 @@ local code = [[local ret, err = pcall(function()
 
 	print("=== Entity ===")
 
+	print("Entity(39): ", Entity(39))
+
 	PrintTable(ents)
 
 	print("=== Get info_player_start ===")
