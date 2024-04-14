@@ -98,7 +98,7 @@ LUA_FUNCTION_STATIC(Entity__tostring)
 	LUA->Pop(1);
 
 	char szBuf[64] = {};
-	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, ent->entity->entindex(), ent->entity->GetClassname()); // EntityIndex
+	V_snprintf(szBuf, sizeof(szBuf),"%s [%i][%s]", name, engine->IndexOfEdict(ent->entity->edict()), ent->entity->edict()->GetClassName()); // EntityIndex
 	LUA->PushString(szBuf);
 	return 1;
 }
@@ -157,12 +157,18 @@ LUA_FUNCTION_STATIC(Entity__eq)
 	return 1;
 }
 
+LUA_FUNCTION_STATIC(Entity_EntIndex)
+{
+	LUA->PushBool(Entity_Get(LUA, 1) == Entity_Get(LUA, 2));
+	return 1;
+}
+
 
 LUA_FUNCTION(Global_Entity)
 {
 	double id = LUA->CheckNumber(1);
 
-	CBaseEntity* ent = CBaseEntity::Instance(id);
+	CBaseEntity* ent = CBaseEntity::Instance(engine.PEntityOfEntIndex((int)id));
 
 	if (ent == NULL)
 	{

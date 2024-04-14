@@ -9,22 +9,16 @@ IEntityInfoManager* GetInfoManager()
 {
     Msg("WILL DEFINE VARS ###############\n");
 
+    
+
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
-	if (ientityinfo_pointer == nullptr)
-	{
-		SourceSDK::FactoryLoader server_loader("server");
-        
-		auto entity_info_manager = (IEntityInfoManager *)server_loader(INTERFACEVERSION_ENTITYINFOMANAGER,NULL);
-
-        if (entity_info_manager != nullptr) {
-            Msg("EntityInfoManager found\n");
+	if (ientityinfo_pointer == nullptr) {
+		SourceSDK::FactoryLoader engine_loader("engine");
+		auto entity_info_manager = (IEntityInfoManager*)engine_loader.GetFactory()(INTERFACEVERSION_ENTITYINFOMANAGER, nullptr);
+		if (entity_info_manager != nullptr)
             ientityinfo_pointer = entity_info_manager;
-
-        }
         else
-        {
-            Msg("EntityInfoManager not found\n");
-        }
+			LUA->ThrowError("unable to initialize IEntityInfoManager");
 	}
 
 	return ientityinfo_pointer;
