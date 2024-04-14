@@ -168,7 +168,7 @@ LUA_FUNCTION(Global_Entity)
 {
 	double id = LUA->CheckNumber(1);
 
-	CBaseEntity* ent = CBaseEntity::Instance(engine.PEntityOfEntIndex((int)id));
+	CBaseEntity* ent = CBaseEntity::Instance(engine->PEntityOfEntIndex((int)id));
 
 	if (ent == NULL)
 	{
