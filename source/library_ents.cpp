@@ -9,8 +9,6 @@ IEntityInfoManager* GetInfoManager()
 {
     Msg("WILL DEFINE VARS ###############\n");
 
-    
-
 	static IEntityInfoManager *ientityinfo_pointer = nullptr;
 	if (ientityinfo_pointer == nullptr) {
 		SourceSDK::FactoryLoader engine_loader("engine");
@@ -18,7 +16,7 @@ IEntityInfoManager* GetInfoManager()
 		if (entity_info_manager != nullptr)
             ientityinfo_pointer = entity_info_manager;
         else
-			LUA->ThrowError("unable to initialize IEntityInfoManager");
+			Msg("unable to initialize IEntityInfoManager");
 	}
 
 	return ientityinfo_pointer;
