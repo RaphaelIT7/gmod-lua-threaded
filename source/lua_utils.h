@@ -219,6 +219,7 @@ struct GMOD_Info
 	std::list<IAddonSystem::Information> addons;
 	std::list<IGamemodeSystem::Information> gamemodes;
 	std::list<IGameDepotSystem::Information> games;
+	const char* active_gamemode;
 };
 
 inline float Lerp(float delta, float from, float to)
