@@ -40,42 +40,45 @@ LUA_FUNCTION(engine_GetAddons)
 	int i = 0;
 	New_Addon::FileSystem* addon_filesystem = (New_Addon::FileSystem*)filesystem->Addons();
 	const std::list<IAddonSystem::Information>& addons = addon_filesystem->GetList();
-	for (IAddonSystem::Information addon : addons)
+	if (&addons != nullptr)
 	{
-		++i;
-		LUA->CreateTable();
+		for (IAddonSystem::Information addon : addon_filesystem->GetList())
+		{
+			++i;
+			LUA->CreateTable();
 
-		LUA->PushBool(true); // ToDo: How can I check this? (Look into it while creating custom filesystem_stdio.dll)
-		LUA->SetField(-2, "downloaded");
+			LUA->PushBool(true); // ToDo: How can I check this? (Look into it while creating custom filesystem_stdio.dll)
+			LUA->SetField(-2, "downloaded");
 
-		LUA->PushNumber(addon.placeholder6); // Maybe placeholder6 contains the models count?
-		LUA->SetField(-2, "models");
+			LUA->PushNumber(addon.placeholder6); // Maybe placeholder6 contains the models count?
+			LUA->SetField(-2, "models");
 
-		LUA->PushString(addon.title.c_str());
-		LUA->SetField(-2, "title");
+			LUA->PushString(addon.title.c_str());
+			LUA->SetField(-2, "title");
 
-		LUA->PushString(addon.file.c_str());
-		LUA->SetField(-2, "file");
+			LUA->PushString(addon.file.c_str());
+			LUA->SetField(-2, "file");
 
-		LUA->PushBool(true); // ToDo: Same todo as for downloaded
-		LUA->SetField(-2, "mounted");
+			LUA->PushBool(true); // ToDo: Same todo as for downloaded
+			LUA->SetField(-2, "mounted");
 
-		LUA->PushNumber(addon.wsid);
-		LUA->SetField(-2, "wsid");
+			LUA->PushNumber(addon.wsid);
+			LUA->SetField(-2, "wsid");
 
-		LUA->PushNumber(addon.placeholder4); // Maybe placerholder4 is the size?
-		LUA->SetField(-2, "size");
+			LUA->PushNumber(addon.placeholder4); // Maybe placerholder4 is the size?
+			LUA->SetField(-2, "size");
 
-		LUA->PushNumber(addon.time_updated);
-		LUA->SetField(-2, "updated");
+			LUA->PushNumber(addon.time_updated);
+			LUA->SetField(-2, "updated");
 
-		LUA->PushString(addon.tags.c_str());
-		LUA->SetField(-2, "tags");
+			LUA->PushString(addon.tags.c_str());
+			LUA->SetField(-2, "tags");
 
-		LUA->PushNumber(addon.time_updated);
-		LUA->SetField(-2, "timeadded");
+			LUA->PushNumber(addon.time_updated);
+			LUA->SetField(-2, "timeadded");
 
-		LUA->SetField(-2, std::to_string(i).c_str());
+			LUA->SetField(-2, std::to_string(i).c_str());
+		}
 	}
 
 	return 1;
