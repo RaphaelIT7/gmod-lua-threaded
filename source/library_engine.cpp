@@ -154,7 +154,8 @@ LUA_FUNCTION(engine_GetGamemodes)
 
 LUA_FUNCTION(engine_ActiveGamemode)
 {
-	LUA->PushString(((New_Gamemode::System*)filesystem->Gamemodes())->Active().name.c_str());
+	std::string name = ((New_Gamemode::System*)filesystem->Gamemodes())->Active().name;
+	LUA->PushString(name.c_str());
 
 	return 1;
 }
