@@ -216,9 +216,9 @@ struct GMOD_Info
 	GarrysMod::Lua::ILuaGameCallback* gamecallback;
 
 	// engine library
-	std::list<IAddonSystem::Information> addons;
-	std::list<IGamemodeSystem::Information> gamemodes;
-	std::list<IGameDepotSystem::Information> games;
+	std::list<IAddonSystem::Information>& addons;
+	std::list<IGamemodeSystem::Information>& gamemodes;
+	std::list<IGameDepotSystem::Information>& games;
 	const char* active_gamemode;
 };
 
