@@ -62,7 +62,7 @@ GMOD_MODULE_OPEN()
 	InitEnums(LLUA);
 
 	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine(LLUA);
+	UpdateEngine(LLUA); // Look into it why it breaks my shit.
 
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
@@ -75,20 +75,6 @@ GMOD_MODULE_OPEN()
 				LLUA->CallFunctionProtected(3, 0, true);
 			} else {
 				LUA->Pop();
-			}
-		}
-	LUA->Pop(2);
-
-	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-		LUA->GetField(-1, "engine");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
-			LUA->GetField(-1, "ActiveGamemode");
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
-				LLUA->CallFunctionProtected(0, 1, true);
-				GMOD->active_gamemode = LUA->GetString(-1);
-				LUA->Pop(1);
-			} else {
-				LUA->Pop(1);
 			}
 		}
 	LUA->Pop(2);

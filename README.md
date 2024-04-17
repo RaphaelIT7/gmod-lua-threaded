@@ -26,7 +26,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] jit  
 - [x] timer  
 - [x] hammer (useful for Windows later)  
-- [x] engine (engine.GetUserContent won't be implemented for now.)  
+- [x] engine  
 - [x] gameevent  
 - [x] file  
 - [x] debug  
