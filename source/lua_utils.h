@@ -216,12 +216,9 @@ struct GMOD_Info
 	GarrysMod::Lua::ILuaGameCallback* gamecallback;
 
 	// engine library
-	ILuaValue* addons;
-	ILuaValue* games;
-	ILuaValue* gamemodes;
-	ILuaValue* usercontent;
-
-	const char* active_gamemode;
+	std::list<IAddonSystem::Information> addons;
+	std::list<IGamemodeSystem::Information> gamemodes;
+	std::list<IGameDepotSystem::Information> games;
 };
 
 inline float Lerp(float delta, float from, float to)

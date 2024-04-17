@@ -2,12 +2,6 @@
 #include <GarrysMod/Lua/Interface.h>
 #include "lua_threaded.h"
 
-LUA_FUNCTION(LUA_UpdateEngine)
-{
-	UpdateEngine((GarrysMod::Lua::ILuaInterface*)LUA);
-	return 0;
-}
-
 LUA_FUNCTION(LUA_ReadyThreads)
 {
 	GMOD->threadready = true;
@@ -25,11 +19,6 @@ GMOD_MODULE_OPEN()
 	);
 	
 	GMOD = new GMOD_Info;
-	GMOD->active_gamemode = "";
-	GMOD->addons = new ILuaValue;
-	GMOD->games = new ILuaValue;
-	GMOD->gamemodes = new ILuaValue;
-	GMOD->usercontent = new ILuaValue;
 	GMOD->gamecallback = ((GarrysMod::Lua::CLuaInterface*)LUA)->GetLuaGameCallback();
 	if (get)
 	{
@@ -62,22 +51,6 @@ GMOD_MODULE_OPEN()
 	InitEnums(LLUA);
 
 	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine(LLUA); // Look into it why it breaks my shit.
-
-	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-		LUA->GetField(-1, "hook");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
-			LUA->GetField(-1, "Add");
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
-				LUA->PushString("GameContentChanged");
-				LUA->PushString("LuaThreaded");
-				LUA->PushCFunction(LUA_UpdateEngine);
-				LLUA->CallFunctionProtected(3, 0, true);
-			} else {
-				LUA->Pop();
-			}
-		}
-	LUA->Pop(2);
 
 	// NOTE: We need to wait until InitPostEntity is called because a bunch of stuff is missing which cause a crash.
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
