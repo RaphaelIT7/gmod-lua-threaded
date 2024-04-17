@@ -39,7 +39,8 @@ LUA_FUNCTION(engine_GetAddons)
 	LUA->CreateTable();
 	int i = 0;
 	New_Addon::FileSystem* addon_filesystem = (New_Addon::FileSystem*)filesystem->Addons();
-	for (IAddonSystem::Information addon : addon_filesystem->GetList())
+	const std::list<IAddonSystem::Information>& addons = addon_filesystem->GetList();
+	for (IAddonSystem::Information addon : addons)
 	{
 		++i;
 		LUA->CreateTable();
