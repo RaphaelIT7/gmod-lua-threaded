@@ -87,6 +87,9 @@ local code = [[local ret, err = pcall(function()
 
 	print("GetConVar: ", GetConVar("hostname"))
 
+	print("==== Shared Table ====")
+	PrintTable(LuaThreaded.GetValue("example"))
+
 	error("Error handling test")
 end)
 
@@ -100,6 +103,13 @@ print("Testing Started")
 local ret, err = pcall(function()
 	require("lua_threaded")
 	LuaThreaded.ReadyThreads()
+	LuaThreaded.SetValue("example", {
+		["boolean"] = true,
+		["number"] = 10,
+		["string"] = "Hello World",
+		["Angle"] = Angle(10, 9, 8),
+		["Vector"] = Vector(1, 2, 3),
+	})
 	
 	iFace = LuaThreaded.CreateInterface()
 	iFace:InitGmod()
