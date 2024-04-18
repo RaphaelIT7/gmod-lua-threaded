@@ -178,10 +178,10 @@ Args:
 Returns the Shared table.  
 NOTE: You need to call this function to get an updated version!  
 
-### LuaThreaded.SetValue(string key, any value)
+### LuaThreaded.SetValue(any key, any value)
 Sets a Value inside the shared table.  
 
-### LuaThreaded.GetValue(string key)
+### LuaThreaded.GetValue(any key)
 Returns only the specified value from the shared table.  
 
 Args:  
