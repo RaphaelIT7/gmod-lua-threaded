@@ -26,7 +26,7 @@ std::unordered_map<double, ILuaThread*> interfaces;
 
 int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
-std::unordered_map<std::string, ILuaValue*> shared_table;
+std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
 
 void PushFile(GarrysMod::Lua::ILuaBase* LUA, LUA_File* file)
 {
@@ -97,29 +97,6 @@ void SafeDelete(ILuaValue* value)
 		delete value->otherstuff;
 
 	delete value;
-}
-
-ILuaValue* GetOrCreate(std::string key)
-{
-	auto it = shared_table.find(key);
-	if (it != shared_table.end())
-	{
-		ILuaValue* val = it->second;
-
-		if (val) {
-			if (val->type == GarrysMod::Lua::Type::Table)
-			{
-				for (auto& [key2, val2] : val->tbl)
-				{
-					SafeDelete(val2);
-				}
-			}
-
-			return val;
-		}
-	}
-
-	return new ILuaValue;
 }
 
 void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
@@ -315,4 +292,40 @@ ILuaValue* CreateValue(const char* value)
 	val->string = value;
 
 	return val;
+}
+
+bool EqualValue(ILuaValue* val1, ILuaValue* val2)
+{
+	if (val1->type != val2->type)
+		return false;
+
+	bool same = false;
+	switch(val1->type)
+	{
+		case GarrysMod::Lua::Type::NUMBER:
+			same = val1->number == val2->number;
+			break;
+		case GarrysMod::Lua::Type::BOOL:
+			same = val1->number == val2->number;
+			break;
+		case GarrysMod::Lua::Type::STRING:
+			same = strcmp(val1->string, val2->string) == 0;
+			break;
+		case GarrysMod::Lua::Type::ENTITY: // ToDo
+			break;
+		case GarrysMod::Lua::Type::VECTOR:
+			same = val1->vec == val2->vec;
+			break;
+		case GarrysMod::Lua::Type::ANGLE:
+			same = val1->ang == val2->ang;
+			break;
+		case GarrysMod::Lua::Type::File: // ToDo
+			break;
+		case GarrysMod::Lua::Type::Table: // ToDo
+			break;
+		default:
+			break;
+	}
+
+	return same;
 }

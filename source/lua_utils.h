@@ -236,12 +236,12 @@ extern std::unordered_map<double, ILuaThread*> interfaces;
 
 extern int shared_table_reference;
 extern CThreadFastMutex shared_table_mutex;
-extern std::unordered_map<std::string, ILuaValue*> shared_table;
+extern std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
 
 extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
-extern ILuaValue* GetOrCreate(std::string);
 extern void FillValue(GarrysMod::Lua::ILuaBase*, ILuaValue*, int, int);
+extern bool EqualValue(ILuaValue*, ILuaValue*);
 
 extern ILuaValue* CreateValue(int);
 extern ILuaValue* CreateValue(const char*);

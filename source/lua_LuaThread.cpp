@@ -87,8 +87,9 @@ LUA_FUNCTION(LuaThread_GetTable)
     shared_table_mutex.Lock();
     for (auto& [key, value] : shared_table)
     {
+		PushValue(LUA, key);
 		PushValue(LUA, value);
-		LUA->SetField(-2, key.c_str());
+		LUA->SetTable(-3);
     }
     shared_table_mutex.Unlock();
 
@@ -97,29 +98,30 @@ LUA_FUNCTION(LuaThread_GetTable)
 
 LUA_FUNCTION(LuaThread_SetValue)
 {
-	std::string key = (std::string)LUA->CheckString(1);
+	ILuaValue* key = new ILuaValue;
+	FillValue(LUA, key, 1, LUA->GetType(1));
+
+	int key_type = LUA->GetType(1);
 	int type = LUA->GetType(2);
 
 	if (type == GarrysMod::Lua::Type::Nil)
 	{
 		shared_table_mutex.Lock();
-		if (shared_table.find(key) == shared_table.end())
-			return 0;
-
-		ILuaValue* val = shared_table[key];
-		if (val)
+		for (auto& [sKey, sVal] : shared_table)
 		{
-			shared_table.erase(key);
-			SafeDelete(val);
+			if (EqualValue(key, sKey))
+			{
+				SafeDelete(sKey);
+				SafeDelete(sVal);
+			}
 		}
 		shared_table_mutex.Unlock();
+		SafeDelete(key);
 
 		return 0;
 	}
 
-	ILuaValue* val = GetOrCreate(key);
-	val->type = type;
-
+	ILuaValue* val = new ILuaValue;
 	FillValue(LUA, val, 2, type);
 
 	shared_table_mutex.Lock();
@@ -131,12 +133,23 @@ LUA_FUNCTION(LuaThread_SetValue)
 
 LUA_FUNCTION(LuaThread_GetValue)
 {
-	std::string key = LUA->CheckString(1);
+	ILuaValue* key = new ILuaValue;
+	FillValue(LUA, key, 1, LUA->GetType(1));
 
-	auto it = shared_table.find(key);
-	if (it != shared_table.end())
+	ILuaValue* val = nullptr;
+	shared_table_mutex.Lock();
+	for (auto& [sKey, sVal] : shared_table)
 	{
-		ILuaValue* val = it->second;
+		if (EqualValue(key, sKey))
+		{
+			val = sVal;
+			break;
+		}
+	}
+	shared_table_mutex.Unlock();
+
+	if (val)
+	{
 		PushValue(LUA, val);
 	} else {
 		LUA->PushNil();

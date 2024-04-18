@@ -62,7 +62,7 @@ GMOD_MODULE_OPEN()
 	InitEnums(LLUA);
 
 	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine(LLUA); // Look into it why it breaks my shit.
+	UpdateEngine(LLUA);
 
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
@@ -114,8 +114,9 @@ GMOD_MODULE_CLOSE()
 
 	for (auto& [key, val] : shared_table)
 	{
+		PushValue(LUA, key);
 		PushValue(LUA, val);
-		LUA->SetField(-2, key.c_str());
+		LUA->SetTable(-3);
 	}
 
 	RemoveEnums();
