@@ -387,5 +387,7 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 
 		Add_Func(LUA, Global_Angle, "Angle");
 		Add_Func(LUA, Global_LerpAngle, "LerpAngle");
+
+		Add_Func(LUA, Global_Entity, "Entity");
 	LUA->Pop(1);
 }
