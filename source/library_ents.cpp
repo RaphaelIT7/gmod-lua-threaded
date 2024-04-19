@@ -1,3 +1,4 @@
+
 #include "lua_threaded.h"
 #include <player.h>
 #include <entitylist_base.h>
@@ -32,14 +33,16 @@ LUA_FUNCTION(ents_FindEntityByName)
         const char* name = LUA->GetString(1);
 
         if (gpEntityList != nullptr) {
-            CBaseEntity* entity = gpEntityList->FirstHandle();
+            CBaseHandle hEntity = gpEntityList->FirstHandle();
+            CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             while (entity != nullptr) {
                 if (strcmp(entity->GetEntityName(), name) == 0) {
                     Push_Entity(LUA, entity);
                     
                     return 1;
                 }
-                entity = gpEntityList->NextHandle(entity);
+                hEntity = gpEntityList->NextHandle(hEntity);
+                entity = static_cast<CBaseEntity*>(hEntity.Get());
             }
         } else {
             LUA->ThrowError("Entity list is null");
@@ -61,7 +64,8 @@ LUA_FUNCTION(ents_FindByClass)
         const char* classname = LUA->GetString(1);
 
         if (gpEntityList != nullptr) {
-            CBaseEntity* entity = gpEntityList->FirstHandle();
+            CBaseHandle hEntity = gpEntityList->FirstHandle();
+            CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             int i = 1;
             while (entity != nullptr) {
                 if (strcmp(entity->GetClassname(), classname) == 0) {
@@ -70,7 +74,8 @@ LUA_FUNCTION(ents_FindByClass)
                     LUA->SetField(-2, index);
                     i++;
                 }
-                entity = gpEntityList->NextHandle(entity);
+                hEntity = gpEntityList->NextHandle(hEntity);
+                entity = static_cast<CBaseEntity*>(hEntity.Get());
             }
 
             return 1;
