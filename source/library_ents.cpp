@@ -36,7 +36,7 @@ LUA_FUNCTION(ents_FindEntityByName)
             CBaseHandle hEntity = gpEntityList->FirstHandle();
             CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             while (entity != nullptr) {
-                if (strcmp(entity->GetEntityName().c_str(), name) == 0) {
+                if (strcmp(entity->GetEntityName().ToCStr(), name) == 0) {
                     Push_Entity(LUA, entity);
                     
                     return 1;
