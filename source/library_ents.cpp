@@ -68,6 +68,7 @@ LUA_FUNCTION(ents_FindByClass)
             CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             int i = 1;
             while (entity != nullptr) {
+                Msg("classname: %s\n", entity->GetClassname());
                 if (strcmp(entity->GetClassname(), classname) == 0) {
                     Push_Entity(LUA, entity);
                     const char* index = std::to_string(i).c_str();
