@@ -107,7 +107,7 @@ struct lua_State
 #include "detours.h"
 #include <setjmp.h>
 #include <eiface.h>
-#include <game/server/ientityinfo.h>
+#include <entitylist_base.h>
 #include <player.h>
 #include <vector>
 #include <lua.h>
@@ -259,4 +259,4 @@ extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobal;
 extern IVEngineServer* engine;
-extern IEntityInfoManager* entityInfoManager;
+extern CBaseEntityList* gpEntityList;

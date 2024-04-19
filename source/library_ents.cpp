@@ -1,25 +1,20 @@
 #include "lua_threaded.h"
 #include <player.h>
-#include <game/server/ientityinfo.h>
+#include <entitylist_base.h>
 
-/* class IEntityInfo; */
-static const char entityinfomanager_name[] = "EntityInfoManager001";
-
-IEntityInfoManager* GetInfoManager()
+CBaseEntityList* GetEntityList()
 {
-    Msg("WILL DEFINE VARS ###############\n");
-
-	static IEntityInfoManager *ientityinfo_pointer = nullptr;
-	if (ientityinfo_pointer == nullptr) {
-		SourceSDK::FactoryLoader engine_loader("engine");
-		auto entity_info_manager = (IEntityInfoManager*)engine_loader.GetFactory()(INTERFACEVERSION_ENTITYINFOMANAGER, nullptr);
-		if (entity_info_manager != nullptr)
-            ientityinfo_pointer = entity_info_manager;
-        else
+	static CBaseEntityList *EntityList_pointer = nullptr;
+	if (EntityList_pointer == nullptr) {
+		SourceSDK::FactoryLoader server_loader( "server" );
+        EntityList_pointer = ResolveSymbol<CBaseEntityList>(
+            server_loader, Symbol::FromName("g_pEntityList")
+        );
+		if (EntityList_pointer == nullptr)
 			Msg("unable to initialize IEntityInfoManager");
 	}
 
-	return ientityinfo_pointer;
+	return EntityList_pointer;
 }
 
 LUA_FUNCTION(ents_Create)
@@ -35,15 +30,19 @@ LUA_FUNCTION(ents_FindEntityByName)
 {
     if (LUA->CheckString(1)) {
         const char* name = LUA->GetString(1);
-        if (entityInfoManager != NULL) {
-            CBaseEntity* entity = CBaseEntity::Instance(entityInfoManager->FindEntityByName(NULL, name));
-            if (entity != NULL) {
-                Push_Entity(LUA, entity);
-                
-                return 1;
-            } else {
-                // Entity not found
+
+        if (gpEntityList != nullptr) {
+            CBaseEntity* entity = gpEntityList->FirstEntity();
+            while (entity != nullptr) {
+                if (strcmp(entity->GetEntityName(), name) == 0) {
+                    Push_Entity(LUA, entity);
+                    
+                    return 1;
+                }
+                entity = gpEntityList->NextEntity(entity);
             }
+        } else {
+            LUA->ThrowError("Entity list is null");
         }
     } else {
         LUA->ThrowError("Invalid name");
@@ -60,25 +59,23 @@ LUA_FUNCTION(ents_FindByClass)
         LUA->CreateTable();
 
         const char* classname = LUA->GetString(1);
-        if (entityInfoManager != NULL) {
-            edict_t* entity = entityInfoManager->FindEntityByClassname(NULL, classname);
 
-            Msg("iterating through entities\n");
+        if (gpEntityList != nullptr) {
+            CBaseEntity* entity = gpEntityList->FirstEntity();
             int i = 1;
-            while (entity != NULL) {
-                Push_Entity(LUA, CBaseEntity::Instance(entity));
-                //LUA->SetField(-2, i);
-                i++;
-                Msg("iterating through entities");
-                Msg(entity->GetClassName());
-                Msg("\n");
-                entity = entityInfoManager->FindEntityByClassname(entity, classname);
+            while (entity != nullptr) {
+                if (strcmp(entity->GetClassname(), classname) == 0) {
+                    Push_Entity(LUA, entity);
+                    LUA->SetField(-2, i);
+                    i++;
+                }
+                entity = gpEntityList->NextEntity(entity);
             }
 
             return 1;
         }
 
-        Msg("no entity info manager\n");
+        Msg("no entity listr\n");
 
 
         return 1;
@@ -91,9 +88,9 @@ LUA_FUNCTION(ents_FindByClass)
 
 void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
-    if (entityInfoManager == nullptr)
+    if (gpEntityList == nullptr)
 	{
-		entityInfoManager = GetInfoManager();
+		gpEntityList = GetEntityList();
 	}
 
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
