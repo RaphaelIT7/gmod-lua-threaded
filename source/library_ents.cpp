@@ -76,7 +76,7 @@ LUA_FUNCTION(ents_FindByClass)
                     i++;
                 }
                 hEntity = g_pEntityList->NextHandle(hEntity);
-                entity = static_cast<CBaseEntity*>(hEntity.Get());
+                entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
             }
 
             Msg("entity listr, i = %i\n", i);
