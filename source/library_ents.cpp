@@ -36,7 +36,7 @@ LUA_FUNCTION(ents_FindEntityByName)
             CBaseHandle hEntity = gpEntityList->FirstHandle();
             CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             while (entity != nullptr) {
-                if (strcmp(entity->GetEntityName(), name) == 0) {
+                if (strcmp(entity->GetEntityName().c_str(), name) == 0) {
                     Push_Entity(LUA, entity);
                     
                     return 1;
@@ -70,7 +70,7 @@ LUA_FUNCTION(ents_FindByClass)
             while (entity != nullptr) {
                 if (strcmp(entity->GetClassname(), classname) == 0) {
                     Push_Entity(LUA, entity);
-                    char* index = std::to_string(i).c_str();
+                    const char* index = std::to_string(i).c_str();
                     LUA->SetField(-2, index);
                     i++;
                 }
