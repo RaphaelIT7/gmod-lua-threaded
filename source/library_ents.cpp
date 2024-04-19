@@ -1,5 +1,6 @@
 
 #include "lua_threaded.h"
+#include <baseentity.h>
 #include <player.h>
 #include <entitylist_base.h>
 
