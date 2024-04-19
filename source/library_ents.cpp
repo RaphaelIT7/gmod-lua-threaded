@@ -79,6 +79,8 @@ LUA_FUNCTION(ents_FindByClass)
                 entity = static_cast<CBaseEntity*>(hEntity.Get());
             }
 
+            Msg("entity listr, i = %i\n", i)
+
             return 1;
         }
 
