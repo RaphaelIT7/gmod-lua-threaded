@@ -32,8 +32,8 @@ LUA_FUNCTION(ents_FindEntityByName)
     if (LUA->CheckString(1)) {
         const char* name = LUA->GetString(1);
 
-        if (gpEntityList != nullptr) {
-            CBaseHandle hEntity = gpEntityList->FirstHandle();
+        if (g_pEntityList != nullptr) {
+            CBaseHandle hEntity = g_pEntityList->FirstHandle();
             CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             while (entity != nullptr) {
                 if (strcmp(entity->GetEntityName().ToCStr(), name) == 0) {
@@ -41,7 +41,7 @@ LUA_FUNCTION(ents_FindEntityByName)
                     
                     return 1;
                 }
-                hEntity = gpEntityList->NextHandle(hEntity);
+                hEntity = g_pEntityList->NextHandle(hEntity);
                 entity = static_cast<CBaseEntity*>(hEntity.Get());
             }
         } else {
@@ -63,8 +63,8 @@ LUA_FUNCTION(ents_FindByClass)
 
         const char* classname = LUA->GetString(1);
 
-        if (gpEntityList != nullptr) {
-            CBaseHandle hEntity = gpEntityList->FirstHandle();
+        if (g_pEntityList != nullptr) {
+            CBaseHandle hEntity = g_pEntityList->FirstHandle();
             CBaseEntity* entity = static_cast<CBaseEntity*>(hEntity.Get());
             int i = 1;
             while (entity != nullptr) {
@@ -74,7 +74,7 @@ LUA_FUNCTION(ents_FindByClass)
                     LUA->SetField(-2, index);
                     i++;
                 }
-                hEntity = gpEntityList->NextHandle(hEntity);
+                hEntity = g_pEntityList->NextHandle(hEntity);
                 entity = static_cast<CBaseEntity*>(hEntity.Get());
             }
 
@@ -94,9 +94,9 @@ LUA_FUNCTION(ents_FindByClass)
 
 void InitEntsLib(GarrysMod::Lua::ILuaInterface* LUA)
 {
-    if (gpEntityList == nullptr)
+    if (g_pEntityList == nullptr)
 	{
-		gpEntityList = GetEntityList();
+		g_pEntityList = GetEntityList();
 	}
 
     LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
