@@ -32,14 +32,14 @@ LUA_FUNCTION(ents_FindEntityByName)
         const char* name = LUA->GetString(1);
 
         if (gpEntityList != nullptr) {
-            CBaseEntity* entity = gpEntityList->FirstEntity();
+            CBaseEntity* entity = gpEntityList->FirstHandle();
             while (entity != nullptr) {
                 if (strcmp(entity->GetEntityName(), name) == 0) {
                     Push_Entity(LUA, entity);
                     
                     return 1;
                 }
-                entity = gpEntityList->NextEntity(entity);
+                entity = gpEntityList->NextHandle(entity);
             }
         } else {
             LUA->ThrowError("Entity list is null");
@@ -61,15 +61,16 @@ LUA_FUNCTION(ents_FindByClass)
         const char* classname = LUA->GetString(1);
 
         if (gpEntityList != nullptr) {
-            CBaseEntity* entity = gpEntityList->FirstEntity();
+            CBaseEntity* entity = gpEntityList->FirstHandle();
             int i = 1;
             while (entity != nullptr) {
                 if (strcmp(entity->GetClassname(), classname) == 0) {
                     Push_Entity(LUA, entity);
-                    LUA->SetField(-2, i);
+                    char* index = std::to_string(i).c_str();
+                    LUA->SetField(-2, index);
                     i++;
                 }
-                entity = gpEntityList->NextEntity(entity);
+                entity = gpEntityList->NextHandle(entity);
             }
 
             return 1;
