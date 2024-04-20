@@ -182,7 +182,7 @@ LUA_FUNCTION(Global_Entity)
 
 	double id = LUA->CheckNumber(1);
 
-	CHandle<CBaseEntity> hEntity = g_pEntityList->GetNetworkableHandle((int)id);
+	CHandle<CBaseEntity> hEntity = (CBaseEntity*)g_pEntityList->LookupEntityByNetworkIndex((int)id);
 
 	if (!hEntity.IsValid() || hEntity == nullptr)
 	{
