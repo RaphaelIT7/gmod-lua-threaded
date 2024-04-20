@@ -180,7 +180,21 @@ LUA_FUNCTION(Global_Entity)
 
 	return 1; */
 
-	return 0;
+	double id = LUA->CheckNumber(1);
+
+	CHandle<CBaseEntity> hEntity = g_pEntityList->GetNetworkableHandle((int)id);
+
+	if (!hEntity.IsValid() || hEntity == nullptr)
+	{
+		LUA->PushNil();
+		return 1;
+	}
+
+	CBaseEntity* ent = dynamic_cast<CBaseEntity*>(hEntity.Get());
+
+	Push_Entity(LUA, ent);
+
+	return 1;
 }
 
 void InitEntityClass(GarrysMod::Lua::ILuaInterface* LUA)
