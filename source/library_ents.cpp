@@ -64,10 +64,10 @@ LUA_FUNCTION(ents_FindByClass)
         const char* classname = LUA->GetString(1);
 
         if (g_pEntityList != nullptr) {
-            CHandle hEntity = g_pEntityList->FirstHandle();
-            CBaseEntity* entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
+            CBaseHandle hEntity = g_pEntityList->FirstHandle();
+            //CBaseEntity* entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
             if (hEntity.IsValid()) { Msg("Entitity is valid\n"); } else { Msg("Entitity is not valid\n"); }
-            int i = 1;
+            /* int i = 1;
             while (entity != nullptr) {
                 Msg("classname: %s\n", entity->GetClassname());
                 if (strcmp(entity->GetClassname(), classname) == 0) {
@@ -78,7 +78,7 @@ LUA_FUNCTION(ents_FindByClass)
                 }
                 hEntity = g_pEntityList->NextHandle(hEntity);
                 entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
-            }
+            } */
 
             Msg("entity listr, i = %i\n", i);
 
