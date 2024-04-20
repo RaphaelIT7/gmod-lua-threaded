@@ -80,7 +80,7 @@ LUA_FUNCTION(ents_FindByClass)
                 entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
             } */
 
-            Msg("entity listr, i = %i\n", i);
+            //Msg("entity listr, i = %i\n", i);
 
             return 1;
         }
