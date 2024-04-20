@@ -64,8 +64,8 @@ LUA_FUNCTION(ents_FindByClass)
         const char* classname = LUA->GetString(1);
 
         if (g_pEntityList != nullptr) {
-            CBaseHandle hEntity = g_pEntityList->FirstHandle();
-            EHANDLE entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
+            CBaseHandle<CBaseEntity> hEntity = g_pEntityList->FirstHandle();
+            CBaseEntity* entity = dynamic_cast<CBaseEntity*>(hEntity.Get());
             int i = 1;
             while (entity != nullptr) {
                 Msg("classname: %s\n", entity->GetClassname());
