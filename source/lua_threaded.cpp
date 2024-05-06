@@ -40,11 +40,11 @@ GMOD_MODULE_OPEN()
 		LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 			LUA->GetField(-1, "VERSION");
 			GMOD->version = LUA->GetNumber(-1);
-			LUA->Pop();
+			LUA->Pop(1);
 		
 			LUA->GetField(-1, "VERSIONSTR");
 			GMOD->versionstr = LUA->GetString(-1);
-			LUA->Pop();
+			LUA->Pop(1);
 
 			LUA->GetField(-1, "BRANCH");
 			GMOD->branch = LUA->GetString(-1);

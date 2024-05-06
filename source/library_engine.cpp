@@ -147,7 +147,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 		SafeDelete(GMOD->usercontent);
 	}
 
-	Msg("Top: %i\n", LUA->Top());
 	if (PushEngineFunction(LUA, "GetAddons"))
 	{
 		LUA->CallFunctionProtected(0, 1, true);
@@ -156,7 +155,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 		FillValue(LUA, GMOD->addons, -1, LUA->GetType(-1));
 	}
 
-	Msg("Top: %i\n", LUA->Top());
 	if (PushEngineFunction(LUA, "GetGames"))
 	{
 		LUA->CallFunctionProtected(0, 1, true);
@@ -165,7 +163,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 		FillValue(LUA, GMOD->games, -1, LUA->GetType(-1));
 	}
 
-	Msg("Top: %i\n", LUA->Top());
 	if (PushEngineFunction(LUA, "GetGamemodes"))
 	{
 		LUA->CallFunctionProtected(0, 1, true);
@@ -174,7 +171,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 		FillValue(LUA, GMOD->gamemodes, -1, LUA->GetType(-1));
 	}
 
-	Msg("Top: %i\n", LUA->Top());
 	if (PushEngineFunction(LUA, "GetUserContent"))
 	{
 		LUA->CallFunctionProtected(0, 1, true);
@@ -183,7 +179,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 		FillValue(LUA, GMOD->usercontent, -1, LUA->GetType(-1));
 	}
 
-	Msg("Top: %i\n", LUA->Top());
 	if (PushEngineFunction(LUA, "ActiveGamemode"))
 	{
 		LUA->CallFunctionProtected(0, 1, true);
@@ -191,7 +186,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 		GMOD->active_gamemode = LUA->GetString(-1);
 		LUA->Pop(1);
 	}
-	Msg("Top: %i\n", LUA->Top());
 }
 
 void InitEngine(GarrysMod::Lua::ILuaInterface* LUA)
