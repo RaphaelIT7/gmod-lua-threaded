@@ -1,8 +1,10 @@
 #include "detours.h"
 #include <GarrysMod/ModuleLoader.hpp>
 #include <scanning/symbolfinder.hpp>
+#include <detouring/hook.hpp>
 #include <GarrysMod/InterfacePointers.hpp>
 #include <GarrysMod/Symbols.hpp>
+#include <unordered_map>
 
 CreateLuaInterface func_CreateLuaInterface;
 CloseLuaInterface func_CloseLuaInterface;
@@ -38,14 +40,6 @@ CLuaGameCallback_Msg func_CLuaGameCallback_Msg;
 CLuaGameCallback_MsgColour func_CLuaGameCallback_MsgColour;
 
 IFileSystem* gpFileSystem;
-
-template<class T>
-void CheckFunction(T func, const char* name)
-{
-	if (func == nullptr) {
-		Msg("Could not locate %s symbol!\n", name);
-	}
-}
 
 SymbolFinder symfinder;
 void* FindFunction(void* loader, Symbol symbol)
@@ -97,12 +91,50 @@ void* GetFunction(SourceSDK::ModuleLoader loader, const char* name, std::vector<
 	return func;
 }
 
+std::unordered_map<void*, DoStackCheckCallback> stackcheck_callback;
+void AddStackCheckCallback(void* key, DoStackCheckCallback func)
+{
+	stackcheck_callback[key] = func;
+}
+
+void RemoveStackCheckCallback(void* key)
+{
+	stackcheck_callback.erase(key);
+}
+
+std::vector<Detouring::Hook*> detours = {};
+void CreateDetour(Detouring::Hook* hook, const char* name, void* module, Symbol symbol, void* hook_func)
+{
+	void* func = symfinder.Resolve(module, symbol.name.c_str(), symbol.length);
+	if (!CheckFunction(func, name))
+		return;
+
+	hook->Create(func, hook_func);
+	hook->Enable();
+
+	detours.push_back(hook);
+
+	if (!hook->IsValid()) {
+		Msg("Failed to detour %s!\n", name);
+	}
+}
+
+Detouring::Hook detour_CLuaInterface_DoStackCheck;
+void hook_CLuaInterface_DoStackCheck(void* iface)
+{
+	if (stackcheck_callback.find(iface) != stackcheck_callback.end())
+		stackcheck_callback[iface](iface);
+
+	detour_CLuaInterface_DoStackCheck.GetTrampoline<CLuaInterface_DoStackCheck>()(iface);
+}
+
 
 void Symbols_Init() 
 {
 	gpFileSystem = InterfacePointers::FileSystemServer();
 
 	SourceSDK::ModuleLoader lua_shared_loader("lua_shared");
+	CreateDetour(&detour_CLuaInterface_DoStackCheck, "CLuaInterface::DoStackCheck", lua_shared_loader.GetModule(), CLuaInterface_DoStackCheckSym, (void*)hook_CLuaInterface_DoStackCheck);
 
 	func_CreateLuaInterface = (CreateLuaInterface)FindFunction(lua_shared_loader.GetModule(), CreateLuaInterfaceSym);
 	CheckFunction(func_CreateLuaInterface, "CreateLuaInterface");

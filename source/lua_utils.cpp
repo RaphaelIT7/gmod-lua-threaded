@@ -204,6 +204,35 @@ LUA_FUNCTION(LuaPanic)
 	return 0;
 }
 
+std::unordered_map<void*, std::unordered_map<std::string, int>> references;
+void SafeOurFunnies(void* lua)
+{
+	GarrysMod::Lua::ILuaInterface* IFace = (GarrysMod::Lua::ILuaInterface*)lua;
+	std::unordered_map<std::string, int> refs;
+
+	IFace->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+		IFace->GetField(-1, "debug");
+		if (IFace->IsType(-1, GarrysMod::Lua::Type::Table))
+		{
+			IFace->GetField(-1, "setlocal");
+			refs["setlocal"] = IFace->ReferenceCreate();
+
+			IFace->GetField(-1, "setupvalue");
+			refs["setupvalue"] = IFace->ReferenceCreate();
+
+			IFace->GetField(-1, "upvalueid");
+			refs["upvalueid"] = IFace->ReferenceCreate();
+
+			IFace->GetField(-1, "upvaluejoin");
+			refs["upvaluejoin"] = IFace->ReferenceCreate();
+		} else {
+			Msg("[LuaThreaded] debug table doesn't seem to exist for ILuaInterface?\n");
+		}
+	IFace->Pop(2);
+
+	references[lua] = refs;
+}
+
 GarrysMod::Lua::ILuaInterface* CreateInterface()
 {
 #ifdef SYSTEM_WINDOWS
@@ -212,7 +241,30 @@ GarrysMod::Lua::ILuaInterface* CreateInterface()
 	GarrysMod::Lua::ILuaInterface* IFace = func_CreateLuaInterface(true);
 #endif
 	// new CLuaGameCallback()
+	AddStackCheckCallback(IFace, SafeOurFunnies);
 	IFace->Init(GMOD->gamecallback, true); // We should call it but we do everything manually. NOTE: We don't "cache" all strings. Gmod pushes all hooks in the Init
+	RemoveStackCheckCallback(IFace);
+
+	if (references.find(IFace) != references.end())
+	{
+		IFace->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+			IFace->GetField(-1, "debug");
+			if (IFace->IsType(-1, GarrysMod::Lua::Type::Table))
+			{
+				std::unordered_map<std::string, int> refs = references[IFace];
+				for (auto&[key, value] : refs)
+				{
+					IFace->PushString(key.c_str());
+					IFace->ReferencePush(value);
+					IFace->SetTable(-3);
+				}
+			} else {
+				Msg("[LuaThreaded] debug table doesn't seem to exist for ILuaInterface?\n");
+			}
+		IFace->Pop(2);
+	} else {
+		Msg("[LuaThreaded] Our Callback wasn't called?\n");
+	}
 
 #ifndef SYSTEM_WINDOWS
 	//lua_State* state = func_luaL_newstate();
