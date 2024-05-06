@@ -7,7 +7,7 @@ static const char table_name[] = "File_object";
 
 void Push_File(GarrysMod::Lua::ILuaBase* LUA, const char* filename, const char* fileMode, const char* path)
 {
-	LUA_File* udata = (LUA_File*)LUA->NewUserdata(sizeof(LUA_File));
+	LUA_File* udata = LUA->NewUserType<LUA_File>(metatype);
 	udata->filename = filename;
 	udata->fileMode = fileMode;
 	udata->path = path;

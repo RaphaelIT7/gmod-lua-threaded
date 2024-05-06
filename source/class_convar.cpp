@@ -7,7 +7,7 @@ static const char table_name[] = "ConVar_object";
 
 void Push_ConVar(GarrysMod::Lua::ILuaBase* LUA, ConVar* convar)
 {
-	LUA_ConVar* udata = (LUA_ConVar*)LUA->NewUserdata(sizeof(LUA_ConVar));
+	LUA_ConVar* udata = LUA->NewUserType<LUA_ConVar>(metatype);
 	udata->cvar = convar;
 
 	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;

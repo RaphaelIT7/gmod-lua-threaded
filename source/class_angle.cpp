@@ -7,7 +7,7 @@ static const char table_name[] = "Angle_object";
 
 void Push_Angle(GarrysMod::Lua::ILuaBase* LUA, int pitch, int yaw, int roll)
 {
-	LUA_Angle* udata = (LUA_Angle*)LUA->NewUserdata(sizeof(LUA_Angle));
+	LUA_Angle* udata = LUA->NewUserType<LUA_Angle>(metatype);
 	udata->x = pitch;
 	udata->y = yaw;
 	udata->z = roll;

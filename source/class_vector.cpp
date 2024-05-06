@@ -8,7 +8,7 @@ static const char table_name[] = "Vector_object";
 
 void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, float x, float y, float z)
 {
-	LUA_Vector* udata = (LUA_Vector*)LUA->NewUserdata(sizeof(LUA_Vector));
+	LUA_Vector* udata = LUA->NewUserType<LUA_Vector>(metatype);
 	udata->x = x;
 	udata->y = y;
 	udata->z = z;
