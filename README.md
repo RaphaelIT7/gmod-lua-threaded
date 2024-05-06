@@ -29,7 +29,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] engine  
 - [x] gameevent  
 - [x] file  
-- [x] debug  
+- [x] debug (Also `setlocal`, `setupvalue`, `upvalueid` and `upvaluejoin` exists)  
 
 #### Unfinished/Untested
 - [x] physenv (Mostly implemented)  
