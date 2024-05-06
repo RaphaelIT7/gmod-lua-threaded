@@ -288,7 +288,7 @@ LUA_FUNCTION(Global_Msg)
 			ss << arg_str;
 		} else {
 			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
-				LUA->GetField(1, "tostring");
+				LUA->GetField(-1, "tostring");
 				if (LUA->IsType(-1, GarrysMod::Lua::Type::Function))
 				{
 					LUA->Push(i);
