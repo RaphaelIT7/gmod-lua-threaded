@@ -41,36 +41,13 @@ void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, Vector vec)
 
 void Vector_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData))
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::Vector))
 		LUA->TypeError(index, metaname);
-}
-
-bool IsVector(GarrysMod::Lua::ILuaBase* LUA, int index)
-{
-	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
-	{
-		LUA->GetMetaTable(index);
-		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
-		{
-			if (strcmp(LUA->GetString(-1), metaname))
-			{
-				LUA->Pop(2);
-				return true;
-			} else {
-				LUA->Pop(2);
-			}
-		} else {
-			LUA->Pop(2);
-		}
-	}
-
-	return false;
 }
 
 LUA_Vector* Vector_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
-	return (LUA_Vector*)LUA->GetUserdata(index);
+	return LUA->GetUserType<LUA_Vector>(index, metatype);
 }
 
 LUA_Vector* Vector_Get(GarrysMod::Lua::ILuaBase* LUA, int index)

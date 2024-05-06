@@ -17,38 +17,15 @@ void Push_ConVar(GarrysMod::Lua::ILuaBase* LUA, ConVar* convar)
 	LUA->SetMetaTable(-2);
 }
 
-bool IsConVar(GarrysMod::Lua::ILuaBase* LUA, int index)
-{
-	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
-	{
-		LUA->GetMetaTable(index);
-		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
-		{
-			if (strcmp(LUA->GetString(-1), metaname))
-			{
-				LUA->Pop(2);
-				return true;
-			} else {
-				LUA->Pop(2);
-			}
-		} else {
-			LUA->Pop(2);
-		}
-	}
-
-	return false;
-}
-
 void ConVar_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData)) // ToDo: Make a better check.
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::ConVar)) // ToDo: Make a better check.
 		LUA->TypeError(index, metaname);
 }
 
 LUA_ConVar* ConVar_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
-	return (LUA_ConVar*)LUA->GetUserdata(index);
+	return LUA->GetUserType<LUA_ConVar>(index, metatype);
 }
 
 LUA_ConVar* ConVar_Get(GarrysMod::Lua::ILuaBase* LUA, int index, bool error)

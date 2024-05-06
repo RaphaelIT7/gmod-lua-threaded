@@ -209,7 +209,7 @@ LUA_FUNCTION(AddCSLuaFile) // Implemented so that Gmod won't complain. ToDo: How
 
 LUA_FUNCTION(isangle)
 {
-	LUA->PushBool(IsAngle(LUA, 1));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Angle));
 
 	return 1;
 }
@@ -272,7 +272,7 @@ LUA_FUNCTION(istable)
 
 LUA_FUNCTION(isvector)
 {
-	LUA->PushBool(IsVector(LUA, 1));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Vector));
 
 	return 1;
 }

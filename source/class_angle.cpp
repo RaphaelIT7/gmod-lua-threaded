@@ -23,7 +23,7 @@ void Push_Angle(GarrysMod::Lua::ILuaBase* LUA, QAngle ang)
 
 void Angle_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData))
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::Angle))
 		LUA->TypeError(index, metaname);
 }
 
@@ -52,7 +52,7 @@ bool IsAngle(GarrysMod::Lua::ILuaBase* LUA, int index)
 
 LUA_Angle* Angle_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
-	return (LUA_Angle*)LUA->GetUserdata(index);
+	return LUA->GetUserType<LUA_Angle>(index, metatype);
 }
 
 LUA_Angle* Angle_Get(GarrysMod::Lua::ILuaBase* LUA, int index)
