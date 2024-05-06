@@ -90,6 +90,9 @@ local code = [[local ret, err = pcall(function()
 	print("==== Shared Table ====")
 	PrintTable(LuaThreaded.GetValue("example"))
 
+	print("==== Debug Library ====")
+	PrintTable(debug)
+
 	error("Error handling test")
 end)
 
