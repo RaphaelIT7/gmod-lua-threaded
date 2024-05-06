@@ -295,7 +295,12 @@ LUA_FUNCTION(Global_Msg)
 					LUA->Call(1, 1);
 					const char* str = LUA->GetString(-1);
 					if (str != NULL)
+					{
 						ss << str;
+						ss << "\n";
+					} else {
+						Msg("[LuaThreaded] tostring failed?\n");
+					}
 
 					LUA->Pop(1);
 				} else {
@@ -304,8 +309,6 @@ LUA_FUNCTION(Global_Msg)
 			LUA->Pop(2);
 		}
 	}
-
-	ss << "\n";
 
 	Msg(ss.str().c_str());
 
