@@ -289,11 +289,14 @@ LUA_FUNCTION(Global_Msg)
 		} else {
 			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 				LUA->GetField(1, "tostring");
-				if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
+				if (LUA->IsType(-1, GarrysMod::Lua::Type::Function))
 				{
 					LUA->Push(i);
 					LUA->Call(1, 1);
-					ss << LUA->GetString(-1);
+					const char* str = LUA->GetString(-1);
+					if (str != NULL)
+						ss << str;
+
 					LUA->Pop(1);
 				} else {
 					Msg("[LuaThreaded] Please don't nuke tostring. It's needed by Msg for now\n");
