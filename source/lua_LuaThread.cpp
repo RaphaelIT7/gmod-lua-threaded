@@ -113,6 +113,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 			{
 				SafeDelete(sKey);
 				SafeDelete(sVal);
+				break;
 			}
 		}
 		shared_table_mutex.Unlock();
@@ -121,10 +122,28 @@ LUA_FUNCTION(LuaThread_SetValue)
 		return 0;
 	}
 
-	ILuaValue* val = new ILuaValue;
+	ILuaValue* original_key = nullptr;
+	ILuaValue* original_value = nullptr;
+	shared_table_mutex.Lock();
+	for (auto& [sKey, sVal] : shared_table)
+	{
+		if (EqualValue(key, sKey))
+		{
+			original_key = sKey;
+			original_value = sVal;
+			break;
+		}
+	}
+
+	if (original_key)
+	{
+		delete key;
+		key = original_key;
+	}
+
+	ILuaValue* val = original_value ? original_value : new ILuaValue;
 	FillValue(LUA, val, 2, type);
 
-	shared_table_mutex.Lock();
 	shared_table[key] = val;
 	shared_table_mutex.Unlock();
 
