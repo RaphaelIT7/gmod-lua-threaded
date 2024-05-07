@@ -131,6 +131,9 @@ LUA_FUNCTION(LuaThread_SetValue)
 	{
 		delete key;
 		key = original_key;
+		Msg("Found the original key.\n");
+	} else {
+		Msg("Didn't find the original key.\n");
 	}
 
 	ILuaValue* val = original_value ? original_value : new ILuaValue;
