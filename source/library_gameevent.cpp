@@ -29,7 +29,7 @@ ILuaValue* GetString(IGameEvent* event, const char* pKey)
 {
 	ILuaValue* val = new ILuaValue;
 	val->type = GarrysMod::Lua::Type::String;
-	val->string = event->GetString(pKey);
+	val->data = (void*)event->GetString(pKey);
 
 	return val;
 }

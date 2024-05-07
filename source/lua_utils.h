@@ -137,16 +137,18 @@ struct ILuaValue
 struct ILuaValueHash {
     std::size_t operator()(ILuaValue* obj) const {
         std::size_t hash = std::hash<int>()(obj->type);
+		QAngle* ang;
+		Vector* vec;
 		switch(obj->type)
 		{
 			case GarrysMod::Lua::Type::Angle:
-				QAngle* ang = (QAngle*)obj->data;
+				ang = (QAngle*)obj->data;
 				hash ^= std::hash<float>()(ang->x);
 				hash ^= std::hash<float>()(ang->y);
 				hash ^= std::hash<float>()(ang->z);
 				break;
 			case GarrysMod::Lua::Type::Vector:
-				Vector* vec = (Vector*)obj->data;
+				vec = (Vector*)obj->data;
 				hash ^= std::hash<float>()(vec->x);
 				hash ^= std::hash<float>()(vec->y);
 				hash ^= std::hash<float>()(vec->z);
@@ -165,6 +167,9 @@ struct ILuaValueHash {
 				break;
 			case GarrysMod::Lua::Type::File:
 				hash ^= std::hash<void*>()(obj->data);
+				break;
+			default:
+				Msg("Warning! Unknown type for hash! %i\n", obj->type);
 				break;
 		}
 

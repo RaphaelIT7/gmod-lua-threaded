@@ -2875,7 +2875,7 @@ void InitEnums(GarrysMod::Lua::ILuaInterface* LUA)
 		} else if (type == GarrysMod::Lua::Type::String)
 		{
 			val->type = type;
-			val->string = LUA->GetString(-1);
+			val->data = (void*)LUA->GetString(-1);
 		} else {
 			Msg("Unhanded Enum Type! Enums: %s %i\n", gmod_enum.c_str(), type);
 		}
