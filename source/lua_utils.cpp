@@ -26,7 +26,7 @@ std::unordered_map<double, ILuaThread*> interfaces;
 
 int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
-std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
+std::unordered_map<ILuaValue*, ILuaValue*, ILuaValueHash> shared_table;
 
 void PushFile(GarrysMod::Lua::ILuaBase* LUA, LUA_File* file)
 {

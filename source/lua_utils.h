@@ -134,7 +134,10 @@ struct ILuaValue
 	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 	float x, y, z;
 	void* data = nullptr; // Used for LUA_File
+};
 
+struct ILuaValueHash
+{
 	std::size_t operator()(ILuaValue* obj) const {
         std::size_t hash = std::hash<int>()(obj->type);
 		QAngle* ang;
@@ -276,7 +279,7 @@ extern std::unordered_map<double, ILuaThread*> interfaces;
 
 extern int shared_table_reference;
 extern CThreadFastMutex shared_table_mutex;
-extern std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
+extern std::unordered_map<ILuaValue*, ILuaValue*, ILuaValueHash> shared_table;
 
 extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
