@@ -78,6 +78,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [ ] Look again into Error handling. Maybe show which file had an error?
 
 ### Bugs
+- [ ] Fix a memory leak related to LuaThreaded.SetValue not reusing the original key and value.  
 - [ ] File:Seek seems to have some issues?
 - [ ] Requiring this module befor InitPostEntity was called causes a bunch of weird bugs.
 See [LuaThreaded.ReadyThreads()](https://github.com/RaphaelIT7/gmod-lua-threaded?tab=readme-ov-file#luathreadedreadythreads) for the implemented workaround.
