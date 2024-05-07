@@ -44,7 +44,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			LUA->PushBool(value->number == 1);
 			break;
 		case GarrysMod::Lua::Type::STRING:
-			LUA->PushString((const char*)value->data);
+			LUA->PushString(value->string);
 			break;
 		case GarrysMod::Lua::Type::ENTITY:
 			/*
@@ -57,10 +57,10 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			*/
 			break;
 		case GarrysMod::Lua::Type::VECTOR:
-			Push_Vector(LUA, (const Vector&)value->data);
+			Push_Vector(LUA, Vector(value->x, value->y, value->z));
 			break;
 		case GarrysMod::Lua::Type::ANGLE:
-			Push_Angle(LUA, (const QAngle&)value->data);
+			Push_Angle(LUA, QAngle(value->x, value->y, value->z));
 			break;
 		case GarrysMod::Lua::Type::File:
 			if (ThreadInMainThread()) // We cannot push a File from a our module to GMod.
@@ -93,7 +93,7 @@ void SafeDelete(ILuaValue* value)
 		SafeDelete(val);
 	}
 
-	if (value->data != nullptr && value->type != GarrysMod::Lua::Type::String) // Lua manages the strings itself.
+	if (value->data != nullptr)
 		delete value->data;
 
 	delete value;
@@ -112,7 +112,7 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 	} else if (type == GarrysMod::Lua::Type::String)
 	{
 		val->type = type;
-		val->data = (void*)LUA->GetString(iStackPos);
+		val->string = LUA->GetString(iStackPos);
 	} else if (type == GarrysMod::Lua::Type::Entity)
 	{
 		//val->type = type;
@@ -120,13 +120,33 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 	} else if (type == GarrysMod::Lua::Type::Vector)
 	{
 		val->type = type;
-		LUA_Vector* vec = Vector_Get(LUA, iStackPos);
-		val->data = new Vector(vec->x, vec->y, vec->z);
+		if (ThreadInMainThread())
+		{
+			const Vector& vec = LUA->GetVector(iStackPos);
+			val->x = vec.x;
+			val->y = vec.y;
+			val->z = vec.z;
+		} else {
+			LUA_Vector* vec = Vector_Get(LUA, iStackPos);
+			val->x = vec->x;
+			val->y = vec->y;
+			val->z = vec->z;
+		}
 	} else if (type == GarrysMod::Lua::Type::Angle)
 	{
 		val->type = type;
-		LUA_Angle* ang = Angle_Get(LUA, iStackPos);
-		val->data = new QAngle(ang->x, ang->y, ang->z);
+		if (ThreadInMainThread())
+		{
+			const QAngle& ang = LUA->GetAngle(iStackPos);
+			val->x = ang.x;
+			val->y = ang.y;
+			val->z = ang.z;
+		} else {
+			LUA_Angle* ang = Angle_Get(LUA, iStackPos);
+			val->x = ang->x;
+			val->y = ang->y;
+			val->z = ang->z;
+		}
 	} else if (type == GarrysMod::Lua::Type::Table)
 	{
 		val->type = type;
@@ -331,7 +351,7 @@ ILuaValue* CreateValue(const char* value)
 {
 	ILuaValue* val = new ILuaValue;
 	val->type = GarrysMod::Lua::Type::String;
-	val->data = (void*)value;
+	val->string = value;
 
 	return val;
 }
@@ -341,5 +361,33 @@ bool EqualValue(ILuaValue* val1, ILuaValue* val2)
 	if (val1->type != val2->type)
 		return false;
 
-	return ILuaValueHash()(val1) == ILuaValueHash()(val2);
+	bool same = false;
+	switch(val1->type)
+	{
+		case GarrysMod::Lua::Type::NUMBER:
+			same = val1->number == val2->number;
+			break;
+		case GarrysMod::Lua::Type::BOOL:
+			same = val1->number == val2->number;
+			break;
+		case GarrysMod::Lua::Type::STRING:
+			same = strcmp(val1->string, val2->string) == 0;
+			break;
+		case GarrysMod::Lua::Type::ENTITY: // ToDo
+			break;
+		case GarrysMod::Lua::Type::VECTOR:
+			same = val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
+			break;
+		case GarrysMod::Lua::Type::ANGLE:
+			same = val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
+			break;
+		case GarrysMod::Lua::Type::File: // ToDo
+			break;
+		case GarrysMod::Lua::Type::Table: // ToDo
+			break;
+		default:
+			break;
+	}
+
+	return same;
 }

@@ -130,8 +130,10 @@ struct ILuaValue
 	unsigned char type = -1;
 
 	double number = -1;
+	const char* string = "";
 	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
-	void* data = nullptr; // Used for LUA_File, Vector, QAngle and Strings
+	float x, y, z;
+	void* data = nullptr; // Used for LUA_File
 };
 
 struct ILuaValueHash {
