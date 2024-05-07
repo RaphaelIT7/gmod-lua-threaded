@@ -26,7 +26,7 @@ std::unordered_map<double, ILuaThread*> interfaces;
 
 int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
-std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
+std::unordered_map<ILuaValue*, ILuaValue*, ILuaValueHash> shared_table;
 
 void PushFile(GarrysMod::Lua::ILuaBase* LUA, LUA_File* file)
 {
@@ -44,7 +44,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			LUA->PushBool(value->number == 1);
 			break;
 		case GarrysMod::Lua::Type::STRING:
-			LUA->PushString(value->string);
+			LUA->PushString((const char*)value->data);
 			break;
 		case GarrysMod::Lua::Type::ENTITY:
 			/*
@@ -57,10 +57,10 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			*/
 			break;
 		case GarrysMod::Lua::Type::VECTOR:
-			Push_Vector(LUA, value->vec);
+			Push_Vector(LUA, (const Vector&)value->data);
 			break;
 		case GarrysMod::Lua::Type::ANGLE:
-			Push_Angle(LUA, value->ang);
+			Push_Angle(LUA, (const QAngle&)value->data);
 			break;
 		case GarrysMod::Lua::Type::File:
 			if (ThreadInMainThread()) // We cannot push a File from a our module to GMod.
@@ -69,7 +69,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 				break;
 			}
 
-			PushFile(LUA, (LUA_File*)value->otherstuff);
+			PushFile(LUA, (LUA_File*)value->data);
 			break;
 		case GarrysMod::Lua::Type::Table:
 			LUA->CreateTable();
@@ -93,8 +93,8 @@ void SafeDelete(ILuaValue* value)
 		SafeDelete(val);
 	}
 
-	if (value->otherstuff != nullptr)
-		delete value->otherstuff;
+	if (value->data != nullptr && value->type != GarrysMod::Lua::Type::String) // Lua manages the strings itself.
+		delete value->data;
 
 	delete value;
 }
@@ -112,7 +112,7 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 	} else if (type == GarrysMod::Lua::Type::String)
 	{
 		val->type = type;
-		val->string = LUA->GetString(iStackPos);
+		val->data = (void*)LUA->GetString(iStackPos);
 	} else if (type == GarrysMod::Lua::Type::Entity)
 	{
 		//val->type = type;
@@ -120,23 +120,13 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 	} else if (type == GarrysMod::Lua::Type::Vector)
 	{
 		val->type = type;
-		if (ThreadInMainThread())
-		{
-			val->vec = LUA->GetVector(iStackPos);
-		} else {
-			LUA_Vector* vec = Vector_Get(LUA, iStackPos);
-			val->vec = Vector(vec->x, vec->y, vec->z);
-		}
+		LUA_Vector* vec = Vector_Get(LUA, iStackPos);
+		val->data = new Vector(vec->x, vec->y, vec->z);
 	} else if (type == GarrysMod::Lua::Type::Angle)
 	{
 		val->type = type;
-		if (ThreadInMainThread())
-		{
-			val->ang = LUA->GetAngle(iStackPos);
-		} else {
-			LUA_Angle* ang = Angle_Get(LUA, iStackPos);
-			val->ang = QAngle(ang->x, ang->y, ang->z);
-		}
+		LUA_Angle* ang = Angle_Get(LUA, iStackPos);
+		val->data = new QAngle(ang->x, ang->y, ang->z);
 	} else if (type == GarrysMod::Lua::Type::Table)
 	{
 		val->type = type;
@@ -174,7 +164,7 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 		copy->path = file->path;
 		//copy->handle = file->handle // Should we really share the handle?
 		val->type = type;
-		val->otherstuff = copy;
+		val->data = copy;
 	}
 }
 
@@ -341,7 +331,7 @@ ILuaValue* CreateValue(const char* value)
 {
 	ILuaValue* val = new ILuaValue;
 	val->type = GarrysMod::Lua::Type::String;
-	val->string = value;
+	val->data = (void*)value;
 
 	return val;
 }
@@ -351,33 +341,5 @@ bool EqualValue(ILuaValue* val1, ILuaValue* val2)
 	if (val1->type != val2->type)
 		return false;
 
-	bool same = false;
-	switch(val1->type)
-	{
-		case GarrysMod::Lua::Type::NUMBER:
-			same = val1->number == val2->number;
-			break;
-		case GarrysMod::Lua::Type::BOOL:
-			same = val1->number == val2->number;
-			break;
-		case GarrysMod::Lua::Type::STRING:
-			same = strcmp(val1->string, val2->string) == 0;
-			break;
-		case GarrysMod::Lua::Type::ENTITY: // ToDo
-			break;
-		case GarrysMod::Lua::Type::VECTOR:
-			same = val1->vec == val2->vec;
-			break;
-		case GarrysMod::Lua::Type::ANGLE:
-			same = val1->ang == val2->ang;
-			break;
-		case GarrysMod::Lua::Type::File: // ToDo
-			break;
-		case GarrysMod::Lua::Type::Table: // ToDo
-			break;
-		default:
-			break;
-	}
-
-	return same;
+	return ILuaValueHash()(val1) == ILuaValueHash()(val2);
 }

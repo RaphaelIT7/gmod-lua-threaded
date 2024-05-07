@@ -127,14 +127,49 @@ enum LuaAction
 
 struct ILuaValue
 {
-	int type = -1;
+	unsigned char type = -1;
 
 	double number = -1;
-	const char* string = "";
 	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
-	Vector vec;
-	QAngle ang;
-	void* otherstuff = nullptr; // Can be used for LUA_File as an example. Use Copies as everything will be deleted.
+	void* data = nullptr; // Used for LUA_File, Vector, QAngle and Strings
+};
+
+struct ILuaValueHash {
+    std::size_t operator()(ILuaValue* obj) const {
+        std::size_t hash = std::hash<int>()(obj->type);
+		switch(obj->type)
+		{
+			case GarrysMod::Lua::Type::Angle:
+				QAngle* ang = (QAngle*)obj->data;
+				hash ^= std::hash<float>()(ang->x);
+				hash ^= std::hash<float>()(ang->y);
+				hash ^= std::hash<float>()(ang->z);
+				break;
+			case GarrysMod::Lua::Type::Vector:
+				Vector* vec = (Vector*)obj->data;
+				hash ^= std::hash<float>()(vec->x);
+				hash ^= std::hash<float>()(vec->y);
+				hash ^= std::hash<float>()(vec->z);
+				break;
+			case GarrysMod::Lua::Type::String:
+				hash ^= std::hash<const char*>()((const char*)obj->data);
+				break;
+			case GarrysMod::Lua::Type::Table:
+				// ToDo
+				break;
+			case GarrysMod::Lua::Type::Number:
+				hash ^= std::hash<double>()(obj->number);
+				break;
+			case GarrysMod::Lua::Type::Bool:
+				hash ^= std::hash<bool>()(obj->number == 1);
+				break;
+			case GarrysMod::Lua::Type::File:
+				hash ^= std::hash<void*>()(obj->data);
+				break;
+		}
+
+        return hash;
+    }
 };
 
 struct ILuaAction
@@ -236,7 +271,7 @@ extern std::unordered_map<double, ILuaThread*> interfaces;
 
 extern int shared_table_reference;
 extern CThreadFastMutex shared_table_mutex;
-extern std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
+extern std::unordered_map<ILuaValue*, ILuaValue*, ILuaValueHash> shared_table;
 
 extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);

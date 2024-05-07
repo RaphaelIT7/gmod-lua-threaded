@@ -3,8 +3,8 @@
 
 LUA_FUNCTION(game_AddDecal)
 {
-	const char* decalName = LUA->CheckString(1);
-	const char* materialName = LUA->CheckString(2);
+	//const char* decalName = LUA->CheckString(1);
+	//const char* materialName = LUA->CheckString(2);
 
 	// ToDo: How does this even work
 
