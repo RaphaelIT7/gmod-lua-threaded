@@ -138,7 +138,7 @@ struct ILuaValue
 
 struct ILuaValueHash
 {
-	std::size_t operator()(ILuaValue* obj) const {
+	std::size_t operator()(const ILuaValue* obj) const {
         std::size_t hash = std::hash<int>()(obj->type);
 		QAngle* ang;
 		Vector* vec;
