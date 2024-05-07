@@ -301,6 +301,7 @@ void InitConVarClass(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, ConVar_GetDefault, "GetDefault");
 		Add_Func(LUA, ConVar_GetFlags, "GetFlags");
 		Add_Func(LUA, ConVar_GetHelpText, "GetHelpText");
+		Add_Func(LUA, ConVar_GetFloat, "GetFloat");
 		Add_Func(LUA, ConVar_GetInt, "GetInt");
 		Add_Func(LUA, ConVar_GetMax, "GetMax");
 		Add_Func(LUA, ConVar_GetMin, "GetMin");

@@ -27,7 +27,7 @@ LUA_FUNCTION(game_AddParticles)
 
 LUA_FUNCTION(game_CleanUpMap)
 {
-	bool dontSendToClients = LUA->GetBool(1);
+	//bool dontSendToClients = LUA->GetBool(1);
 	/* second arg: table -> entity filter
 	// third arg: callback function
 
@@ -212,7 +212,7 @@ LUA_FUNCTION(game_GetAmmoTypes)
 
 LUA_FUNCTION(game_GetGlobalCounter)
 {
-	const char* name = LUA->CheckString(1);
+	//const char* name = LUA->CheckString(1);
 
 	// ToDo
 
@@ -221,7 +221,7 @@ LUA_FUNCTION(game_GetGlobalCounter)
 
 LUA_FUNCTION(game_GetGlobalState)
 {
-	const char* name = LUA->CheckString(1);
+	//const char* name = LUA->CheckString(1);
 
 	// ToDo
 

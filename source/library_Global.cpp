@@ -152,7 +152,8 @@ LUA_FUNCTION(CreateConVar)
 	if (LUA->IsType(3, GarrysMod::Lua::Type::Number)) {
 		flags = LUA->CheckNumber(3);
 	} else if (LUA->IsType(3, GarrysMod::Lua::Type::Table)) {
-		flags = 131072; // Seems to always be FCVAR_DONTRECORD
+		GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+		flags = LLUA->GetFlags(3); // Seems to always be FCVAR_DONTRECORD
 	} else {
 		LUA->ArgError(3, ((std::string)"number expected, got " + LUA->GetTypeName(LUA->GetType(3))).c_str()); // ToDo: Make it better someday.
 	}
@@ -169,7 +170,7 @@ LUA_FUNCTION(CreateConVar)
 		}
 	}
 
-	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", 1); // Crashes for unknown reasons
+	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", flags); // Crashes for unknown reasons
 	// ToDo: Add support for min & max
 
 	Push_ConVar(LUA, cvar);
