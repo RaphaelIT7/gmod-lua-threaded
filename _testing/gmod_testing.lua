@@ -119,6 +119,24 @@ local ret, err = pcall(function()
 	iFace:RunFile("includes/init.lua")
 	iFace:RunString(code)
 	iFace:RunHook("ExampleHook", "ExampleArg", 1234, true, Vector(1, 2, 3), Angle(4, 5, 6))
+
+	local startTime = SysTime()
+	for k=1, 100000 do 
+		LuaThreaded.SetValue(k, "Some Random String")
+	end
+	local endTime = SysTime()
+	print("Added 100.000 keys in " .. endTime - startTime .. "s")
+
+	local startTime = SysTime()
+	for k=1, 100000 do 
+		LuaThreaded.SetValue(k, nil)
+	end
+	local endTime = SysTime()
+	print("Removed 100.000 keys in " .. endTime - startTime .. "s")
+
+	if LuaThreaded.GetValue(1000) != nil then
+		error("LuaThreaded.SetValue failed! Investigate!")
+	end
 end)
 
 if err then
