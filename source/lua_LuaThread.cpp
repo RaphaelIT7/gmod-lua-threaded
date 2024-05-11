@@ -141,13 +141,13 @@ LUA_FUNCTION(LuaThread_SetValue)
 	if (original_key)
 	{
 		delete key;
-		key = original_key;
+		FillValue(LUA, original_value, 2, type);
+	} else {
+		ILuaValue* val = new ILuaValue;
+		FillValue(LUA, val, 2, type);
+
+		shared_table[key] = val;
 	}
-
-	ILuaValue* val = original_value ? original_value : new ILuaValue;
-	FillValue(LUA, val, 2, type);
-
-	shared_table[key] = val;
 	shared_table_mutex.Unlock();
 
 	return 0;

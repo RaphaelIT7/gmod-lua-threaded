@@ -123,6 +123,13 @@ local ret, err = pcall(function()
 
 	local startTime = SysTime()
 	for k=1, 100000 do 
+		LuaThreaded.SetValue(k, "A new String")
+	end
+	local endTime = SysTime()
+	print("Updating 100.000 keys in " .. endTime - startTime .. "s")
+
+	local startTime = SysTime()
+	for k=1, 100000 do 
 		LuaThreaded.SetValue(k, nil)
 	end
 	local endTime = SysTime()
