@@ -136,50 +136,6 @@ struct ILuaValue
 	void* data = nullptr; // Used for LUA_File
 };
 
-struct ILuaValueHash
-{
-	std::size_t operator()(const ILuaValue* obj) const {
-        std::size_t hash = std::hash<int>()(obj->type);
-		QAngle* ang;
-		Vector* vec;
-		switch(obj->type)
-		{
-			case GarrysMod::Lua::Type::Angle:
-				ang = (QAngle*)obj->data;
-				hash ^= std::hash<float>()(ang->x);
-				hash ^= std::hash<float>()(ang->y);
-				hash ^= std::hash<float>()(ang->z);
-				break;
-			case GarrysMod::Lua::Type::Vector:
-				vec = (Vector*)obj->data;
-				hash ^= std::hash<float>()(vec->x);
-				hash ^= std::hash<float>()(vec->y);
-				hash ^= std::hash<float>()(vec->z);
-				break;
-			case GarrysMod::Lua::Type::String:
-				hash ^= std::hash<const char*>()((const char*)obj->data);
-				break;
-			case GarrysMod::Lua::Type::Table:
-				// ToDo
-				break;
-			case GarrysMod::Lua::Type::Number:
-				hash ^= std::hash<double>()(obj->number);
-				break;
-			case GarrysMod::Lua::Type::Bool:
-				hash ^= std::hash<bool>()(obj->number == 1);
-				break;
-			case GarrysMod::Lua::Type::File:
-				hash ^= std::hash<void*>()(obj->data);
-				break;
-			default:
-				Msg("Warning! Unknown type for hash! %i\n", obj->type);
-				break;
-		}
-
-        return hash;
-    }
-};
-
 struct ILuaAction
 {
 	LuaAction type;
@@ -271,7 +227,36 @@ inline float Lerp(float delta, float from, float to)
 {
     return from + (to - from) * delta;
 }
-#endif
+
+inline bool EqualValue(ILuaValue* val1, ILuaValue* val2)
+{
+	if (val1->type != val2->type)
+		return false;
+
+	switch(val1->type)
+	{
+		case GarrysMod::Lua::Type::NUMBER:
+			return val1->number == val2->number;
+		case GarrysMod::Lua::Type::BOOL:
+			return val1->number == val2->number;
+		case GarrysMod::Lua::Type::STRING:
+			return strcmp(val1->string, val2->string) == 0;
+		case GarrysMod::Lua::Type::ENTITY: // ToDo
+			return false;
+		case GarrysMod::Lua::Type::VECTOR:
+			return val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
+		case GarrysMod::Lua::Type::ANGLE:
+			return val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
+		case GarrysMod::Lua::Type::File: // ToDo
+			return false;
+		case GarrysMod::Lua::Type::Table: // ToDo
+			return false;
+		default:
+			break;
+	}
+
+	return false;
+}
 
 extern GMOD_Info* GMOD;
 extern int interfaces_count;
@@ -279,12 +264,11 @@ extern std::unordered_map<double, ILuaThread*> interfaces;
 
 extern int shared_table_reference;
 extern CThreadFastMutex shared_table_mutex;
-extern std::unordered_map<ILuaValue*, ILuaValue*, ILuaValueHash> shared_table;
+extern std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
 
 extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
 extern void FillValue(GarrysMod::Lua::ILuaBase*, ILuaValue*, int, int);
-extern bool EqualValue(ILuaValue*, ILuaValue*);
 
 extern ILuaValue* CreateValue(int);
 extern ILuaValue* CreateValue(const char*);
@@ -299,3 +283,4 @@ extern std::string ToPath(std::string);
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobal;
 extern IVEngineServer* engine;
+#endif

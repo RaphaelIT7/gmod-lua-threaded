@@ -26,7 +26,7 @@ std::unordered_map<double, ILuaThread*> interfaces;
 
 int shared_table_reference = -1;
 CThreadFastMutex shared_table_mutex;
-std::unordered_map<ILuaValue*, ILuaValue*, ILuaValueHash> shared_table;
+std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
 
 void PushFile(GarrysMod::Lua::ILuaBase* LUA, LUA_File* file)
 {
@@ -354,40 +354,4 @@ ILuaValue* CreateValue(const char* value)
 	val->string = value;
 
 	return val;
-}
-
-bool EqualValue(ILuaValue* val1, ILuaValue* val2)
-{
-	if (val1->type != val2->type)
-		return false;
-
-	bool same = false;
-	switch(val1->type)
-	{
-		case GarrysMod::Lua::Type::NUMBER:
-			same = val1->number == val2->number;
-			break;
-		case GarrysMod::Lua::Type::BOOL:
-			same = val1->number == val2->number;
-			break;
-		case GarrysMod::Lua::Type::STRING:
-			same = strcmp(val1->string, val2->string) == 0;
-			break;
-		case GarrysMod::Lua::Type::ENTITY: // ToDo
-			break;
-		case GarrysMod::Lua::Type::VECTOR:
-			same = val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
-			break;
-		case GarrysMod::Lua::Type::ANGLE:
-			same = val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
-			break;
-		case GarrysMod::Lua::Type::File: // ToDo
-			break;
-		case GarrysMod::Lua::Type::Table: // ToDo
-			break;
-		default:
-			break;
-	}
-
-	return same;
 }

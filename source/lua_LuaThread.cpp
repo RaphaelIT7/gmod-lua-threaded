@@ -107,10 +107,14 @@ LUA_FUNCTION(LuaThread_SetValue)
 	if (type == GarrysMod::Lua::Type::Nil)
 	{
 		shared_table_mutex.Lock();
-		auto it = shared_table.find(key);
-		if (it != shared_table.end()) {
-			SafeDelete(it->first);
-			SafeDelete(it->second);
+		for (auto& [sKey, sVal] : shared_table)
+		{
+			if (EqualValue(key, sKey))
+			{
+				SafeDelete(sKey);
+				SafeDelete(sVal);
+				break;
+			}
 		}
 		shared_table_mutex.Unlock();
 		SafeDelete(key);
@@ -121,10 +125,14 @@ LUA_FUNCTION(LuaThread_SetValue)
 	ILuaValue* original_key = nullptr;
 	ILuaValue* original_value = nullptr;
 	shared_table_mutex.Lock();
-	auto it = shared_table.find(key);
-	if (it != shared_table.end()) {
-		original_key = it->first;
-		original_value = it->second;
+	for (auto& [sKey, sVal] : shared_table)
+	{
+		if (EqualValue(key, sKey))
+		{
+			original_key = sKey;
+			original_value = sVal;
+			break;
+		}
 	}
 
 	if (original_key)
@@ -152,9 +160,13 @@ LUA_FUNCTION(LuaThread_GetValue)
 
 	ILuaValue* val = nullptr;
 	shared_table_mutex.Lock();
-	auto it = shared_table.find(key);
-	if (it != shared_table.end()) {
-		val = it->second;
+	for (auto& [sKey, sVal] : shared_table)
+	{
+		if (EqualValue(key, sKey))
+		{
+			val = sVal;
+			break;
+		}
 	}
 	shared_table_mutex.Unlock();
 
