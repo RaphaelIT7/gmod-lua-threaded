@@ -258,6 +258,24 @@ inline bool EqualValue(ILuaValue* val1, ILuaValue* val2)
 	return false;
 }
 
+inline ILuaValue* CreateValue(int value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = GarrysMod::Lua::Type::Number;
+	val->number = value;
+
+	return val;
+}
+
+inline ILuaValue* CreateValue(const char* value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = GarrysMod::Lua::Type::String;
+	val->string = value;
+
+	return val;
+}
+
 extern GMOD_Info* GMOD;
 extern int interfaces_count;
 extern std::unordered_map<double, ILuaThread*> interfaces;
@@ -269,9 +287,6 @@ extern std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
 extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
 extern void FillValue(GarrysMod::Lua::ILuaBase*, ILuaValue*, int, int);
-
-extern ILuaValue* CreateValue(int);
-extern ILuaValue* CreateValue(const char*);
 
 extern void Add_Func(GarrysMod::Lua::ILuaBase*, GarrysMod::Lua::CFunc, const char*);
 extern ILuaThread* FindThread(int);

@@ -101,90 +101,82 @@ void SafeDelete(ILuaValue* value)
 
 void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 {
-	if (type == GarrysMod::Lua::Type::Number)
+	LUA_Vector* vec;
+	LUA_Angle* ang;
+	LUA_File* file;
+	LUA_File* copy;
+	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
+	switch(type)
 	{
-		val->type = type;
-		val->number = LUA->GetNumber(iStackPos);
-	} else if (type == GarrysMod::Lua::Type::Bool)
-	{
-		val->type = type;
-		val->number = LUA->GetBool(iStackPos) ? 1 : 0;
-	} else if (type == GarrysMod::Lua::Type::String)
-	{
-		val->type = type;
-		val->string = LUA->GetString(iStackPos);
-	} else if (type == GarrysMod::Lua::Type::Entity)
-	{
-		//val->type = type;
-		//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
-	} else if (type == GarrysMod::Lua::Type::Vector)
-	{
-		val->type = type;
-		if (ThreadInMainThread())
-		{
-			const Vector& vec = LUA->GetVector(iStackPos);
-			val->x = vec.x;
-			val->y = vec.y;
-			val->z = vec.z;
-		} else {
-			LUA_Vector* vec = Vector_Get(LUA, iStackPos);
+		case GarrysMod::Lua::Type::Number:
+			val->type = type;
+			val->number = LUA->GetNumber(iStackPos);
+			return;
+		case GarrysMod::Lua::Type::Bool:
+			val->type = type;
+			val->number = LUA->GetBool(iStackPos) ? 1 : 0;
+			return;
+		case GarrysMod::Lua::Type::String:
+			val->type = type;
+			val->string = LUA->GetString(iStackPos);
+			return;
+		case GarrysMod::Lua::Type::Entity:
+			//val->type = type;
+			//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
+			return;
+		case GarrysMod::Lua::Type::Vector:
+			val->type = type;
+			vec = Vector_Get(LUA, iStackPos);
 			val->x = vec->x;
 			val->y = vec->y;
 			val->z = vec->z;
-		}
-	} else if (type == GarrysMod::Lua::Type::Angle)
-	{
-		val->type = type;
-		if (ThreadInMainThread())
-		{
-			const QAngle& ang = LUA->GetAngle(iStackPos);
-			val->x = ang.x;
-			val->y = ang.y;
-			val->z = ang.z;
-		} else {
-			LUA_Angle* ang = Angle_Get(LUA, iStackPos);
+			return;
+		case GarrysMod::Lua::Type::Angle:
+			val->type = type;
+			ang = Angle_Get(LUA, iStackPos);
 			val->x = ang->x;
 			val->y = ang->y;
 			val->z = ang->z;
-		}
-	} else if (type == GarrysMod::Lua::Type::Table)
-	{
-		val->type = type;
-		std::unordered_map<ILuaValue*, ILuaValue*> tbl;
-
-		LUA->Push(iStackPos);
-		LUA->PushNil();
-		while (LUA->Next(-2)) {
-			LUA->Push(-2);
-
-			ILuaValue* key = new ILuaValue;
-			FillValue(LUA, key, -1, LUA->GetType(-1));
-
-			ILuaValue* new_val = new ILuaValue;
-			FillValue(LUA, new_val, -2, LUA->GetType(-2));
-
-			tbl[key] = new_val;
-
-			LUA->Pop(2);
-		}
-		LUA->Pop(1);
-
-		val->tbl = tbl;
-	} else if (type == GarrysMod::Lua::Type::File)
-	{
-		if (ThreadInMainThread()) // We cannot push a File from GMod to our module.
-		{
 			return;
-		}
+		case GarrysMod::Lua::Type::Table:
+			val->type = type;;
 
-		LUA_File* file = File_Get(LUA, iStackPos);
-		LUA_File* copy = new LUA_File;
-		copy->fileMode = file->fileMode;
-		copy->filename = file->filename;
-		copy->path = file->path;
-		//copy->handle = file->handle // Should we really share the handle?
-		val->type = type;
-		val->data = copy;
+			LUA->Push(iStackPos);
+			LUA->PushNil();
+			while (LUA->Next(-2)) {
+				LUA->Push(-2);
+
+				ILuaValue* key = new ILuaValue;
+				FillValue(LUA, key, -1, LUA->GetType(-1));
+
+				ILuaValue* new_val = new ILuaValue;
+				FillValue(LUA, new_val, -2, LUA->GetType(-2));
+
+				tbl[key] = new_val;
+
+				LUA->Pop(2);
+			}
+			LUA->Pop(1);
+
+			val->tbl = tbl;
+			return;
+		case GarrysMod::Lua::Type::File:
+			if (ThreadInMainThread()) // We cannot push a File from GMod to our module.
+			{
+				return;
+			}
+
+			file = File_Get(LUA, iStackPos);
+			copy = new LUA_File;
+			copy->fileMode = file->fileMode;
+			copy->filename = file->filename;
+			copy->path = file->path;
+			//copy->handle = file->handle // Should we really share the handle?
+			val->type = type;
+			val->data = copy;
+			return;
+		default:
+			return;
 	}
 }
 
@@ -336,22 +328,4 @@ std::string ToPath(std::string path)
     }
 
     return path;
-}
-
-ILuaValue* CreateValue(int value)
-{
-	ILuaValue* val = new ILuaValue;
-	val->type = GarrysMod::Lua::Type::Number;
-	val->number = value;
-
-	return val;
-}
-
-ILuaValue* CreateValue(const char* value)
-{
-	ILuaValue* val = new ILuaValue;
-	val->type = GarrysMod::Lua::Type::String;
-	val->string = value;
-
-	return val;
 }
