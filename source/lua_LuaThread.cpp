@@ -113,7 +113,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 			{
 				SafeDelete(it->first);
 				SafeDelete(it->second);
-				it = shared_table.erase(it);
+				shared_table.erase(it);
 				break;
 			}
 

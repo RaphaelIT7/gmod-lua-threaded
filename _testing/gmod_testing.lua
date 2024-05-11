@@ -113,12 +113,6 @@ local ret, err = pcall(function()
 		["Angle"] = Angle(10, 9, 8),
 		["Vector"] = Vector(1, 2, 3),
 	})
-	
-	iFace = LuaThreaded.CreateInterface()
-	iFace:InitGmod()
-	iFace:RunFile("includes/init.lua")
-	iFace:RunString(code)
-	iFace:RunHook("ExampleHook", "ExampleArg", 1234, true, Vector(1, 2, 3), Angle(4, 5, 6))
 
 	local startTime = SysTime()
 	for k=1, 100000 do 
@@ -137,6 +131,12 @@ local ret, err = pcall(function()
 	if LuaThreaded.GetValue(1000) != nil then
 		error("LuaThreaded.SetValue failed! Investigate!")
 	end
+	
+	iFace = LuaThreaded.CreateInterface()
+	iFace:InitGmod()
+	iFace:RunFile("includes/init.lua")
+	iFace:RunString(code)
+	iFace:RunHook("ExampleHook", "ExampleArg", 1234, true, Vector(1, 2, 3), Angle(4, 5, 6))
 end)
 
 if err then

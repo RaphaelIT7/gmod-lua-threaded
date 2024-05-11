@@ -10,6 +10,7 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
+		async->status = err;
 		char* content = new char[nBytesRead + 1];
 		std::memcpy(static_cast<void*>(content), request.pData, nBytesRead);
 		content[nBytesRead] = '\0';
@@ -58,7 +59,7 @@ void FileLibThink(ILuaThread* thread)
 		LUA->ReferencePush(file->callback);
 		LUA->PushString(file->req->pszFilename);
 		LUA->PushString(file->req->pszPathID);
-		LUA->PushNumber(file->Status);
+		LUA->PushNumber(file->status);
 		LUA->PushString(file->content);
 		LUA->CallFunctionProtected(4, 0, true);
 		LUA->ReferenceFree(file->callback);
