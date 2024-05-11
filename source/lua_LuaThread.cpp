@@ -119,9 +119,12 @@ LUA_FUNCTION(LuaThread_SetValue)
 			}
 		}
 
-		shared_table.erase(pKey);
-		SafeDelete(pKey);
-		SafeDelete(pVal);
+		if (pKey)
+		{
+			shared_table.erase(pKey);
+			SafeDelete(pKey);
+			SafeDelete(pVal);
+		}
 		shared_table_mutex.Unlock();
 		SafeDelete(key);
 
