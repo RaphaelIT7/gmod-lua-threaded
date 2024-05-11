@@ -76,9 +76,10 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - - [ ] Implement sql.Query. (Fixes sql and cookie library)  
 - [ ] Add a new way to send data across threads. Maybe something like net messages but for threads?  
 - [ ] Look again into Error handling. Maybe show which file had an error?
+- [ ] Improve Performance of `LuaThreaded.SetValue` and `LuaThreaded.GetValue`
 
 ### Bugs
-- [ ] Fix a memory leak related to LuaThreaded.SetValue not reusing the original key and value.  
+- [x] Fix a memory leak related to LuaThreaded.SetValue not reusing the original key and value.  
 - [ ] File:Seek seems to have some issues?
 - [ ] Requiring this module befor InitPostEntity was called causes a bunch of weird bugs.
 See [LuaThreaded.ReadyThreads()](https://github.com/RaphaelIT7/gmod-lua-threaded?tab=readme-ov-file#luathreadedreadythreads) for the implemented workaround.
