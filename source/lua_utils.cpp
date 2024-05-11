@@ -101,11 +101,6 @@ void SafeDelete(ILuaValue* value)
 
 void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int type)
 {
-	LUA_Vector* vec;
-	LUA_Angle* ang;
-	LUA_File* file;
-	LUA_File* copy;
-	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
 	switch(type)
 	{
 		case GarrysMod::Lua::Type::Number:
@@ -125,40 +120,46 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 			//val->number = ((CBaseEntity*)ILUA->GetObject(3)->GetEntity())->edict()->m_EdictIndex;
 			return;
 		case GarrysMod::Lua::Type::Vector:
-			val->type = type;
-			vec = Vector_Get(LUA, iStackPos);
-			val->x = vec->x;
-			val->y = vec->y;
-			val->z = vec->z;
+			{
+				val->type = type;
+				LUA_Vector* vec = Vector_Get(LUA, iStackPos);
+				val->x = vec->x;
+				val->y = vec->y;
+				val->z = vec->z;
+			}
 			return;
 		case GarrysMod::Lua::Type::Angle:
-			val->type = type;
-			ang = Angle_Get(LUA, iStackPos);
-			val->x = ang->x;
-			val->y = ang->y;
-			val->z = ang->z;
+			{
+				val->type = type;
+				LUA_Angle* ang = Angle_Get(LUA, iStackPos);
+				val->x = ang->x;
+				val->y = ang->y;
+				val->z = ang->z;
+			}
 			return;
 		case GarrysMod::Lua::Type::Table:
-			val->type = type;;
+			{
+				val->type = type;
+				std::unordered_map<ILuaValue*, ILuaValue*> tbl;
+				LUA->Push(iStackPos);
+				LUA->PushNil();
+				while (LUA->Next(-2)) {
+					LUA->Push(-2);
 
-			LUA->Push(iStackPos);
-			LUA->PushNil();
-			while (LUA->Next(-2)) {
-				LUA->Push(-2);
+					ILuaValue* key = new ILuaValue;
+					FillValue(LUA, key, -1, LUA->GetType(-1));
 
-				ILuaValue* key = new ILuaValue;
-				FillValue(LUA, key, -1, LUA->GetType(-1));
+					ILuaValue* new_val = new ILuaValue;
+					FillValue(LUA, new_val, -2, LUA->GetType(-2));
 
-				ILuaValue* new_val = new ILuaValue;
-				FillValue(LUA, new_val, -2, LUA->GetType(-2));
+					tbl[key] = new_val;
 
-				tbl[key] = new_val;
+					LUA->Pop(2);
+				}
+				LUA->Pop(1);
 
-				LUA->Pop(2);
+				val->tbl = tbl;
 			}
-			LUA->Pop(1);
-
-			val->tbl = tbl;
 			return;
 		case GarrysMod::Lua::Type::File:
 			if (ThreadInMainThread()) // We cannot push a File from GMod to our module.
@@ -166,14 +167,16 @@ void FillValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* val, int iStackPos, int
 				return;
 			}
 
-			file = File_Get(LUA, iStackPos);
-			copy = new LUA_File;
-			copy->fileMode = file->fileMode;
-			copy->filename = file->filename;
-			copy->path = file->path;
-			//copy->handle = file->handle // Should we really share the handle?
-			val->type = type;
-			val->data = copy;
+			{
+				LUA_File* file = File_Get(LUA, iStackPos);
+				LUA_File* copy = new LUA_File;
+				copy->fileMode = file->fileMode;
+				copy->filename = file->filename;
+				copy->path = file->path;
+				//copy->handle = file->handle // Should we really share the handle?
+				val->type = type;
+				val->data = copy;
+			}
 			return;
 		default:
 			return;
