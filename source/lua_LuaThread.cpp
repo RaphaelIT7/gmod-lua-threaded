@@ -122,7 +122,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 		if (pKey)
 		{
 			shared_table.erase(pKey);
-			SafeDelete(pKey);
+			//SafeDelete(pKey); // Potential memory leak? idk but it causes weird behavior.
 			SafeDelete(pVal);
 		}
 		shared_table_mutex.Unlock();
