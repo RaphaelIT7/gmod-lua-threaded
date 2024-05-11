@@ -107,23 +107,17 @@ LUA_FUNCTION(LuaThread_SetValue)
 	if (type == GarrysMod::Lua::Type::Nil)
 	{
 		shared_table_mutex.Lock();
-		ILuaValue* pKey = nullptr;
-		ILuaValue* pVal = nullptr;
-		for (auto& [sKey, sVal] : shared_table)
+		for (auto it = shared_table.begin(); it != shared_table.end();)
 		{
-			if (EqualValue(key, sKey))
+			if (EqualValue(key, it->first))
 			{
-				pKey = sKey;
-				pVal = sVal;
+				SafeDelete(it->first);
+				SafeDelete(it->second);
+				it = shared_table.erase(it);
 				break;
 			}
-		}
 
-		if (pKey)
-		{
-			shared_table.erase(pKey);
-			//SafeDelete(pKey); // Potential memory leak? idk but it causes weird behavior.
-			SafeDelete(pVal);
+			++it;
 		}
 		shared_table_mutex.Unlock();
 		SafeDelete(key);
