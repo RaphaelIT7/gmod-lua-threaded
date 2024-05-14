@@ -144,10 +144,6 @@ local ret, err = pcall(function()
 	iFace:RunFile("includes/init.lua")
 	iFace:RunString(code)
 	iFace:RunHook("ExampleHook", "ExampleArg", 1234, true, Vector(1, 2, 3), Angle(4, 5, 6))
-
-	timer.Simple(5, function()
-		engine.CloseServer()
-	end)
 end)
 
 if err then

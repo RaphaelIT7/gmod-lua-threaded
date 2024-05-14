@@ -163,9 +163,9 @@ local function Sleep(time)
 	while time > os.time() do end
 end
 
-Sleep(10)
+Sleep(20)
 
---[[HTTP({
+HTTP({
 	method = "POST",
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
 	headers = header,
@@ -178,7 +178,7 @@ Sleep(10)
 	body = json.encode({
 		command = "quit"
 	})
-})]]
+})
 
 print("Waiting for Server to stop")
 
