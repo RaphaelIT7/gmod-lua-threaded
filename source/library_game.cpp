@@ -1,5 +1,7 @@
 #include "lua_threaded.h"
 #include "source_ammodef.h"
+#include <string_t.h>
+#include <globalstate.h>
 
 LUA_FUNCTION(game_AddDecal)
 {
@@ -212,20 +214,30 @@ LUA_FUNCTION(game_GetAmmoTypes)
 
 LUA_FUNCTION(game_GetGlobalCounter)
 {
-	//const char* name = LUA->CheckString(1);
+	const char* name = LUA->CheckString(1);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		LUA->PushNumber(GlobalEntity_GetCounter(globalIndex));
+	} else {
+		LUA->PushNumber(0);
+	}
 
-	// ToDo
-
-	return 0;
+	return 1;
 }
 
 LUA_FUNCTION(game_GetGlobalState)
 {
-	//const char* name = LUA->CheckString(1);
+	const char* name = LUA->CheckString(1);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		LUA->PushNumber(GlobalEntity_GetState(globalIndex));
+	} else {
+		LUA->PushNumber(GLOBAL_DEAD);
+	}
 
-	// ToDo
-
-	return 0;
+	return 1;
 }
 
 LUA_FUNCTION(game_GetIPAddress)
@@ -258,16 +270,16 @@ LUA_FUNCTION(game_GetMapVersion)
 
 LUA_FUNCTION(game_GetSkillLevel)
 {
-	// ToDo
+	LUA->PushNumber(g_pGameRules->GetSkillLevel());
 
-	return 0;
+	return 1;
 }
 
 LUA_FUNCTION(game_GetTimeScale)
 {
-	// ToDo
+	LUA->PushNumber(1); // ToDo
 
-	return 0;
+	return 1;
 }
 
 LUA_FUNCTION(game_GetWorld)
@@ -345,28 +357,52 @@ LUA_FUNCTION(game_RemoveRagdolls)
 
 LUA_FUNCTION(game_SetGlobalCounter)
 {
-	// ToDo: This is going to be complex
+	const char* name = LUA->CheckString(1);
+	int count = LUA->CheckNumber(2);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		GlobalEntity_SetCounter(globalIndex, count);
+	} else {
+		GlobalEntity_Add(name, gpGlobals->mapname.ToCStr(), GLOBAL_ON);
+		globalIndex = GlobalEntity_GetIndex(name);
+
+		GlobalEntity_SetCounter(globalIndex, count);
+	}
 
 	return 0;
 }
 
 LUA_FUNCTION(game_SetGlobalState)
-{
-	// ToDo
+{ 
+	const char* name = LUA->CheckString(1);
+	int state = LUA->CheckNumber(2);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		GlobalEntity_SetState(globalIndex, (GLOBALESTATE)state);
+	} else {
+		GlobalEntity_Add(name, gpGlobals->mapname.ToCStr(), (GLOBALESTATE)state);
+		globalIndex = GlobalEntity_GetIndex(name);
+
+		GlobalEntity_SetCounter(globalIndex, 0);
+	}
 
 	return 0;
 }
 
 LUA_FUNCTION(game_SetSkillLevel)
 {
-	// ToDo
+	int level = LUA->CheckNumber(1);
+	g_pGameRules->SetSkillLevel(level);
 
 	return 0;
 }
 
 LUA_FUNCTION(game_SetTimeScale)
 {
-	// ToDo
+	double timescale = LUA->CheckNumber(1);
+	engine->GMOD_SetTimeManipulator(timescale);
 
 	return 0;
 }
@@ -406,13 +442,13 @@ void InitGame(GarrysMod::Lua::ILuaInterface* LUA)
 			Add_Func(LUA, game_GetAmmoPlayerDamage, "GetAmmoPlayerDamage");
 			Add_Func(LUA, game_GetAmmoTypes, "GetAmmoTypes");
 
-			//Add_Func(LUA, game_GetGlobalCounter, "GetGlobalCounter");
-			//Add_Func(LUA, game_GetGlobalState, "GetGlobalState");
+			Add_Func(LUA, game_GetGlobalCounter, "GetGlobalCounter");
+			Add_Func(LUA, game_GetGlobalState, "GetGlobalState");
 			Add_Func(LUA, game_GetIPAddress, "GetIPAddress");
 			Add_Func(LUA, game_GetMap, "GetMap");
 			//Add_Func(LUA, game_GetMapNext, "GetMapNext");
 			Add_Func(LUA, game_GetMapVersion, "GetMapVersion");
-			//Add_Func(LUA, game_GetSkillLevel, "GetSkillLevel");
+			Add_Func(LUA, game_GetSkillLevel, "GetSkillLevel");
 			//Add_Func(LUA, game_GetTimeScale, "GetTimeScale");
 			//Add_Func(LUA, game_GetWorld, "GetWorld");
 			Add_Func(LUA, game_IsDedicated, "IsDedicated");
@@ -422,9 +458,9 @@ void InitGame(GarrysMod::Lua::ILuaInterface* LUA)
 			Add_Func(LUA, game_MaxPlayers, "MaxPlayers");
 			//Add_Func(LUA, game_MountGMA, "MountGMA");
 			//Add_Func(LUA, game_RemoveRagdolls, "RemoveRagdolls");
-			//Add_Func(LUA, game_SetGlobalCounter, "SetGlobalCounter");
-			//Add_Func(LUA, game_SetGlobalState, "SetGlobalState");
-			//Add_Func(LUA, game_SetSkillLevel, "SetSkillLevel");
+			Add_Func(LUA, game_SetGlobalCounter, "SetGlobalCounter");
+			Add_Func(LUA, game_SetGlobalState, "SetGlobalState");
+			Add_Func(LUA, game_SetSkillLevel, "SetSkillLevel");
 			//Add_Func(LUA, game_SetTimeScale, "SetTimeScale");
 			Add_Func(LUA, game_SinglePlayer, "SinglePlayer");
 			//Add_Func(LUA, game_StartSpot, "StartSpot");

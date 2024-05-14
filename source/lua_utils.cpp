@@ -1,5 +1,6 @@
 #include <GarrysMod/InterfacePointers.hpp>
 #include <GarrysMod/Lua/Interface.h>
+#include <datacache/imdlcache.h>
 #include "CLuaGameCallback.h"
 #include <usermessages.h>
 #include "lua_threaded.h"
@@ -44,9 +45,11 @@ CGlobalVars* gpGlobals;
 IVEngineServer* engine;
 INetworkStringTableContainer* networkstringtables;
 CGameRules* g_pGameRules;
+IMDLCache* mdlcache;
 
 static SourceSDK::FactoryLoader engine_loader("engine");
 static SourceSDK::FactoryLoader server_loader("server");
+static SourceSDK::FactoryLoader datacache_loader("datacache");
 void InitInterfaces()
 {
 	if (filesystem == nullptr)
@@ -80,6 +83,10 @@ void InitInterfaces()
 		usermessages = ResolveSymbol<CUserMessages>(
 			server_loader, CUserMessages_Sym
 		);
+	}
+
+	if (mdlcache == nullptr) {
+		mdlcache = (IMDLCache*)datacache_loader.GetFactory()(MDLCACHE_INTERFACE_VERSION, nullptr);
 	}
 }
 
