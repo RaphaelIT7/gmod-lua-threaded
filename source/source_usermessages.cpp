@@ -186,6 +186,6 @@ bool CUserMessages::DispatchUserMessage( int msg_type, bf_read &msg_data )
 }
 
 // Singleton
-static CUserMessages g_UserMessages;
+//static CUserMessages g_UserMessages;
 // Expose to rest of .dll
-CUserMessages *usermessages = &g_UserMessages;
+CUserMessages *usermessages = nullptr; //&g_UserMessages;

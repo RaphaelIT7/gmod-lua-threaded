@@ -74,6 +74,13 @@ void InitInterfaces()
 			server_loader, CGameRules_Sym
 		);
 	}
+
+	if (usermessages == nullptr)
+	{
+		usermessages = ResolveSymbol<CUserMessages>(
+			server_loader, CUserMessages_Sym
+		);
+	}
 }
 
 int interfaces_count = 0;

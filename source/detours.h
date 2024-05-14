@@ -126,6 +126,7 @@ extern TGetAmmoDef func_GetAmmoDef;
 const Symbol GetAmmoDefSym = Symbol::FromName("_Z10GetAmmoDefv");
 
 const Symbol CGameRules_Sym = Symbol::FromName("g_pGameRules");
+const Symbol CUserMessages_Sym = Symbol::FromName("usermessages");
 
 /*
 	CLuaGameCallback stuff
