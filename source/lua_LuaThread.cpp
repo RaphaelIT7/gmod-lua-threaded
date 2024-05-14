@@ -83,7 +83,9 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 
 LUA_FUNCTION(LuaThread_GetTable)
 {
-    LUA->CreateTable();
+    GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+	LLUA->PreCreateTable(0, shared_table.size());
+
     shared_table_mutex.Lock();
     for (auto& [key, value] : shared_table)
     {
@@ -128,7 +130,7 @@ LUA_FUNCTION(LuaThread_SetValue)
 	ILuaValue* original_key = nullptr;
 	ILuaValue* original_value = nullptr;
 	shared_table_mutex.Lock();
-	for (auto& [sKey, sVal] : shared_table)
+	for (auto& [sKey, sVal] : shared_table) // This is slow.
 	{
 		if (EqualValue(key, sKey))
 		{
