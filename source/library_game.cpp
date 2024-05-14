@@ -237,7 +237,7 @@ LUA_FUNCTION(game_GetIPAddress)
 
 LUA_FUNCTION(game_GetMap)
 {
-	LUA->PushString(gpGlobal->mapname.ToCStr());
+	LUA->PushString(gpGlobals->mapname.ToCStr());
 
 	return 1;
 }
@@ -251,7 +251,7 @@ LUA_FUNCTION(game_GetMapNext)
 
 LUA_FUNCTION(game_GetMapVersion)
 {
-	LUA->PushNumber(gpGlobal->mapversion);
+	LUA->PushNumber(gpGlobals->mapversion);
 
 	return 1;
 }
@@ -300,7 +300,7 @@ LUA_FUNCTION(game_LoadNextMap)
 
 LUA_FUNCTION(game_MapLoadType)
 {
-	switch(gpGlobal->eLoadType)
+	switch(gpGlobals->eLoadType)
 	{
 		case MapLoad_NewGame:
 			LUA->PushString("newgame");
@@ -323,7 +323,7 @@ LUA_FUNCTION(game_MapLoadType)
 
 LUA_FUNCTION(game_MaxPlayers)
 {
-	LUA->PushNumber(gpGlobal->maxClients);
+	LUA->PushNumber(gpGlobals->maxClients);
 
 	return 1;
 }
@@ -373,7 +373,7 @@ LUA_FUNCTION(game_SetTimeScale)
 
 LUA_FUNCTION(game_SinglePlayer)
 {
-	LUA->PushBool(gpGlobal->maxClients == 1);
+	LUA->PushBool(gpGlobals->maxClients == 1);
 
 	return 1;
 }

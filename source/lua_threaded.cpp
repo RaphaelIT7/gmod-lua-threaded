@@ -53,6 +53,8 @@ GMOD_MODULE_OPEN()
 
 	GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
 
+	InitInterfaces();
+
 	Symbols_Init();
 
 	InitLuaThreaded(LLUA);
@@ -61,7 +63,6 @@ GMOD_MODULE_OPEN()
 
 	InitEnums(LLUA);
 
-	filesystem = InterfacePointers::FileSystem();
 	UpdateEngine(LLUA);
 
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);

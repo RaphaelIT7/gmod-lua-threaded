@@ -125,6 +125,8 @@ typedef void* (*TGetAmmoDef)();
 extern TGetAmmoDef func_GetAmmoDef;
 const Symbol GetAmmoDefSym = Symbol::FromName("_Z10GetAmmoDefv");
 
+const Symbol CGameRules_Sym = Symbol::FromName("g_pGameRules");
+
 /*
 	CLuaGameCallback stuff
 */
@@ -243,7 +245,7 @@ static inline T* ResolveSymbols(
 inline bool CheckValue(const char* msg, const char* name, bool ret)
 {
 	if (!ret) {
-		Msg("[vprof] Failed to %s %s!\n", msg, name);
+		Msg("[LuaThreaded] Failed to %s %s!\n", msg, name);
 		return false;
 	}
 

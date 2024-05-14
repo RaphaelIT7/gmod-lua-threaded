@@ -2,6 +2,7 @@
 #include "lua_threaded.h"
 #include <sstream>
 #include "convar.h"
+#include <recipientfilter.h>
 
 LUA_FUNCTION(include)
 {
@@ -318,14 +319,14 @@ LUA_FUNCTION(Global_Msg)
 
 LUA_FUNCTION(CurTime)
 {
-	LUA->PushNumber(gpGlobal->curtime);
+	LUA->PushNumber(gpGlobals->curtime);
 
 	return 1;
 }
 
 LUA_FUNCTION(RealTime)
 {
-	LUA->PushNumber(gpGlobal->realtime);
+	LUA->PushNumber(gpGlobals->realtime);
 
 	return 1;
 }
@@ -334,6 +335,22 @@ LUA_FUNCTION(RunConsoleCommand) // ToDo: Finish this. This is not how it should 
 {
 	const char* cmd = LUA->CheckString(1);
 	engine->GMOD_RawServerCommand(cmd);
+
+	return 1;
+}
+
+LUA_FUNCTION(BroadcastLua)
+{
+	const char* lua = LUA->CheckString(1);
+
+	// Everything below is done inside the BroadcastLua(const char*) function in Gmod.
+	CRecipientFilter filter;
+	filter.AddAllPlayers();
+	filter.MakeReliable();
+
+	UserMessageBegin(filter, "LuaCmd");
+		MessageWriteString(lua);
+	MessageEnd();
 
 	return 1;
 }
@@ -350,6 +367,7 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
 		Add_Func(LUA, GetConVar_Internal, "GetConVar_Internal");
 		//Add_Func(LUA, CreateConVar, "CreateConVar");
+		Add_Func(LUA, BroadcastLua, "BroadcastLua");
 
 		Add_Func(LUA, CurTime, "CurTime");
 		Add_Func(LUA, RealTime, "RealTime");

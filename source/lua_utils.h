@@ -101,9 +101,11 @@ struct lua_State
     #endif
 #endif
 
+#include "networkstringtabledefs.h"
 #include "GameEventListener.h"
 #include <unordered_map>
 #include "ILuaConVars.h"
+#include <gamerules.h>
 #include "detours.h"
 #include <setjmp.h>
 #include <eiface.h>
@@ -295,7 +297,10 @@ extern GarrysMod::Lua::ILuaInterface* CreateInterface();
 extern void ShutdownInterface(ILuaThread*);
 
 extern std::string ToPath(std::string);
+
+extern void InitInterfaces();
 extern IFileSystem* filesystem;
-extern CGlobalVars* gpGlobal;
+extern CGlobalVars* gpGlobals;
 extern IVEngineServer* engine;
+extern INetworkStringTableContainer* networkstringtables;
 #endif

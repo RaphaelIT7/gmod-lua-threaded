@@ -1,9 +1,11 @@
 #include <GarrysMod/Lua/Interface.h>
 #include "CLuaGameCallback.h"
+#include <usermessages.h>
 #include "lua_threaded.h"
 
 #ifdef SYSTEM_WINDOWS
 #include <GarrysMod/Lua/LuaShared.h>
+#include <GarrysMod/InterfacePointers.hpp>
 
 static SourceSDK::FactoryLoader luashared_loader("lua_shared");
 GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
@@ -17,9 +19,67 @@ GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
 }
 #endif
 
+class IPlayerInfo;
+class edict_t;
+static const char playerinfomanager_name[] = "PlayerInfoManager002";
+class IPlayerInfoManager
+{
+public:
+	virtual IPlayerInfo *GetPlayerInfo( edict_t *pEdict ) = 0;
+	virtual CGlobalVars *GetGlobalVars( ) = 0;
+};
+
+CGlobalVars* GlobalVars()
+{
+	static CGlobalVars *iface_pointer = nullptr;
+	if (iface_pointer == nullptr)
+	{
+		SourceSDK::FactoryLoader server_loader("server");
+		auto player_info_manager = server_loader.GetInterface<IPlayerInfoManager>(
+			playerinfomanager_name
+		);
+		if (player_info_manager != nullptr)
+			iface_pointer = player_info_manager->GetGlobalVars();
+	}
+
+	return iface_pointer;
+}
+
 IFileSystem* filesystem;
-CGlobalVars* gpGlobal;
+CGlobalVars* gpGlobals;
 IVEngineServer* engine;
+INetworkStringTableContainer* networkstringtables;
+
+static SourceSDK::FactoryLoader engine_loader("engine");
+static SourceSDK::FactoryLoader server_loader("server");
+void InitInterfaces()
+{
+	if (filesystem == nullptr)
+	{
+		filesystem = InterfacePointers::FileSystem();
+	}
+
+	if (engine == nullptr)
+	{
+		engine = InterfacePointers::VEngineServer();
+	}
+
+	if (gpGlobals == nullptr)
+	{
+		gpGlobals = GlobalVars();
+	}
+
+	if (networkstringtables == nullptr) {
+		networkstringtables = (INetworkStringTableContainer*)engine_loader.GetFactory()(INTERFACENAME_NETWORKSTRINGTABLESERVER, nullptr);
+	}
+
+	if (g_pGameRules == nullptr)
+	{
+		g_pGameRules = ResolveSymbol<CGameRules>(
+			server_loader, CGameRules_Sym
+		);
+	}
+}
 
 int interfaces_count = 0;
 std::unordered_map<double, ILuaThread*> interfaces;

@@ -336,6 +336,9 @@ Files:
 
 ## Some notes
 
+### Entities
+We should block entity creation while `PackEntities_Normal` is running because else we might cause engine errors.  
+
 ### NW
 For the NW System I'm going to need CLuaNetworkedVars.  
 CLuaNetworkedVars::FindEntityVar -- Returns a LuaNetworkedVar_t. GetNW* and GetGlobal functions are gonna require this.  
@@ -348,3 +351,14 @@ This is going to be pain.
 Going to need g_pServerWorldTable, SetDataTableVar, IGMODDataTable, CGMODVariant.  
 Already got: [IGMODDataTable](https://github.com/danielga/sourcesdk-minimal/blob/1cacb57cd36ee5b77c970e91fff374046aa8574d/public/GarrysMod/IGMODDataTable.h#L5)  
 ToDo: Find out what the CGMODVariant is.  
+NOTE: Found out.
+
+## Other Stuff
+
+Gmod umsg names:  
+- "LuaCmd"  
+- "SWEPCmd"  
+- "AmmoPickup"  
+- "WeaponPickup"  
+- "BreakModel"  
+- "CheapBreakModel"  

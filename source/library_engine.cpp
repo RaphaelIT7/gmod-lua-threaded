@@ -1,33 +1,6 @@
-#include <GarrysMod/InterfacePointers.hpp>
 #include "lua_threaded.h"
 #include <icommandline.h>
 #include <eiface.h>
-
-class IPlayerInfo;
-class edict_t;
-static const char playerinfomanager_name[] = "PlayerInfoManager002";
-class IPlayerInfoManager
-{
-public:
-	virtual IPlayerInfo *GetPlayerInfo( edict_t *pEdict ) = 0;
-	virtual CGlobalVars *GetGlobalVars( ) = 0;
-};
-
-CGlobalVars* GlobalVars()
-{
-	static CGlobalVars *iface_pointer = nullptr;
-	if (iface_pointer == nullptr)
-	{
-		SourceSDK::FactoryLoader server_loader("server");
-		auto player_info_manager = server_loader.GetInterface<IPlayerInfoManager>(
-			playerinfomanager_name
-		);
-		if (player_info_manager != nullptr)
-			iface_pointer = player_info_manager->GetGlobalVars();
-	}
-
-	return iface_pointer;
-}
 
 LUA_FUNCTION(engine_GetAddons)
 {
@@ -66,21 +39,21 @@ LUA_FUNCTION(engine_ActiveGamemode)
 
 LUA_FUNCTION(engine_TickInterval)
 {
-	LUA->PushNumber(gpGlobal->interval_per_tick);
+	LUA->PushNumber(gpGlobals->interval_per_tick);
 
 	return 1;
 }
 
 LUA_FUNCTION(engine_AbsoluteFrameTime)
 {
-	LUA->PushNumber(gpGlobal->absoluteframetime);
+	LUA->PushNumber(gpGlobals->absoluteframetime);
 
 	return 1;
 }
 
 LUA_FUNCTION(engine_TickCount)
 {
-	LUA->PushNumber(gpGlobal->tickcount);
+	LUA->PushNumber(gpGlobals->tickcount);
 
 	return 1;
 }
@@ -190,16 +163,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 void InitEngine(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	if (engine == nullptr)
-	{
-		engine = InterfacePointers::VEngineServer();
-	}
-
-	if (gpGlobal == nullptr)
-	{
-		gpGlobal = GlobalVars();
-	}
-
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, engine_GetAddons, "GetAddons");
