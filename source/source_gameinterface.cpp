@@ -55,7 +55,10 @@
 #include "shareddefs.h"
 #include "props.h"
 #include "timedeventmgr.h"
-#include "gameinterface.h"
+
+//#include "gameinterface.h"
+#include "source_gameinterface.h"
+
 #include "eventqueue.h"
 #include "hltvdirector.h"
 #if defined( REPLAY_ENABLED )
