@@ -93,6 +93,14 @@ local code = [[local ret, err = pcall(function()
 	print("==== Debug Library ====")
 	PrintTable(debug)
 
+	print("==== RecipientFilter ====")
+	local filter = RecipientFilter()
+	print("1. RecipientFilter:__tostring", filter)
+	filter:AddAllPlayers() -- The bot should be added.
+	print("2. RecipientFilter:__tostring", filter)
+	filter:RemoveAllPlayers()
+	print("3. RecipientFilter:__tostring", filter)
+
 	error("Error handling test")
 end)
 

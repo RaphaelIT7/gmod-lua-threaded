@@ -2,7 +2,7 @@
 #include "lua_threaded.h"
 #include <sstream>
 #include "convar.h"
-#include <recipientfilter.h>
+#include <source_recipientfilter.h>
 
 LUA_FUNCTION(include)
 {
@@ -394,5 +394,6 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 
 		Add_Func(LUA, Global_Angle, "Angle");
 		Add_Func(LUA, Global_LerpAngle, "LerpAngle");
+		Add_Func(LUA, Global_RecipientFilter, "RecipientFilter");
 	LUA->Pop(1);
 }

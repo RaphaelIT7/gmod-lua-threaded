@@ -245,6 +245,7 @@ LUA_FUNCTION(ILuaInterface_RunString)
 
 void InitClasses(GarrysMod::Lua::ILuaInterface* LUA)
 {
+	InitRecipientFilterClass(LUA);
 	InitVectorClass(LUA);
 	InitAngleClass(LUA);
 	InitFileClass(LUA);

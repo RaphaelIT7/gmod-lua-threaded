@@ -101,6 +101,7 @@ struct lua_State
     #endif
 #endif
 
+#include "source_recipientfilter.h"
 #include "networkstringtabledefs.h"
 #include "GameEventListener.h"
 #include <unordered_map>

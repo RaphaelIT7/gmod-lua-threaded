@@ -127,6 +127,7 @@ const Symbol GetAmmoDefSym = Symbol::FromName("_Z10GetAmmoDefv");
 
 const Symbol CGameRules_Sym = Symbol::FromName("g_pGameRules");
 const Symbol CUserMessages_Sym = Symbol::FromName("usermessages");
+const Symbol CTeamList_Sym = Symbol::FromName("g_Teams");
 
 /*
 	CLuaGameCallback stuff

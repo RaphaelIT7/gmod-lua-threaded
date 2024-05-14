@@ -4,6 +4,7 @@
 #include "CLuaGameCallback.h"
 #include <usermessages.h>
 #include "lua_threaded.h"
+#include "team.h"
 
 #ifdef SYSTEM_WINDOWS
 #include <GarrysMod/Lua/LuaShared.h>
@@ -46,7 +47,7 @@ IVEngineServer* engine;
 INetworkStringTableContainer* networkstringtables;
 CGameRules* g_pGameRules;
 IMDLCache* mdlcache;
-
+#include "cbase.h"
 static SourceSDK::FactoryLoader engine_loader("engine");
 static SourceSDK::FactoryLoader server_loader("server");
 static SourceSDK::FactoryLoader datacache_loader("datacache");
@@ -88,6 +89,10 @@ void InitInterfaces()
 	if (mdlcache == nullptr) {
 		mdlcache = (IMDLCache*)datacache_loader.GetFactory()(MDLCACHE_INTERFACE_VERSION, nullptr);
 	}
+
+	g_Teams = *ResolveSymbol<CUtlVector<CTeam*>>(
+		server_loader, CTeamList_Sym
+	);
 }
 
 int interfaces_count = 0;

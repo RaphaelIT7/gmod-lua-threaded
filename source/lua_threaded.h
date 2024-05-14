@@ -20,6 +20,7 @@
 #include "library_net.h"
 #include "library_sql.h"
 
+#include "class_recipientfilter.h"
 #include "class_convar.h"
 #include "class_vector.h"
 #include "class_angle.h"

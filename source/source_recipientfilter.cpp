@@ -5,8 +5,8 @@
 // $NoKeywords: $
 //
 //=============================================================================//
+#include "source_recipientfilter.h"
 #include "cbase.h"
-#include "recipientfilter.h"
 #include "team.h"
 #include "ipredictionsystem.h"
 
@@ -27,6 +27,7 @@ CRecipientFilter::CRecipientFilter()
 CRecipientFilter::~CRecipientFilter()
 {
 }
+
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -182,7 +183,12 @@ void CRecipientFilter::RemoveRecipientsByTeam( CTeam *team )
 	}
 }
 
-/*void CRecipientFilter::RemoveRecipientsNotOnTeam( CTeam *team )
+CTeam *CBaseEntity::GetTeam( void ) const
+{
+	return GetGlobalTeam( m_iTeamNum );
+}
+
+void CRecipientFilter::RemoveRecipientsNotOnTeam( CTeam *team )
 {
 	Assert( team );
 
@@ -198,7 +204,7 @@ void CRecipientFilter::RemoveRecipientsByTeam( CTeam *team )
 			RemoveRecipient( player );
 		}
 	}
-}*/
+}
 
 void CRecipientFilter::AddPlayersFromBitMask( CBitVec< ABSOLUTE_PLAYER_LIMIT >& playerbits )
 {
@@ -412,5 +418,24 @@ void CPASAttenuationFilter::Filter( const Vector& origin, float attenuation /*= 
 			continue;
 
 		RemoveRecipient( player );
+	}
+}
+
+bool CRecipientFilter::GMOD_HasRecipient( int slot )
+{
+	return m_Recipients.HasElement(slot);
+}
+
+void CRecipientFilter::GMOD_RemoveRecipientsByPAS( const Vector& origin )
+{
+	if ( gpGlobals->maxClients == 1 )
+	{
+		m_Recipients.RemoveAll();
+	}
+	else
+	{
+		CBitVec< ABSOLUTE_PLAYER_LIMIT > playerbits;
+		engine->Message_DetermineMulticastRecipients( true, origin, playerbits );
+		RemovePlayersFromBitMask( playerbits );
 	}
 }
