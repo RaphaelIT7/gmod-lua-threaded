@@ -4,7 +4,7 @@
 #include "lua_LuaThread.h"
 #include "CLuaObject.h"
 #include "lua_Enums.h"
-#include "IGet.h"
+#include <GarrysMod/IGet.h>
 
 #include "library_gameevent.h"
 #include "library_resource.h"
