@@ -72,8 +72,10 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 			PushFile(LUA, (LUA_File*)value->data);
 			break;
 		case GarrysMod::Lua::Type::Table:
-			GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
-			LLUA->PreCreateTable(0, value->tbl.size());
+			{
+				GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+				LLUA->PreCreateTable(0, value->tbl.size());
+			}
 			for (auto& [key, val] : value->tbl)
 			{
 				PushValue(LUA, key);
