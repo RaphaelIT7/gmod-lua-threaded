@@ -1,3 +1,4 @@
+#include <GarrysMod/InterfacePointers.hpp>
 #include <GarrysMod/Lua/Interface.h>
 #include "CLuaGameCallback.h"
 #include <usermessages.h>
@@ -5,7 +6,6 @@
 
 #ifdef SYSTEM_WINDOWS
 #include <GarrysMod/Lua/LuaShared.h>
-#include <GarrysMod/InterfacePointers.hpp>
 
 static SourceSDK::FactoryLoader luashared_loader("lua_shared");
 GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
