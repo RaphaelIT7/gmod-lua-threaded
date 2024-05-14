@@ -171,10 +171,15 @@ LUA_FUNCTION(CreateConVar)
 		}
 	}
 
-	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", flags); // Crashes for unknown reasons
-	// ToDo: Add support for min & max
+	if (luaconvars)
+	{
+		ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", flags); // Crashes for unknown reasons
+		// ToDo: Add support for min & max
 
-	Push_ConVar(LUA, cvar);
+		Push_ConVar(LUA, cvar);
+	} else {
+		LUA->PushNil();
+	}
 
 	return 1;
 }

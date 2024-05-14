@@ -16,7 +16,7 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 		content[nBytesRead] = '\0';
 		async->content = content;
 	} else {
-		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
+		Msg("[Luathreaded] file.AsyncRead Invalid request? (%s, %s)\n", request.pszFilename, request.pszPathID);
 	}
 }
 
