@@ -5,17 +5,17 @@ void CLuaObject::Init()
 	Error("What called this?");
 }
 
-void CLuaObject::Init(GarrysMod::Lua::ILuaInterface* LLUA)
+void CLuaObject::Init(GarrysMod::Lua::ILuaBase* Lm_pLua)
 {
-	LUA = LLUA;
+	m_pLua = Lm_pLua;
 }
 
 void CLuaObject::UnReference()
 {
-	LUA->ReferenceFree(m_reference);
+	m_pLua->ReferenceFree(m_reference);
 	m_reference = -1;
 	// Should we also reset the Metatable?
-	// LUA->ReferenceFree(m_metatable)
+	// m_pLua->ReferenceFree(m_metatable)
 	// m_metatable = -1;
 }
 
@@ -32,28 +32,28 @@ void CLuaObject::Set(ILuaObject* obj)
 
 void CLuaObject::SetFromStack(int pos)
 {
-	LUA->Push(pos);
+	m_pLua->Push(pos);
 
-	if (LUA->GetType(-1) != GarrysMod::Lua::Type::Nil)
+	if (m_pLua->GetType(-1) != GarrysMod::Lua::Type::Nil)
 	{
 		UnReference();
-		m_reference = LUA->ReferenceCreate();
+		m_reference = m_pLua->ReferenceCreate();
 	}
 
-	LUA->Pop(1);
+	m_pLua->Pop(1);
 }
 
 void CLuaObject::Push()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
+		m_pLua->ReferencePush(m_reference);
 		if (m_metatable != -1) {
-			LUA->ReferencePush(m_metatable);
-			LUA->SetMetaTable(-2);
+			m_pLua->ReferencePush(m_metatable);
+			m_pLua->SetMetaTable(-2);
 		}
 	} else {
-		LUA->PushNil();
+		m_pLua->PushNil();
 	}
 }
 
@@ -61,9 +61,9 @@ int CLuaObject::GetType()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		int type = LUA->GetType(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		int type = m_pLua->GetType(-1);
+		m_pLua->Pop(1);
 		return type;
 	} else {
 		return GarrysMod::Lua::Type::Nil;
@@ -74,9 +74,9 @@ const char* CLuaObject::GetString()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		const char* str = LUA->GetString(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		const char* str = m_pLua->GetString(-1);
+		m_pLua->Pop(1);
 		return str == NULL ? "" : str;
 	} else {
 		return "";
@@ -87,9 +87,9 @@ float CLuaObject::GetFloat()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		float num = LUA->GetNumber(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		float num = m_pLua->GetNumber(-1);
+		m_pLua->Pop(1);
 		return num;
 	} else {
 		return 0;
@@ -100,9 +100,9 @@ int CLuaObject::GetInt()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		int num = LUA->GetNumber(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		int num = m_pLua->GetNumber(-1);
+		m_pLua->Pop(1);
 		return num;
 	} else {
 		return 0;
@@ -113,9 +113,9 @@ double CLuaObject::GetDouble()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		double num = LUA->GetNumber(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		double num = m_pLua->GetNumber(-1);
+		m_pLua->Pop(1);
 		return num;
 	} else {
 		return 0;
@@ -126,9 +126,9 @@ void* CLuaObject::GetUserData()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		void* data = LUA->GetUserdata(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		void* data = m_pLua->GetUserdata(-1);
+		m_pLua->Pop(1);
 		return data;
 	} else {
 		return 0;
@@ -139,13 +139,13 @@ void CLuaObject::SetMember(const char* name)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->Push(-2);
-			LUA->SetField(-2, name);
+			m_pLua->Push(-2);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -153,13 +153,13 @@ void CLuaObject::SetMember(const char* name, ILuaObject *obj)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
 			obj->Push();
-			LUA->SetField(-2, name);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -167,13 +167,13 @@ void CLuaObject::SetMember(const char* name, float val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushNumber(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -181,13 +181,13 @@ void CLuaObject::SetMember(const char* name, bool val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushBool(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushBool(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -195,13 +195,13 @@ void CLuaObject::SetMember(const char* name, const char* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushString(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushString(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -209,13 +209,13 @@ void CLuaObject::SetMember(const char* name, GarrysMod::Lua::CFunc val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushCFunction(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushCFunction(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -224,16 +224,16 @@ bool CLuaObject::GetMemberBool(const char* name, bool b)
 	bool val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Bool)) {
-				val = LUA->GetBool(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Bool)) {
+				val = m_pLua->GetBool(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -244,16 +244,16 @@ int CLuaObject::GetMemberInt(const char* name, int b)
 	int val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Number)) {
-				val = LUA->GetNumber(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Number)) {
+				val = m_pLua->GetNumber(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -264,16 +264,16 @@ float CLuaObject::GetMemberFloat(const char* name, float b)
 	float val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Number)) {
-				val = LUA->GetNumber(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Number)) {
+				val = m_pLua->GetNumber(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -284,16 +284,16 @@ const char* CLuaObject::GetMemberStr(const char* name, const char* b)
 	const char* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::String)) {
-				val = LUA->GetString(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::String)) {
+				val = m_pLua->GetString(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -304,16 +304,16 @@ void* CLuaObject::GetMemberUserData(const char* name, void* b)
 	void* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::UserData)) {
-				val = LUA->GetUserdata(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::UserData)) {
+				val = m_pLua->GetUserdata(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -324,17 +324,17 @@ void* CLuaObject::GetMemberUserData(float name, void* b)
 	void* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(name);
-			LUA->GetTable(-1);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::UserData)) {
-				val = LUA->GetUserdata(-1);
+			m_pLua->PushNumber(name);
+			m_pLua->GetTable(-1);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::UserData)) {
+				val = m_pLua->GetUserdata(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -345,19 +345,19 @@ GarrysMod::Lua::ILuaObject* CLuaObject::GetMember(const char* name, ILuaObject* 
 	ILuaObject* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table)) {
 				CLuaObject* obj = new CLuaObject;
-				obj->Init(LUA);
+				obj->Init(m_pLua);
 				obj->SetFromStack(-1);
 				val = obj;
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -368,20 +368,20 @@ GarrysMod::Lua::ILuaObject* CLuaObject::GetMember(ILuaObject* name, ILuaObject* 
 	ILuaObject* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
 			name->Push();
-			LUA->GetTable(-1);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
+			m_pLua->GetTable(-1);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table)) {
 				CLuaObject* obj = new CLuaObject;
-				obj->Init(LUA);
+				obj->Init(m_pLua);
 				obj->SetFromStack(-1);
 				val = obj;
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -395,7 +395,7 @@ void CLuaObject::SetMetaTable(ILuaObject* meta)
 void CLuaObject::SetUserData(void* data)
 {
 	UnReference();
-	LUA->PushUserdata(data);
+	m_pLua->PushUserdata(data);
 	SetFromStack(-1);
 }
 
@@ -434,20 +434,20 @@ GarrysMod::Lua::ILuaObject* CLuaObject::GetMember(float name, ILuaObject* b)
 	ILuaObject* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(name);
-			LUA->GetTable(-1);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
+			m_pLua->PushNumber(name);
+			m_pLua->GetTable(-1);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table)) {
 				CLuaObject* obj = new CLuaObject;
-				obj->Init(LUA);
+				obj->Init(m_pLua);
 				obj->SetFromStack(-1);
 				val = obj;
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -455,7 +455,7 @@ GarrysMod::Lua::ILuaObject* CLuaObject::GetMember(float name, ILuaObject* b)
 
 void* CLuaObject::Remove_Me_1(const char* name, void*)
 {
-	Error("Now u made me Angry :< (Don't call ILuaObject->Remove_Me_1)");
+	Error("Now u made me Angry :< (Don't call Im_pLuaObject->Remove_Me_1)");
 	return nullptr;
 }
 
@@ -463,14 +463,14 @@ void CLuaObject::SetMember(float name)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->Push(-2);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->Push(-2);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -478,14 +478,14 @@ void CLuaObject::SetMember(float name, ILuaObject *obj)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
 			obj->Push();
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -493,14 +493,14 @@ void CLuaObject::SetMember(float name, float val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushNumber(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -508,14 +508,14 @@ void CLuaObject::SetMember(float name, float val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushNumber(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }*/
 
@@ -523,14 +523,14 @@ void CLuaObject::SetMember(float name, bool val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushBool(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushBool(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -538,14 +538,14 @@ void CLuaObject::SetMember(float name, const char* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushString(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushString(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -553,14 +553,14 @@ void CLuaObject::SetMember(float name, GarrysMod::Lua::CFunc val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushCFunction(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushCFunction(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -569,17 +569,17 @@ const char* CLuaObject::GetMemberStr(float name, const char* b)
 	const char* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(name);
-			LUA->GetTable(-1);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::String)) {
-				val = LUA->GetString(-1);
+			m_pLua->PushNumber(name);
+			m_pLua->GetTable(-1);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::String)) {
+				val = m_pLua->GetString(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -589,14 +589,14 @@ void CLuaObject::SetMember(ILuaObject* name, ILuaObject* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
 			name->Push();
 			val->Push();
-			LUA->SetTable(-3);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -604,9 +604,9 @@ bool CLuaObject::GetBool()
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		bool val = LUA->GetBool(-1);
-		LUA->Pop(1);
+		m_pLua->ReferencePush(m_reference);
+		bool val = m_pLua->GetBool(-1);
+		m_pLua->Pop(1);
 		return val;
 	} else {
 		return false;
@@ -623,28 +623,28 @@ void CLuaObject::SetMemberFast(int name, int val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(name);
-			LUA->PushNumber(val);
-			LUA->SetTable(-3);
+			m_pLua->PushNumber(name);
+			m_pLua->PushNumber(val);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
 void CLuaObject::SetFloat(float val)
 {
 	UnReference();
-	LUA->PushNumber(val);
+	m_pLua->PushNumber(val);
 	SetFromStack(-1);
 }
 
 void CLuaObject::SetString(const char* val)
 {
 	UnReference();
-	LUA->PushString(val);
+	m_pLua->PushString(val);
 	SetFromStack(-1);
 }
 
@@ -682,13 +682,13 @@ void CLuaObject::SetMemberDouble(const char* name, double val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushNumber(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -696,13 +696,13 @@ void CLuaObject::SetMemberNil(const char* name)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNil();
-			LUA->SetField(-2, name);
+			m_pLua->PushNil();
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -710,14 +710,14 @@ void CLuaObject::SetMemberNil(float name)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(name);
-			LUA->PushNil();
-			LUA->SetTable(-2);
+			m_pLua->PushNumber(name);
+			m_pLua->PushNil();
+			m_pLua->SetTable(-2);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -728,14 +728,14 @@ bool CLuaObject::RemoveMe()
 
 void CLuaObject::SetFromGlobal(const char*)
 {
-	Error("Look into it later. (ILuaObject::SetFromGlobal)");
+	Error("Look into it later. (Im_pLuaObject::SetFromGlobal)");
 }
 
 int CLuaObject::GetStringLen(unsigned int* idk)
 {
-	LUA->ReferencePush(m_reference);
-	const char* str = LUA->GetString(-1);
-	LUA->Pop(1);
+	m_pLua->ReferencePush(m_reference);
+	const char* str = m_pLua->GetString(-1);
+	m_pLua->Pop(1);
 
 	return strlen(str);
 }
@@ -745,16 +745,16 @@ unsigned int CLuaObject::GetMemberUInt(const char* name, unsigned int b)
 	unsigned int val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->IsType(-1, GarrysMod::Lua::Type::Number)) {
-				val = LUA->GetNumber(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Number)) {
+				val = m_pLua->GetNumber(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -764,13 +764,13 @@ void CLuaObject::SetMember(const char* name, unsigned long long val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushNumber(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -778,13 +778,13 @@ void CLuaObject::SetMember(const char* name, int val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushNumber(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -803,16 +803,16 @@ bool CLuaObject::MemberIsNil(const char* name)
 	bool val = true;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->GetType(-1) != GarrysMod::Lua::Type::Nil) {
+			m_pLua->GetField(-1, name);
+			if (m_pLua->GetType(-1) != GarrysMod::Lua::Type::Nil) {
 				val = false;
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -822,14 +822,14 @@ void CLuaObject::SetMemberDouble(float name, double val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushNumber(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -838,16 +838,16 @@ double CLuaObject::GetMemberDouble(const char* name, double b)
 	double val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->GetType(-1) == GarrysMod::Lua::Type::Number) {
-				val = LUA->GetNumber(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->GetType(-1) == GarrysMod::Lua::Type::Number) {
+				val = m_pLua->GetNumber(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -858,16 +858,16 @@ BaseEntity* CLuaObject::GetMemberEntity(const char* name, BaseEntity* b)
 	BaseEntity* val = b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->GetType(-1) == GarrysMod::Lua::Type::Entity) {
-				val = (BaseEntity*)LUA->GetUserdata();
+			m_pLua->GetField(-1, name);
+			if (m_pLua->GetType(-1) == GarrysMod::Lua::Type::Entity) {
+				val = (BaseEntity*)m_pLua->GetUserdata();
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return val;
@@ -877,14 +877,14 @@ void CLuaObject::SetMemberEntity(float name, BaseEntity* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushUserdata(val);
-			LUA->PushNumber(name);
-			LUA->SetTable(-3);
+			m_pLua->PushUserdata(val);
+			m_pLua->PushNumber(name);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -892,13 +892,13 @@ void CLuaObject::SetMemberEntity(const char* name, BaseEntity* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushUserdata(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushUserdata(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -909,31 +909,31 @@ bool CLuaObject::isEntity()
 
 BaseEntity* CLuaObject::GetEntity()
 {
-	LUA->ReferencePush(m_reference);
-	BaseEntity* ent = (BaseEntity*)LUA->GetUserdata(-1);
-	LUA->Pop(1);
+	m_pLua->ReferencePush(m_reference);
+	BaseEntity* ent = (BaseEntity*)m_pLua->GetUserdata(-1);
+	m_pLua->Pop(1);
 	return ent;
 }
 
 void CLuaObject::SetEntity(BaseEntity* ent)
 {
 	UnReference();
-	LUA->PushUserdata(ent);
-	m_reference = LUA->ReferenceCreate();
-	LUA->Pop(1);
+	m_pLua->PushUserdata(ent);
+	m_reference = m_pLua->ReferenceCreate();
+	m_pLua->Pop(1);
 }
 
 void CLuaObject::SetMemberVector(const char* name, Vector* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushUserdata(val);
-			LUA->SetField(-2, name);
+			m_pLua->PushUserdata(val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -941,13 +941,13 @@ void CLuaObject::SetMemberVector(const char* name, Vector& val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushUserdata(&val);
-			LUA->SetField(-2, name);
+			m_pLua->PushUserdata(&val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -955,14 +955,14 @@ void CLuaObject::SetMemberVector(float name, Vector* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushNumber(name);
-			LUA->PushUserdata(&val);
-			LUA->SetTable(-3);
+			m_pLua->PushNumber(name);
+			m_pLua->PushUserdata(&val);
+			m_pLua->SetTable(-3);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -971,16 +971,16 @@ Vector* CLuaObject::GetMemberVector(const char* name, const Vector* b)
 	Vector val = *b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->GetType(-1) == GarrysMod::Lua::Type::Vector) {
-				val = LUA->GetVector(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->GetType(-1) == GarrysMod::Lua::Type::Vector) {
+				val = m_pLua->GetVector(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return &val;
@@ -1000,9 +1000,9 @@ bool CLuaObject::isVector()
 
 Vector* CLuaObject::GetVector()
 {
-	LUA->ReferencePush(m_reference);
-	Vector vec = LUA->GetVector();
-	LUA->Pop(1);
+	m_pLua->ReferencePush(m_reference);
+	Vector vec = m_pLua->GetVector();
+	m_pLua->Pop(1);
 
 	return &vec;
 }
@@ -1011,13 +1011,13 @@ void CLuaObject::SetMemberAngle(const char* name, QAngle& val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushUserdata(&val);
-			LUA->SetField(-2, name);
+			m_pLua->PushUserdata(&val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -1025,13 +1025,13 @@ void CLuaObject::SetMemberAngle(const char* name, QAngle* val)
 {
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->PushUserdata(&val);
-			LUA->SetField(-2, name);
+			m_pLua->PushUserdata(&val);
+			m_pLua->SetField(-2, name);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 }
 
@@ -1040,16 +1040,16 @@ QAngle* CLuaObject::GetMemberAngle(const char* name, QAngle* b)
 	QAngle val = *b;
 	if (m_reference != -1)
 	{
-		LUA->ReferencePush(m_reference);
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table))
+		m_pLua->ReferencePush(m_reference);
+		if (m_pLua->IsType(-1, GarrysMod::Lua::Type::Table))
 		{
-			LUA->GetField(-1, name);
-			if (LUA->GetType(-1) == GarrysMod::Lua::Type::Angle) {
-				val = LUA->GetAngle(-1);
+			m_pLua->GetField(-1, name);
+			if (m_pLua->GetType(-1) == GarrysMod::Lua::Type::Angle) {
+				val = m_pLua->GetAngle(-1);
 			}
-			LUA->Pop(1);
+			m_pLua->Pop(1);
 		}
-		LUA->Pop(1);
+		m_pLua->Pop(1);
 	}
 
 	return &val;
@@ -1062,9 +1062,9 @@ bool CLuaObject::isAngle()
 
 QAngle* CLuaObject::GetAngle()
 {
-	LUA->ReferencePush(m_reference);
-	QAngle ang = LUA->GetAngle();
-	LUA->Pop(1);
+	m_pLua->ReferencePush(m_reference);
+	QAngle ang = m_pLua->GetAngle();
+	m_pLua->Pop(1);
 
 	return &ang;
 }
