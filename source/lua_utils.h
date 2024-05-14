@@ -105,8 +105,9 @@ struct lua_State
 #include "GameEventListener.h"
 #include <unordered_map>
 #include "ILuaConVars.h"
-#include <gamerules.h>
 #include "detours.h"
+#include "player.h" // Needs to be included before gamerules.h or everything breaks.
+#include <gamerules.h>
 #include <setjmp.h>
 #include <eiface.h>
 #include <vector>

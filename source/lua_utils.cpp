@@ -22,12 +22,6 @@ GarrysMod::Lua::ILuaInterface* Win_CreateInterface() {
 class IPlayerInfo;
 class edict_t;
 static const char playerinfomanager_name[] = "PlayerInfoManager002";
-class IPlayerInfoManager
-{
-public:
-	virtual IPlayerInfo *GetPlayerInfo( edict_t *pEdict ) = 0;
-	virtual CGlobalVars *GetGlobalVars( ) = 0;
-};
 
 CGlobalVars* GlobalVars()
 {
@@ -49,6 +43,7 @@ IFileSystem* filesystem;
 CGlobalVars* gpGlobals;
 IVEngineServer* engine;
 INetworkStringTableContainer* networkstringtables;
+CGameRules* g_pGameRules;
 
 static SourceSDK::FactoryLoader engine_loader("engine");
 static SourceSDK::FactoryLoader server_loader("server");
