@@ -366,7 +366,7 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, Global_Msg, "Msg");
 		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
 		Add_Func(LUA, GetConVar_Internal, "GetConVar_Internal");
-		//Add_Func(LUA, CreateConVar, "CreateConVar");
+		Add_Func(LUA, CreateConVar, "CreateConVar");
 		Add_Func(LUA, BroadcastLua, "BroadcastLua");
 
 		Add_Func(LUA, CurTime, "CurTime");
