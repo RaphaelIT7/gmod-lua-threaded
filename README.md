@@ -37,6 +37,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - - [ ] physenv.GetLastSimulationTime  
 - [x] resource (untested!)  
 - [x] system (untested!)  
+- [ ] umsg (untested!)
 - [x] gmod (untested!)  
 - [ ] game (untested!)  
 - - [ ] game.AddDecal  
@@ -121,7 +122,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] string  
 - - [ ] table  
 - - [ ] team  
-- - [ ] umsg  
 - - [ ] undo  
 - - [ ] usermessage  
 - - [ ] utf8  
