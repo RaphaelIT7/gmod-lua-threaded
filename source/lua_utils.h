@@ -207,6 +207,9 @@ struct ILuaThread
 
 	// File library
 	std::vector<IAsyncFile*> async;
+
+	// Umsg Library
+	bf_write* umsg_buffer;
 };
 
 struct GMOD_Info
@@ -225,6 +228,10 @@ struct GMOD_Info
 	ILuaValue* usercontent;
 
 	const char* active_gamemode;
+
+	// Locking
+	bool request_lock;
+	bool is_locked;
 };
 
 inline float Lerp(float delta, float from, float to)

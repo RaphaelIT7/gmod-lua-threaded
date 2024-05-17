@@ -80,6 +80,21 @@ GMOD_MODULE_OPEN()
 		}
 	LUA->Pop(2);
 
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+		LUA->GetField(-1, "hook");
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
+			LUA->GetField(-1, "Add");
+			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
+				LUA->PushString("Think");
+				LUA->PushString("LuaThreaded");
+				LUA->PushCFunction(LuaThread_Think);
+				LLUA->CallFunctionProtected(3, 0, true);
+			} else {
+				LUA->Pop();
+			}
+		}
+	LUA->Pop(2);
+
 	// NOTE: We need to wait until InitPostEntity is called because a bunch of stuff is missing which cause a crash.
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");

@@ -211,6 +211,37 @@ LUA_FUNCTION(LuaThread_ReadyThreads)
     return 1;
 }
 
+LUA_FUNCTION(LuaThread_LockMain)
+{
+	GMOD->request_lock = true;
+
+	while (!GMOD->is_locked) { ThreadSleep(1); };
+
+    return 0;
+}
+
+LUA_FUNCTION(LuaThread_UnlockMain)
+{
+	GMOD->request_lock = false;
+
+    return 0;
+}
+
+LUA_FUNCTION(LuaThread_Think)
+{
+	if (GMOD->request_lock)
+	{
+		GMOD->is_locked = true;
+		while (GMOD->request_lock)
+		{
+			ThreadSleep(1);
+		}
+		GMOD->is_locked = false;
+	}
+	
+    return 0;
+}
+
 void InitLuaThreaded(GarrysMod::Lua::ILuaInterface* LUA, int id)
 {
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
@@ -228,6 +259,8 @@ void InitLuaThreaded(GarrysMod::Lua::ILuaInterface* LUA, int id)
 			Add_Func(LUA, LuaThread_GetValue, "GetValue");
 			Add_Func(LUA, LuaThread_IsMainThread, "IsMainThread");
 			Add_Func(LUA, LuaThread_ReadyThreads, "ReadyThreads");
+			Add_Func(LUA, LuaThread_LockMain, "LockMain");
+			Add_Func(LUA, LuaThread_UnlockMain, "UnlockMain");
 
 		LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop();
