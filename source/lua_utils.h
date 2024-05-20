@@ -219,19 +219,19 @@ struct GMOD_Info
 	const char* branch = "Unknown";
 
 	bool threadready = false;
-	GarrysMod::Lua::ILuaGameCallback* gamecallback;
+	GarrysMod::Lua::ILuaGameCallback* gamecallback = nullptr;
 
 	// engine library
-	ILuaValue* addons;
-	ILuaValue* games;
-	ILuaValue* gamemodes;
-	ILuaValue* usercontent;
+	ILuaValue* addons = nullptr;
+	ILuaValue* games = nullptr;
+	ILuaValue* gamemodes = nullptr;
+	ILuaValue* usercontent = nullptr;
 
-	const char* active_gamemode;
+	const char* active_gamemode = "";
 
 	// Locking
-	bool request_lock;
-	bool is_locked;
+	bool request_lock = false;
+	bool is_locked = false;
 };
 
 inline float Lerp(float delta, float from, float to)

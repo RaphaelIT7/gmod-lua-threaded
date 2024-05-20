@@ -71,7 +71,7 @@ JSONHTTP({
 	url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 	headers = header,
 	success = function(content)
-		if content.attributes.current_state == "running" then
+		if content.attributes and content.attributes.current_state == "running" then
 			HTTP({
 				method = "POST",
 				url = "https://" .. url .. "/api/client/servers/" .. id .. "/command",
@@ -96,7 +96,7 @@ JSONHTTP({
 					url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 					headers = header,
 					success = function(content)
-						if content.attributes.current_state == "offline" then
+						if content.attributes and content.attributes.current_state == "offline" then
 							stopped = true
 						end
 					end,
@@ -134,7 +134,7 @@ while not started do
 		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 		headers = header,
 		success = function(content)
-			if content.attributes.current_state == "running" then
+			if content.attributes and content.attributes.current_state == "running" then
 				started = true
 			end
 		end,
@@ -189,7 +189,7 @@ while not stopped do
 		url = "https://" .. url .. "/api/client/servers/" .. id .. "/resources",
 		headers = header,
 		success = function(content)
-			if content.attributes.current_state == "offline" then
+			if content.attributes and content.attributes.current_state == "offline" then
 				stopped = true
 			end
 		end,
