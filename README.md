@@ -362,3 +362,6 @@ Gmod umsg names:
 - "WeaponPickup"  
 - "BreakModel"  
 - "CheapBreakModel"  
+
+### Fix file:Read not working in mode wb.
+This seems to be caused by something internal in the filesystem which also affects gmod.
