@@ -101,6 +101,13 @@ local code = [[local ret, err = pcall(function()
 	filter:RemoveAllPlayers()
 	print("3. RecipientFilter:__tostring", filter)
 
+	print("==== umsg Library ====")
+	LuaThreaded.LockMain()
+	umsg.Start("Test")
+		umsg.String("Hello World")
+	umsg.End()
+	LuaThreaded.UnlockMain()
+
 	error("Error handling test")
 end)
 
