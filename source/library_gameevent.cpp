@@ -114,7 +114,7 @@ private:
 	ILuaThread* thread;
 };
 
-LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFunction and see how Gmod does it.
+LUA_FUNCTION_STATIC(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFunction and see how Gmod does it.
 {
 	const char* name = LUA->CheckString(1);
 	ILuaThread* thread = GetValidThread(LUA, 1);

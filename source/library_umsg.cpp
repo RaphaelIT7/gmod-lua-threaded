@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-LUA_FUNCTION(umsg_Start)
+LUA_FUNCTION_STATIC(umsg_Start)
 {
 	const char* name = LUA->CheckString(1);
 	// second argument can be a player!
@@ -20,63 +20,63 @@ LUA_FUNCTION(umsg_Start)
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Short)
+LUA_FUNCTION_STATIC(umsg_Short)
 {
 	MessageWriteShort(LUA->CheckNumber(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_PoolString)
+LUA_FUNCTION_STATIC(umsg_PoolString)
 {
 	MessageWriteWord(LUA->CheckNumber(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Long)
+LUA_FUNCTION_STATIC(umsg_Long)
 {
 	MessageWriteLong(LUA->CheckNumber(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Float)
+LUA_FUNCTION_STATIC(umsg_Float)
 {
 	MessageWriteFloat(LUA->CheckNumber(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Entity)
+LUA_FUNCTION_STATIC(umsg_Entity)
 {
 	// ToDo
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_End)
+LUA_FUNCTION_STATIC(umsg_End)
 {
 	MessageEnd();
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Char)
+LUA_FUNCTION_STATIC(umsg_Char)
 {
 	MessageWriteChar(LUA->CheckNumber(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Bool)
+LUA_FUNCTION_STATIC(umsg_Bool)
 {
 	MessageWriteBool(LUA->GetBool(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Angle)
+LUA_FUNCTION_STATIC(umsg_Angle)
 {
 	LUA_Angle* ang = Angle_Get(LUA, 1);
 	MessageWriteAngles(QAngle(ang->x, ang->y, ang->z));
@@ -84,14 +84,14 @@ LUA_FUNCTION(umsg_Angle)
 	return 0;
 }
 
-LUA_FUNCTION(umsg_String)
+LUA_FUNCTION_STATIC(umsg_String)
 {
 	MessageWriteString(LUA->CheckString(1));
 
 	return 0;
 }
 
-LUA_FUNCTION(umsg_Vector)
+LUA_FUNCTION_STATIC(umsg_Vector)
 {
 	LUA_Vector* vec = Vector_Get(LUA, 1);
 	MessageWriteVec3Coord(Vector(vec->x, vec->y, vec->z));
@@ -99,7 +99,7 @@ LUA_FUNCTION(umsg_Vector)
 	return 0;
 }
 
-LUA_FUNCTION(umsg_VectorNormal)
+LUA_FUNCTION_STATIC(umsg_VectorNormal)
 {
 	LUA_Vector* vec = Vector_Get(LUA, 1);
 	MessageWriteVec3Normal(Vector(vec->x, vec->y, vec->z));
@@ -107,7 +107,7 @@ LUA_FUNCTION(umsg_VectorNormal)
 	return 0;
 }
 
-void InitUmsg(GarrysMod::Lua::ILuaInterface* LUA)
+void InitUmsg(GarrysMod::Lua::ILuaInterface* LUA) // NOTE: If you use this libary call LuaThreaded.LockMain before and UnlockMain after the umsg.
 {
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();

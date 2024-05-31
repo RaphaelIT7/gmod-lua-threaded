@@ -6,7 +6,7 @@
 
 bf_write g_Started;
 
-LUA_FUNCTION(net_Start)
+LUA_FUNCTION_STATIC(net_Start)
 {
 	if (g_Started.GetNumBitsWritten() != 0) // ToDo: Learn how netmessages work and how to use them.
 	{

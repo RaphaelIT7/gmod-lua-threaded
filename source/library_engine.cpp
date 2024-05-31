@@ -2,63 +2,63 @@
 #include <icommandline.h>
 #include <eiface.h>
 
-LUA_FUNCTION(engine_GetAddons)
+LUA_FUNCTION_STATIC_STATIC(engine_GetAddons)
 {
 	PushValue(LUA, GMOD->addons);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_GetUserContent) // Deprecated. If anyone wants to use it, tell me. Until then, I won't bother implementing it.
+LUA_FUNCTION_STATIC(engine_GetUserContent) // Deprecated. If anyone wants to use it, tell me. Until then, I won't bother implementing it.
 {
 	PushValue(LUA, GMOD->usercontent);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_GetGames)
+LUA_FUNCTION_STATIC(engine_GetGames)
 {
 	PushValue(LUA, GMOD->games);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_GetGamemodes)
+LUA_FUNCTION_STATIC(engine_GetGamemodes)
 {
 	PushValue(LUA, GMOD->gamemodes);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_ActiveGamemode)
+LUA_FUNCTION_STATIC(engine_ActiveGamemode)
 {
 	LUA->PushString(GMOD->active_gamemode);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_TickInterval)
+LUA_FUNCTION_STATIC(engine_TickInterval)
 {
 	LUA->PushNumber(gpGlobals->interval_per_tick);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_AbsoluteFrameTime)
+LUA_FUNCTION_STATIC(engine_AbsoluteFrameTime)
 {
 	LUA->PushNumber(gpGlobals->absoluteframetime);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_TickCount)
+LUA_FUNCTION_STATIC(engine_TickCount)
 {
 	LUA->PushNumber(gpGlobals->tickcount);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_CloseServer)
+LUA_FUNCTION_STATIC(engine_CloseServer)
 {
 	if (CommandLine()->FindParm("-systemtest"))
 	{
@@ -68,7 +68,7 @@ LUA_FUNCTION(engine_CloseServer)
 	return 0;
 }
 
-LUA_FUNCTION(engine_LightStyle)
+LUA_FUNCTION_STATIC(engine_LightStyle)
 {
 	int lightstyle = LUA->CheckNumber(1);
 	const char* pattern = LUA->CheckString(2);

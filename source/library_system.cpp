@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-LUA_FUNCTION(system_IsWindows)
+LUA_FUNCTION_STATIC(system_IsWindows)
 {
 #ifdef SYSTEM_WINDOWS
 	LUA->PushBool(true);
@@ -11,7 +11,7 @@ LUA_FUNCTION(system_IsWindows)
 	return 1;
 }
 
-LUA_FUNCTION(system_IsOSX)
+LUA_FUNCTION_STATIC(system_IsOSX)
 {
 #ifdef SYSTEM_MACOS
 	LUA->PushBool(true);
@@ -22,7 +22,7 @@ LUA_FUNCTION(system_IsOSX)
 	return 1;
 }
 
-LUA_FUNCTION(system_IsLinux)
+LUA_FUNCTION_STATIC(system_IsLinux)
 {
 #ifdef SYSTEM_LINUX
 	LUA->PushBool(true);
@@ -34,7 +34,7 @@ LUA_FUNCTION(system_IsLinux)
 }
 
 #define DEDICATED 1 // All functions below return nothing on a dedicated server.
-LUA_FUNCTION(system_HasFocus)
+LUA_FUNCTION_STATIC(system_HasFocus)
 {
 #ifdef DEDICATED
 	return 0;
@@ -45,7 +45,7 @@ LUA_FUNCTION(system_HasFocus)
 #endif
 }
 
-LUA_FUNCTION(system_BatteryPower)
+LUA_FUNCTION_STATIC(system_BatteryPower)
 {
 #ifdef DEDICATED
 	return 0;
@@ -56,7 +56,7 @@ LUA_FUNCTION(system_BatteryPower)
 #endif
 }
 
-LUA_FUNCTION(system_AppTime)
+LUA_FUNCTION_STATIC(system_AppTime)
 {
 #ifdef DEDICATED
 	return 0;
@@ -67,7 +67,7 @@ LUA_FUNCTION(system_AppTime)
 #endif
 }
 
-LUA_FUNCTION(system_UpTime)
+LUA_FUNCTION_STATIC(system_UpTime)
 {
 #ifdef DEDICATED
 	return 0;
@@ -78,7 +78,7 @@ LUA_FUNCTION(system_UpTime)
 #endif
 }
 
-LUA_FUNCTION(system_SteamTime)
+LUA_FUNCTION_STATIC(system_SteamTime)
 {
 #ifdef DEDICATED
 	return 0;
@@ -89,7 +89,7 @@ LUA_FUNCTION(system_SteamTime)
 #endif
 }
 
-LUA_FUNCTION(system_GetCountry)
+LUA_FUNCTION_STATIC(system_GetCountry)
 {
 #ifdef DEDICATED
 	return 0;

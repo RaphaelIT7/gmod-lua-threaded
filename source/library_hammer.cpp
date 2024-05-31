@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-LUA_FUNCTION(hammer_SendCommand)
+LUA_FUNCTION_STATIC(hammer_SendCommand)
 {
 	const char* cmd = LUA->CheckString(1);
 

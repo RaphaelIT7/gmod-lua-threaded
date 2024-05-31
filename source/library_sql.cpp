@@ -1,6 +1,6 @@
 #include "lua_threaded.h"
 
-LUA_FUNCTION(sql_Query) // ToDo: Use sqlite3. Should this use a different db than sv.db?
+LUA_FUNCTION_STATIC(sql_Query) // ToDo: Use sqlite3. Should this use a different db than sv.db?
 {
 	return 0;
 }

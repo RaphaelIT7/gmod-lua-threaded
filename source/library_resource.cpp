@@ -8,7 +8,7 @@ static SourceSDK::ModuleLoader server_loader("server");
 
 #define ressource_workaround
 
-LUA_FUNCTION(resource_AddFile) // ToDo
+LUA_FUNCTION_STATIC(resource_AddFile) // ToDo
 {
 	const char* file = LUA->CheckString(1);
 
@@ -32,7 +32,7 @@ LUA_FUNCTION(resource_AddFile) // ToDo
 	return 0;
 }
 
-LUA_FUNCTION(resource_AddSingleFile)
+LUA_FUNCTION_STATIC(resource_AddSingleFile)
 {
 	const char* file = LUA->CheckString(1);
 
@@ -56,7 +56,7 @@ LUA_FUNCTION(resource_AddSingleFile)
 	return 0;
 }
 
-LUA_FUNCTION(resource_AddWorkshop)
+LUA_FUNCTION_STATIC(resource_AddWorkshop)
 {
 	const char* workshopId = LUA->CheckString(1);
 
