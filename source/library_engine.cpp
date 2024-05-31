@@ -2,7 +2,7 @@
 #include <icommandline.h>
 #include <eiface.h>
 
-LUA_FUNCTION_STATIC_STATIC(engine_GetAddons)
+LUA_FUNCTION_STATIC(engine_GetAddons)
 {
 	PushValue(LUA, GMOD->addons);
 
