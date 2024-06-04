@@ -1,17 +1,19 @@
 #include "lua_threaded.h"
 #include "source_ammodef.h"
+#include <string_t.h>
+#include <globalstate.h>
 
-LUA_FUNCTION(game_AddDecal)
+LUA_FUNCTION_STATIC(game_AddDecal)
 {
-	const char* decalName = LUA->CheckString(1);
-	const char* materialName = LUA->CheckString(2);
+	//const char* decalName = LUA->CheckString(1);
+	//const char* materialName = LUA->CheckString(2);
 
 	// ToDo: How does this even work
 
 	return 0;
 }
 
-LUA_FUNCTION(game_AddParticles)
+LUA_FUNCTION_STATIC(game_AddParticles)
 {
 	const char* particleFileName = LUA->CheckString(1);
 	
@@ -25,9 +27,9 @@ LUA_FUNCTION(game_AddParticles)
 	return 0;
 }
 
-LUA_FUNCTION(game_CleanUpMap)
+LUA_FUNCTION_STATIC(game_CleanUpMap)
 {
-	bool dontSendToClients = LUA->GetBool(1);
+	//bool dontSendToClients = LUA->GetBool(1);
 	/* second arg: table -> entity filter
 	// third arg: callback function
 
@@ -58,7 +60,7 @@ LUA_FUNCTION(game_CleanUpMap)
 	return 0;
 }
 
-LUA_FUNCTION(game_ConsoleCommand)
+LUA_FUNCTION_STATIC(game_ConsoleCommand)
 {
 	const char* cmd = LUA->CheckString(1);
 
@@ -67,7 +69,7 @@ LUA_FUNCTION(game_ConsoleCommand)
 	return 0;
 }
 
-LUA_FUNCTION(game_GetAmmoDamageType)
+LUA_FUNCTION_STATIC(game_GetAmmoDamageType)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -77,7 +79,7 @@ LUA_FUNCTION(game_GetAmmoDamageType)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoData)
+LUA_FUNCTION_STATIC(game_GetAmmoData)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -124,7 +126,7 @@ LUA_FUNCTION(game_GetAmmoData)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoForce)
+LUA_FUNCTION_STATIC(game_GetAmmoForce)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -134,7 +136,7 @@ LUA_FUNCTION(game_GetAmmoForce)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoID)
+LUA_FUNCTION_STATIC(game_GetAmmoID)
 {
 	const char* name = LUA->CheckString(1);
 
@@ -144,7 +146,7 @@ LUA_FUNCTION(game_GetAmmoID)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoMax)
+LUA_FUNCTION_STATIC(game_GetAmmoMax)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -154,7 +156,7 @@ LUA_FUNCTION(game_GetAmmoMax)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoName)
+LUA_FUNCTION_STATIC(game_GetAmmoName)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -171,7 +173,7 @@ LUA_FUNCTION(game_GetAmmoName)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoNPCDamage)
+LUA_FUNCTION_STATIC(game_GetAmmoNPCDamage)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -181,7 +183,7 @@ LUA_FUNCTION(game_GetAmmoNPCDamage)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoPlayerDamage)
+LUA_FUNCTION_STATIC(game_GetAmmoPlayerDamage)
 {
 	int id = LUA->CheckNumber(1);
 
@@ -191,7 +193,7 @@ LUA_FUNCTION(game_GetAmmoPlayerDamage)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetAmmoTypes)
+LUA_FUNCTION_STATIC(game_GetAmmoTypes)
 {
 	CAmmoDef* ammo = (CAmmoDef*)func_GetAmmoDef();
 
@@ -210,97 +212,107 @@ LUA_FUNCTION(game_GetAmmoTypes)
 	return 1;
 }
 
-LUA_FUNCTION(game_GetGlobalCounter)
+LUA_FUNCTION_STATIC(game_GetGlobalCounter)
 {
 	const char* name = LUA->CheckString(1);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		LUA->PushNumber(GlobalEntity_GetCounter(globalIndex));
+	} else {
+		LUA->PushNumber(0);
+	}
 
-	// ToDo
-
-	return 0;
+	return 1;
 }
 
-LUA_FUNCTION(game_GetGlobalState)
+LUA_FUNCTION_STATIC(game_GetGlobalState)
 {
 	const char* name = LUA->CheckString(1);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		LUA->PushNumber(GlobalEntity_GetState(globalIndex));
+	} else {
+		LUA->PushNumber(GLOBAL_DEAD);
+	}
 
-	// ToDo
-
-	return 0;
+	return 1;
 }
 
-LUA_FUNCTION(game_GetIPAddress)
+LUA_FUNCTION_STATIC(game_GetIPAddress)
 {
 	LUA->PushString(engine->GMOD_GetServerAddress());
 
 	return 1;
 }
 
-LUA_FUNCTION(game_GetMap)
+LUA_FUNCTION_STATIC(game_GetMap)
 {
-	LUA->PushString(gpGlobal->mapname.ToCStr());
+	LUA->PushString(gpGlobals->mapname.ToCStr());
 
 	return 1;
 }
 
-LUA_FUNCTION(game_GetMapNext)
+LUA_FUNCTION_STATIC(game_GetMapNext)
 {
 	// ToDo
 
 	return 0;
 }
 
-LUA_FUNCTION(game_GetMapVersion)
+LUA_FUNCTION_STATIC(game_GetMapVersion)
 {
-	LUA->PushNumber(gpGlobal->mapversion);
+	LUA->PushNumber(gpGlobals->mapversion);
 
 	return 1;
 }
 
-LUA_FUNCTION(game_GetSkillLevel)
+LUA_FUNCTION_STATIC(game_GetSkillLevel)
 {
-	// ToDo
+	LUA->PushNumber(g_pGameRules->GetSkillLevel());
 
-	return 0;
+	return 1;
 }
 
-LUA_FUNCTION(game_GetTimeScale)
+LUA_FUNCTION_STATIC(game_GetTimeScale)
 {
-	// ToDo
+	LUA->PushNumber(1); // ToDo
 
-	return 0;
+	return 1;
 }
 
-LUA_FUNCTION(game_GetWorld)
+LUA_FUNCTION_STATIC(game_GetWorld)
 {
 	// ToDo: We need the entity class for this.
 
 	return 0;
 }
 
-LUA_FUNCTION(game_IsDedicated)
+LUA_FUNCTION_STATIC(game_IsDedicated)
 {
 	LUA->PushBool(engine->IsDedicatedServer());
 
 	return 1;
 }
 
-LUA_FUNCTION(game_KickID)
+LUA_FUNCTION_STATIC(game_KickID)
 {
 	// ToDo
 
 	return 0;
 }
 
-LUA_FUNCTION(game_LoadNextMap)
+LUA_FUNCTION_STATIC(game_LoadNextMap)
 {
 	// ToDo
 
 	return 0;
 }
 
-LUA_FUNCTION(game_MapLoadType)
+LUA_FUNCTION_STATIC(game_MapLoadType)
 {
-	switch(gpGlobal->eLoadType)
+	switch(gpGlobals->eLoadType)
 	{
 		case MapLoad_NewGame:
 			LUA->PushString("newgame");
@@ -321,21 +333,21 @@ LUA_FUNCTION(game_MapLoadType)
 	return 1;
 }
 
-LUA_FUNCTION(game_MaxPlayers)
+LUA_FUNCTION_STATIC(game_MaxPlayers)
 {
-	LUA->PushNumber(gpGlobal->maxClients);
+	LUA->PushNumber(gpGlobals->maxClients);
 
 	return 1;
 }
 
-LUA_FUNCTION(game_MountGMA)
+LUA_FUNCTION_STATIC(game_MountGMA)
 {
 	// ToDo: This is going to be complex
 
 	return 0;
 }
 
-LUA_FUNCTION(game_RemoveRagdolls)
+LUA_FUNCTION_STATIC(game_RemoveRagdolls)
 {
 	// ToDo
 	// RagdollClear();
@@ -343,42 +355,66 @@ LUA_FUNCTION(game_RemoveRagdolls)
 	return 0;
 }
 
-LUA_FUNCTION(game_SetGlobalCounter)
+LUA_FUNCTION_STATIC(game_SetGlobalCounter)
 {
-	// ToDo: This is going to be complex
+	const char* name = LUA->CheckString(1);
+	int count = LUA->CheckNumber(2);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		GlobalEntity_SetCounter(globalIndex, count);
+	} else {
+		GlobalEntity_Add(name, gpGlobals->mapname.ToCStr(), GLOBAL_ON);
+		globalIndex = GlobalEntity_GetIndex(name);
+
+		GlobalEntity_SetCounter(globalIndex, count);
+	}
 
 	return 0;
 }
 
-LUA_FUNCTION(game_SetGlobalState)
-{
-	// ToDo
+LUA_FUNCTION_STATIC(game_SetGlobalState)
+{ 
+	const char* name = LUA->CheckString(1);
+	int state = LUA->CheckNumber(2);
+	int globalIndex = GlobalEntity_GetIndex(name);
+	if (globalIndex >= 0)
+	{
+		GlobalEntity_SetState(globalIndex, (GLOBALESTATE)state);
+	} else {
+		GlobalEntity_Add(name, gpGlobals->mapname.ToCStr(), (GLOBALESTATE)state);
+		globalIndex = GlobalEntity_GetIndex(name);
+
+		GlobalEntity_SetCounter(globalIndex, 0);
+	}
 
 	return 0;
 }
 
-LUA_FUNCTION(game_SetSkillLevel)
+LUA_FUNCTION_STATIC(game_SetSkillLevel)
 {
-	// ToDo
+	int level = LUA->CheckNumber(1);
+	g_pGameRules->SetSkillLevel(level);
 
 	return 0;
 }
 
-LUA_FUNCTION(game_SetTimeScale)
+LUA_FUNCTION_STATIC(game_SetTimeScale)
 {
-	// ToDo
+	double timescale = LUA->CheckNumber(1);
+	engine->GMOD_SetTimeManipulator(timescale);
 
 	return 0;
 }
 
-LUA_FUNCTION(game_SinglePlayer)
+LUA_FUNCTION_STATIC(game_SinglePlayer)
 {
-	LUA->PushBool(gpGlobal->maxClients == 1);
+	LUA->PushBool(gpGlobals->maxClients == 1);
 
 	return 1;
 }
 
-LUA_FUNCTION(game_StartSpot)
+LUA_FUNCTION_STATIC(game_StartSpot)
 {
 	// ToDo
 
@@ -406,13 +442,13 @@ void InitGame(GarrysMod::Lua::ILuaInterface* LUA)
 			Add_Func(LUA, game_GetAmmoPlayerDamage, "GetAmmoPlayerDamage");
 			Add_Func(LUA, game_GetAmmoTypes, "GetAmmoTypes");
 
-			//Add_Func(LUA, game_GetGlobalCounter, "GetGlobalCounter");
-			//Add_Func(LUA, game_GetGlobalState, "GetGlobalState");
+			Add_Func(LUA, game_GetGlobalCounter, "GetGlobalCounter");
+			Add_Func(LUA, game_GetGlobalState, "GetGlobalState");
 			Add_Func(LUA, game_GetIPAddress, "GetIPAddress");
 			Add_Func(LUA, game_GetMap, "GetMap");
 			//Add_Func(LUA, game_GetMapNext, "GetMapNext");
 			Add_Func(LUA, game_GetMapVersion, "GetMapVersion");
-			//Add_Func(LUA, game_GetSkillLevel, "GetSkillLevel");
+			Add_Func(LUA, game_GetSkillLevel, "GetSkillLevel");
 			//Add_Func(LUA, game_GetTimeScale, "GetTimeScale");
 			//Add_Func(LUA, game_GetWorld, "GetWorld");
 			Add_Func(LUA, game_IsDedicated, "IsDedicated");
@@ -422,9 +458,9 @@ void InitGame(GarrysMod::Lua::ILuaInterface* LUA)
 			Add_Func(LUA, game_MaxPlayers, "MaxPlayers");
 			//Add_Func(LUA, game_MountGMA, "MountGMA");
 			//Add_Func(LUA, game_RemoveRagdolls, "RemoveRagdolls");
-			//Add_Func(LUA, game_SetGlobalCounter, "SetGlobalCounter");
-			//Add_Func(LUA, game_SetGlobalState, "SetGlobalState");
-			//Add_Func(LUA, game_SetSkillLevel, "SetSkillLevel");
+			Add_Func(LUA, game_SetGlobalCounter, "SetGlobalCounter");
+			Add_Func(LUA, game_SetGlobalState, "SetGlobalState");
+			Add_Func(LUA, game_SetSkillLevel, "SetSkillLevel");
 			//Add_Func(LUA, game_SetTimeScale, "SetTimeScale");
 			Add_Func(LUA, game_SinglePlayer, "SinglePlayer");
 			//Add_Func(LUA, game_StartSpot, "StartSpot");

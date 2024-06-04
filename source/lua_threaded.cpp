@@ -40,11 +40,11 @@ GMOD_MODULE_OPEN()
 		LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 			LUA->GetField(-1, "VERSION");
 			GMOD->version = LUA->GetNumber(-1);
-			LUA->Pop();
+			LUA->Pop(1);
 		
 			LUA->GetField(-1, "VERSIONSTR");
 			GMOD->versionstr = LUA->GetString(-1);
-			LUA->Pop();
+			LUA->Pop(1);
 
 			LUA->GetField(-1, "BRANCH");
 			GMOD->branch = LUA->GetString(-1);
@@ -52,6 +52,8 @@ GMOD_MODULE_OPEN()
 	}
 
 	GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+
+	InitInterfaces();
 
 	Symbols_Init();
 
@@ -61,8 +63,7 @@ GMOD_MODULE_OPEN()
 
 	InitEnums(LLUA);
 
-	filesystem = InterfacePointers::FileSystem();
-	UpdateEngine(LLUA); // Look into it why it breaks my shit.
+	UpdateEngine(LLUA);
 
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->GetField(-1, "hook");
@@ -72,6 +73,21 @@ GMOD_MODULE_OPEN()
 				LUA->PushString("GameContentChanged");
 				LUA->PushString("LuaThreaded");
 				LUA->PushCFunction(LUA_UpdateEngine);
+				LLUA->CallFunctionProtected(3, 0, true);
+			} else {
+				LUA->Pop();
+			}
+		}
+	LUA->Pop(2);
+
+	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+		LUA->GetField(-1, "hook");
+		if (LUA->IsType(-1, GarrysMod::Lua::Type::Table)) {
+			LUA->GetField(-1, "Add");
+			if (LUA->IsType(-1, GarrysMod::Lua::Type::Function)) {
+				LUA->PushString("Think");
+				LUA->PushString("LuaThreaded");
+				LUA->PushCFunction(LuaThread_Think);
 				LLUA->CallFunctionProtected(3, 0, true);
 			} else {
 				LUA->Pop();
@@ -114,8 +130,9 @@ GMOD_MODULE_CLOSE()
 
 	for (auto& [key, val] : shared_table)
 	{
+		PushValue(LUA, key);
 		PushValue(LUA, val);
-		LUA->SetField(-2, key.c_str());
+		LUA->SetTable(-3);
 	}
 
 	RemoveEnums();

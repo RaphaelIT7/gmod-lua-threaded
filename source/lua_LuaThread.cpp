@@ -83,12 +83,15 @@ LUA_FUNCTION(LuaThread_CloseInterface)
 
 LUA_FUNCTION(LuaThread_GetTable)
 {
-    LUA->CreateTable();
+    GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+	LLUA->PreCreateTable(0, shared_table.size());
+
     shared_table_mutex.Lock();
     for (auto& [key, value] : shared_table)
     {
+		PushValue(LUA, key);
 		PushValue(LUA, value);
-		LUA->SetField(-2, key.c_str());
+		LUA->SetTable(-3);
     }
     shared_table_mutex.Unlock();
 
@@ -97,33 +100,56 @@ LUA_FUNCTION(LuaThread_GetTable)
 
 LUA_FUNCTION(LuaThread_SetValue)
 {
-	std::string key = (std::string)LUA->CheckString(1);
+	ILuaValue* key = new ILuaValue;
+	FillValue(LUA, key, 1, LUA->GetType(1));
+
+	int key_type = LUA->GetType(1);
 	int type = LUA->GetType(2);
 
 	if (type == GarrysMod::Lua::Type::Nil)
 	{
 		shared_table_mutex.Lock();
-		if (shared_table.find(key) == shared_table.end())
-			return 0;
-
-		ILuaValue* val = shared_table[key];
-		if (val)
+		for (auto it = shared_table.begin(); it != shared_table.end();)
 		{
-			shared_table.erase(key);
-			SafeDelete(val);
+			if (EqualValue(key, it->first))
+			{
+				SafeDelete(it->first);
+				SafeDelete(it->second);
+				shared_table.erase(it);
+				break;
+			}
+
+			++it;
 		}
 		shared_table_mutex.Unlock();
+		SafeDelete(key);
 
 		return 0;
 	}
 
-	ILuaValue* val = GetOrCreate(key);
-	val->type = type;
-
-	FillValue(LUA, val, 2, type);
-
+	ILuaValue* original_key = nullptr;
+	ILuaValue* original_value = nullptr;
 	shared_table_mutex.Lock();
-	shared_table[key] = val;
+	for (auto& [sKey, sVal] : shared_table) // This is slow.
+	{
+		if (EqualValue(key, sKey))
+		{
+			original_key = sKey;
+			original_value = sVal;
+			break;
+		}
+	}
+
+	if (original_key)
+	{
+		delete key;
+		FillValue(LUA, original_value, 2, type);
+	} else {
+		ILuaValue* val = new ILuaValue;
+		FillValue(LUA, val, 2, type);
+
+		shared_table[key] = val;
+	}
 	shared_table_mutex.Unlock();
 
 	return 0;
@@ -131,12 +157,23 @@ LUA_FUNCTION(LuaThread_SetValue)
 
 LUA_FUNCTION(LuaThread_GetValue)
 {
-	std::string key = LUA->CheckString(1);
+	ILuaValue* key = new ILuaValue;
+	FillValue(LUA, key, 1, LUA->GetType(1));
 
-	auto it = shared_table.find(key);
-	if (it != shared_table.end())
+	ILuaValue* val = nullptr;
+	shared_table_mutex.Lock();
+	for (auto& [sKey, sVal] : shared_table)
 	{
-		ILuaValue* val = it->second;
+		if (EqualValue(key, sKey))
+		{
+			val = sVal;
+			break;
+		}
+	}
+	shared_table_mutex.Unlock();
+
+	if (val)
+	{
 		PushValue(LUA, val);
 	} else {
 		LUA->PushNil();
@@ -174,6 +211,37 @@ LUA_FUNCTION(LuaThread_ReadyThreads)
     return 1;
 }
 
+LUA_FUNCTION(LuaThread_LockMain)
+{
+	GMOD->request_lock = true;
+
+	while (!GMOD->is_locked) { ThreadSleep(1); };
+
+    return 0;
+}
+
+LUA_FUNCTION(LuaThread_UnlockMain)
+{
+	GMOD->request_lock = false;
+
+    return 0;
+}
+
+LUA_FUNCTION(LuaThread_Think)
+{
+	if (GMOD->request_lock)
+	{
+		GMOD->is_locked = true;
+		while (GMOD->request_lock)
+		{
+			ThreadSleep(1);
+		}
+		GMOD->is_locked = false;
+	}
+	
+    return 0;
+}
+
 void InitLuaThreaded(GarrysMod::Lua::ILuaInterface* LUA, int id)
 {
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
@@ -191,6 +259,8 @@ void InitLuaThreaded(GarrysMod::Lua::ILuaInterface* LUA, int id)
 			Add_Func(LUA, LuaThread_GetValue, "GetValue");
 			Add_Func(LUA, LuaThread_IsMainThread, "IsMainThread");
 			Add_Func(LUA, LuaThread_ReadyThreads, "ReadyThreads");
+			Add_Func(LUA, LuaThread_LockMain, "LockMain");
+			Add_Func(LUA, LuaThread_UnlockMain, "UnlockMain");
 
 		LUA->SetField(-2, "LuaThreaded");
 	LUA->Pop();

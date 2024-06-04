@@ -29,7 +29,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - [x] engine  
 - [x] gameevent  
 - [x] file  
-- [x] debug  
+- [x] debug (Also `setlocal`, `setupvalue`, `upvalueid` and `upvaluejoin` exists)  
 
 #### Unfinished/Untested
 - [x] physenv (Mostly implemented)  
@@ -37,6 +37,7 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - - [ ] physenv.GetLastSimulationTime  
 - [x] resource (untested!)  
 - [x] system (untested!)  
+- [ ] umsg (untested!)
 - [x] gmod (untested!)  
 - [ ] game (untested!)  
 - - [ ] game.AddDecal  
@@ -76,8 +77,10 @@ This only works on Linux because on Windows creating a ILuaInterface on another 
 - - [ ] Implement sql.Query. (Fixes sql and cookie library)  
 - [ ] Add a new way to send data across threads. Maybe something like net messages but for threads?  
 - [ ] Look again into Error handling. Maybe show which file had an error?
+- [ ] Improve Performance of `LuaThreaded.SetValue` and `LuaThreaded.GetValue`
 
 ### Bugs
+- [x] Fix a memory leak related to LuaThreaded.SetValue not reusing the original key and value.  
 - [ ] File:Seek seems to have some issues?
 - [ ] Requiring this module befor InitPostEntity was called causes a bunch of weird bugs.
 See [LuaThreaded.ReadyThreads()](https://github.com/RaphaelIT7/gmod-lua-threaded?tab=readme-ov-file#luathreadedreadythreads) for the implemented workaround.
@@ -119,7 +122,6 @@ I listed all Libraries below that are serverside. Regardless if they are impleme
 - - [ ] string  
 - - [ ] table  
 - - [ ] team  
-- - [ ] umsg  
 - - [ ] undo  
 - - [ ] usermessage  
 - - [ ] utf8  
@@ -178,10 +180,10 @@ Args:
 Returns the Shared table.  
 NOTE: You need to call this function to get an updated version!  
 
-### LuaThreaded.SetValue(string key, any value)
+### LuaThreaded.SetValue(any key, any value)
 Sets a Value inside the shared table.  
 
-### LuaThreaded.GetValue(string key)
+### LuaThreaded.GetValue(any key)
 Returns only the specified value from the shared table.  
 
 Args:  
@@ -334,6 +336,9 @@ Files:
 
 ## Some notes
 
+### Entities
+We should block entity creation while `PackEntities_Normal` is running because else we might cause engine errors.  
+
 ### NW
 For the NW System I'm going to need CLuaNetworkedVars.  
 CLuaNetworkedVars::FindEntityVar -- Returns a LuaNetworkedVar_t. GetNW* and GetGlobal functions are gonna require this.  
@@ -346,3 +351,17 @@ This is going to be pain.
 Going to need g_pServerWorldTable, SetDataTableVar, IGMODDataTable, CGMODVariant.  
 Already got: [IGMODDataTable](https://github.com/danielga/sourcesdk-minimal/blob/1cacb57cd36ee5b77c970e91fff374046aa8574d/public/GarrysMod/IGMODDataTable.h#L5)  
 ToDo: Find out what the CGMODVariant is.  
+NOTE: Found out.
+
+## Other Stuff
+
+Gmod umsg names:  
+- "LuaCmd"  
+- "SWEPCmd"  
+- "AmmoPickup"  
+- "WeaponPickup"  
+- "BreakModel"  
+- "CheapBreakModel"  
+
+### Fix file:Read not working in mode wb.
+This seems to be caused by something internal in the filesystem which also affects gmod.

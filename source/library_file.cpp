@@ -10,16 +10,17 @@ void AsyncCallback(const FileAsyncRequest_t &request, int nBytesRead, FSAsyncSta
 	{
 		async->finished = true;
 		async->nBytesRead = nBytesRead;
+		async->status = err;
 		char* content = new char[nBytesRead + 1];
 		std::memcpy(static_cast<void*>(content), request.pData, nBytesRead);
 		content[nBytesRead] = '\0';
 		async->content = content;
 	} else {
-		Msg("[Luathreaded] file.AsyncRead Invalid request?\n");
+		Msg("[Luathreaded] file.AsyncRead Invalid request? (%s, %s)\n", request.pszFilename, request.pszPathID);
 	}
 }
 
-LUA_FUNCTION(file_AsyncRead)
+LUA_FUNCTION_STATIC(file_AsyncRead)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* fileName = LUA->CheckString(1);
@@ -58,7 +59,7 @@ void FileLibThink(ILuaThread* thread)
 		LUA->ReferencePush(file->callback);
 		LUA->PushString(file->req->pszFilename);
 		LUA->PushString(file->req->pszPathID);
-		LUA->PushNumber(file->Status);
+		LUA->PushNumber(file->status);
 		LUA->PushString(file->content);
 		LUA->CallFunctionProtected(4, 0, true);
 		LUA->ReferenceFree(file->callback);
@@ -71,21 +72,21 @@ void FileLibThink(ILuaThread* thread)
 	}
 }
 
-LUA_FUNCTION(file_CreateDir)
+LUA_FUNCTION_STATIC(file_CreateDir)
 {
 	filesystem->CreateDirHierarchy(LUA->CheckString(1), "DATA");
 
 	return 0;
 }
 
-LUA_FUNCTION(file_Delete)
+LUA_FUNCTION_STATIC(file_Delete)
 {
 	filesystem->RemoveFile(LUA->CheckString(1), "DATA");
 
 	return 0;
 }
 
-LUA_FUNCTION(file_Exists)
+LUA_FUNCTION_STATIC(file_Exists)
 {
 	LUA->PushBool(filesystem->FileExists(LUA->CheckString(1), LUA->CheckString(2)));
 
@@ -120,7 +121,7 @@ std::vector<std::string> SortByDate(std::vector<std::string> files, const char* 
 	return files;
 }
 
-LUA_FUNCTION(file_Find)
+LUA_FUNCTION_STATIC(file_Find)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> folders;
@@ -188,14 +189,14 @@ LUA_FUNCTION(file_Find)
 	return 2;
 }
 
-LUA_FUNCTION(file_IsDir)
+LUA_FUNCTION_STATIC(file_IsDir)
 {
 	LUA->PushBool(filesystem->IsDirectory(LUA->CheckString(1), LUA->CheckString(2)));
 
 	return 1;
 }
 
-LUA_FUNCTION(file_Open) // ToDo: Add the File class
+LUA_FUNCTION_STATIC(file_Open) // ToDo: Add the File class
 {
 	const char* filename = LUA->CheckString(1);
 	const char* fileMode = LUA->CheckString(2);
@@ -209,7 +210,7 @@ LUA_FUNCTION(file_Open) // ToDo: Add the File class
 	return 1;
 }
 
-LUA_FUNCTION(file_Rename)
+LUA_FUNCTION_STATIC(file_Rename)
 {
 	const char* original = LUA->CheckString(1);
 	const char* newname = LUA->CheckString(2);
@@ -219,7 +220,7 @@ LUA_FUNCTION(file_Rename)
 	return 1;
 }
 
-LUA_FUNCTION(file_Size)
+LUA_FUNCTION_STATIC(file_Size)
 {
 	const char* path = LUA->GetString(2);
 	if (path == NULL)
@@ -230,7 +231,7 @@ LUA_FUNCTION(file_Size)
 	return 1;
 }
 
-LUA_FUNCTION(file_Time)
+LUA_FUNCTION_STATIC(file_Time)
 {
 	const char* path = LUA->GetString(2);
 	if (path == NULL)

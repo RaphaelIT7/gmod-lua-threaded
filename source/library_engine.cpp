@@ -1,4 +1,3 @@
-#include <GarrysMod/InterfacePointers.hpp>
 #include "lua_threaded.h"
 #include <icommandline.h>
 #include <eiface.h>
@@ -38,56 +37,56 @@ LUA_FUNCTION(engine_GetAddons)
 	return 1;
 }
 
-LUA_FUNCTION(engine_GetUserContent) // Deprecated. If anyone wants to use it, tell me. Until then, I won't bother implementing it.
+LUA_FUNCTION_STATIC(engine_GetUserContent) // Deprecated. If anyone wants to use it, tell me. Until then, I won't bother implementing it.
 {
 	PushValue(LUA, GMOD->usercontent);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_GetGames)
+LUA_FUNCTION_STATIC(engine_GetGames)
 {
 	PushValue(LUA, GMOD->games);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_GetGamemodes)
+LUA_FUNCTION_STATIC(engine_GetGamemodes)
 {
 	PushValue(LUA, GMOD->gamemodes);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_ActiveGamemode)
+LUA_FUNCTION_STATIC(engine_ActiveGamemode)
 {
 	LUA->PushString(GMOD->active_gamemode);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_TickInterval)
+LUA_FUNCTION_STATIC(engine_TickInterval)
 {
-	LUA->PushNumber(gpGlobal->interval_per_tick);
+	LUA->PushNumber(gpGlobals->interval_per_tick);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_AbsoluteFrameTime)
+LUA_FUNCTION_STATIC(engine_AbsoluteFrameTime)
 {
-	LUA->PushNumber(gpGlobal->absoluteframetime);
+	LUA->PushNumber(gpGlobals->absoluteframetime);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_TickCount)
+LUA_FUNCTION_STATIC(engine_TickCount)
 {
-	LUA->PushNumber(gpGlobal->tickcount);
+	LUA->PushNumber(gpGlobals->tickcount);
 
 	return 1;
 }
 
-LUA_FUNCTION(engine_CloseServer)
+LUA_FUNCTION_STATIC(engine_CloseServer)
 {
 	if (CommandLine()->FindParm("-systemtest"))
 	{
@@ -97,7 +96,7 @@ LUA_FUNCTION(engine_CloseServer)
 	return 0;
 }
 
-LUA_FUNCTION(engine_LightStyle)
+LUA_FUNCTION_STATIC(engine_LightStyle)
 {
 	int lightstyle = LUA->CheckNumber(1);
 	const char* pattern = LUA->CheckString(2);
@@ -133,9 +132,10 @@ bool PushEngineFunction(GarrysMod::Lua::ILuaInterface* LUA, const char* eng)
 	{
 		LUA->ReferencePush(ref);
 		LUA->ReferenceFree(ref);
+		return true;
 	}
 
-	return ref != -1;
+	return false;
 }
 
 void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of this stuff on the main thread or else it will crash. Update: It crashes everywhere. What is broken?
@@ -191,16 +191,6 @@ void UpdateEngine(GarrysMod::Lua::ILuaInterface* LUA) // We need to get all of t
 
 void InitEngine(GarrysMod::Lua::ILuaInterface* LUA)
 {
-	if (engine == nullptr)
-	{
-		engine = InterfacePointers::VEngineServer();
-	}
-
-	if (gpGlobal == nullptr)
-	{
-		gpGlobal = GlobalVars();
-	}
-
 	LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
 		LUA->CreateTable();
 			Add_Func(LUA, engine_GetAddons, "GetAddons");

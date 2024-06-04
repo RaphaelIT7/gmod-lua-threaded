@@ -77,6 +77,10 @@ typedef int (*TAdvancedLuaErrorReporter)(lua_State*);
 extern TAdvancedLuaErrorReporter func_AdvancedLuaErrorReporter;
 const Symbol AdvancedLuaErrorReporterSym = Symbol::FromName("_Z24AdvancedLuaErrorReporterP9lua_State");
 
+typedef void (*CLuaInterface_DoStackCheck)(void* funnies);
+const Symbol CLuaInterface_DoStackCheckSym = Symbol::FromName("_ZN13CLuaInterface12DoStackCheckEv");
+
+
 /*
 	server_srv stuff
 */
@@ -120,6 +124,10 @@ const Symbol GMOD_LoadParticleConfigFileSym = Symbol::FromName("_Z27GMOD_LoadPar
 typedef void* (*TGetAmmoDef)();
 extern TGetAmmoDef func_GetAmmoDef;
 const Symbol GetAmmoDefSym = Symbol::FromName("_Z10GetAmmoDefv");
+
+const Symbol CGameRules_Sym = Symbol::FromName("g_pGameRules");
+const Symbol CUserMessages_Sym = Symbol::FromName("usermessages");
+const Symbol CTeamList_Sym = Symbol::FromName("g_Teams");
 
 /*
 	CLuaGameCallback stuff
@@ -235,3 +243,28 @@ static inline T* ResolveSymbols(
 
 	return iface_pointer;
 }
+
+inline bool CheckValue(const char* msg, const char* name, bool ret)
+{
+	if (!ret) {
+		Msg("[LuaThreaded] Failed to %s %s!\n", msg, name);
+		return false;
+	}
+
+	return true;
+}
+
+inline bool CheckValue(const char* name, bool ret)
+{
+	return CheckValue("get function", name, ret);
+}
+
+template<class T>
+bool CheckFunction(T func, const char* name)
+{
+	return CheckValue("get function", name, func != nullptr);
+}
+
+typedef void (*DoStackCheckCallback)(void*);
+extern void AddStackCheckCallback(void* key, DoStackCheckCallback func);
+extern void RemoveStackCheckCallback(void* key);

@@ -7,7 +7,7 @@ static const char table_name[] = "File_object";
 
 void Push_File(GarrysMod::Lua::ILuaBase* LUA, const char* filename, const char* fileMode, const char* path)
 {
-	LUA_File* udata = (LUA_File*)LUA->NewUserdata(sizeof(LUA_File));
+	LUA_File* udata = LUA->NewUserType<LUA_File>(metatype);
 	udata->filename = filename;
 	udata->fileMode = fileMode;
 	udata->path = path;
@@ -20,38 +20,15 @@ void Push_File(GarrysMod::Lua::ILuaBase* LUA, const char* filename, const char* 
 	LUA->SetMetaTable(-2);
 }
 
-bool IsFile(GarrysMod::Lua::ILuaBase* LUA, int index)
-{
-	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
-	{
-		LUA->GetMetaTable(index);
-		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
-		{
-			if (strcmp(LUA->GetString(-1), metaname))
-			{
-				LUA->Pop(2);
-				return true;
-			} else {
-				LUA->Pop(2);
-			}
-		} else {
-			LUA->Pop(2);
-		}
-	}
-
-	return false;
-}
-
 void File_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData)) // ToDo: Make a better check.
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::File)) // ToDo: Make a better check.
 		LUA->TypeError(index, metaname);
 }
 
 LUA_File* File_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
-	return (LUA_File*)LUA->GetUserdata(index);
+	return LUA->GetUserType<LUA_File>(index, metatype);
 }
 
 LUA_File* File_Get(GarrysMod::Lua::ILuaBase* LUA, int index, bool error)

@@ -2,6 +2,7 @@
 #include "lua_threaded.h"
 #include <sstream>
 #include "convar.h"
+#include <source_recipientfilter.h>
 
 LUA_FUNCTION(include)
 {
@@ -152,7 +153,8 @@ LUA_FUNCTION(CreateConVar)
 	if (LUA->IsType(3, GarrysMod::Lua::Type::Number)) {
 		flags = LUA->CheckNumber(3);
 	} else if (LUA->IsType(3, GarrysMod::Lua::Type::Table)) {
-		flags = 131072; // Seems to always be FCVAR_DONTRECORD
+		GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
+		flags = LLUA->GetFlags(3); // Seems to always be FCVAR_DONTRECORD
 	} else {
 		LUA->ArgError(3, ((std::string)"number expected, got " + LUA->GetTypeName(LUA->GetType(3))).c_str()); // ToDo: Make it better someday.
 	}
@@ -169,10 +171,15 @@ LUA_FUNCTION(CreateConVar)
 		}
 	}
 
-	ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", 1); // Crashes for unknown reasons
-	// ToDo: Add support for min & max
+	if (luaconvars)
+	{
+		ConVar* cvar = luaconvars->CreateConVar(name, helpText, "", flags); // Crashes for unknown reasons
+		// ToDo: Add support for min & max
 
-	Push_ConVar(LUA, cvar);
+		Push_ConVar(LUA, cvar);
+	} else {
+		LUA->PushNil();
+	}
 
 	return 1;
 }
@@ -209,7 +216,7 @@ LUA_FUNCTION(AddCSLuaFile) // Implemented so that Gmod won't complain. ToDo: How
 
 LUA_FUNCTION(isangle)
 {
-	LUA->PushBool(IsAngle(LUA, 1));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Angle));
 
 	return 1;
 }
@@ -272,7 +279,7 @@ LUA_FUNCTION(istable)
 
 LUA_FUNCTION(isvector)
 {
-	LUA->PushBool(IsVector(LUA, 1));
+	LUA->PushBool(LUA->IsType(1, GarrysMod::Lua::Type::Vector));
 
 	return 1;
 }
@@ -287,43 +294,26 @@ LUA_FUNCTION(Global_Msg)
 		{
 			ss << arg_str;
 		} else {
-			int type = LUA->GetType(i);
-			bool meta = false;
-			void* ref = nullptr;
-			switch(type)
-			{
-				case GarrysMod::Lua::Type::Bool:
-					ss << (LUA->GetBool(i) ? "true" : "false");
-					break;
-				case GarrysMod::Lua::Type::Function:
-					ss << "function " << std::hex << LUA->Top() - i + 1;
-					break;
-				default:
+			LUA->PushSpecial(GarrysMod::Lua::SPECIAL_GLOB);
+				LUA->GetField(-1, "tostring");
+				if (LUA->IsType(-1, GarrysMod::Lua::Type::Function))
+				{
 					LUA->Push(i);
-					if (LUA->GetMetaTable(-1))
+					LUA->Call(1, 1);
+					const char* str = LUA->GetString(-1);
+					if (str != NULL)
 					{
-						LUA->GetField(-1, "__tostring");
-						if (LUA->IsType(-1, GarrysMod::Lua::Type::Function))
-						{
-							LUA->Push(-3);
-							GarrysMod::Lua::ILuaInterface* LLUA = (GarrysMod::Lua::ILuaInterface*)LUA;
-							LLUA->CallFunctionProtected(1, 1, true);
-							
-							if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
-							{
-								meta = true;
-								ss << LUA->GetString(-1);
-							}
-						}
-						LUA->Pop(2);
+						ss << str;
+						ss << "\n";
+					} else {
+						Msg("[LuaThreaded] tostring failed?\n");
 					}
+
 					LUA->Pop(1);
-
-					if (!meta)
-						ss << "<Something Unknown. Scary>";
-
-					break;
-			}
+				} else {
+					Msg("[LuaThreaded] Please don't nuke tostring. It's needed by Msg for now\n");
+				}
+			LUA->Pop(2);
 		}
 	}
 
@@ -334,14 +324,14 @@ LUA_FUNCTION(Global_Msg)
 
 LUA_FUNCTION(CurTime)
 {
-	LUA->PushNumber(gpGlobal->curtime);
+	LUA->PushNumber(gpGlobals->curtime);
 
 	return 1;
 }
 
 LUA_FUNCTION(RealTime)
 {
-	LUA->PushNumber(gpGlobal->realtime);
+	LUA->PushNumber(gpGlobals->realtime);
 
 	return 1;
 }
@@ -350,6 +340,22 @@ LUA_FUNCTION(RunConsoleCommand) // ToDo: Finish this. This is not how it should 
 {
 	const char* cmd = LUA->CheckString(1);
 	engine->GMOD_RawServerCommand(cmd);
+
+	return 1;
+}
+
+LUA_FUNCTION(BroadcastLua)
+{
+	const char* lua = LUA->CheckString(1);
+
+	// Everything below is done inside the BroadcastLua(const char*) function in Gmod.
+	CRecipientFilter filter;
+	filter.AddAllPlayers();
+	filter.MakeReliable();
+
+	UserMessageBegin(filter, "LuaCmd");
+		MessageWriteString(lua);
+	MessageEnd();
 
 	return 1;
 }
@@ -365,7 +371,8 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, Global_Msg, "Msg");
 		Add_Func(LUA, RunConsoleCommand, "RunConsoleCommand");
 		Add_Func(LUA, GetConVar_Internal, "GetConVar_Internal");
-		//Add_Func(LUA, CreateConVar, "CreateConVar");
+		Add_Func(LUA, CreateConVar, "CreateConVar");
+		Add_Func(LUA, BroadcastLua, "BroadcastLua");
 
 		Add_Func(LUA, CurTime, "CurTime");
 		Add_Func(LUA, RealTime, "RealTime");
@@ -387,7 +394,5 @@ void InitGlobal(GarrysMod::Lua::ILuaInterface* LUA)
 
 		Add_Func(LUA, Global_Angle, "Angle");
 		Add_Func(LUA, Global_LerpAngle, "LerpAngle");
-
-		Add_Func(LUA, Global_Entity, "Entity");
 	LUA->Pop(1);
 }

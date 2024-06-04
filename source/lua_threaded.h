@@ -4,7 +4,7 @@
 #include "lua_LuaThread.h"
 #include "CLuaObject.h"
 #include "lua_Enums.h"
-#include "IGet.h"
+#include <GarrysMod/IGet.h>
 
 #include "library_gameevent.h"
 #include "library_resource.h"
@@ -14,6 +14,7 @@
 #include "library_engine.h"
 #include "library_hammer.h"
 #include "library_timer.h"
+#include "library_umsg.h"
 #include "library_gmod.h"
 #include "library_game.h"
 #include "library_file.h"
@@ -21,6 +22,7 @@
 #include "library_net.h"
 #include "library_sql.h"
 
+#include "class_recipientfilter.h"
 #include "class_convar.h"
 #include "class_vector.h"
 #include "class_angle.h"

@@ -101,10 +101,14 @@ struct lua_State
     #endif
 #endif
 
+#include "source_recipientfilter.h"
+#include "networkstringtabledefs.h"
 #include "GameEventListener.h"
 #include <unordered_map>
 #include "ILuaConVars.h"
 #include "detours.h"
+#include "player.h" // Needs to be included before gamerules.h or everything breaks.
+#include <gamerules.h>
 #include <setjmp.h>
 #include <eiface.h>
 #include <entitylist_base.h>
@@ -129,15 +133,13 @@ enum LuaAction
 
 struct ILuaValue
 {
-	int type = -1;
+	unsigned char type = -1;
 
 	double number = -1;
 	const char* string = "";
 	std::unordered_map<ILuaValue*, ILuaValue*> tbl;
-	Vector vec;
-	QAngle ang;
-	// TODO : Add entity
-	void* otherstuff = nullptr; // Can be used for LUA_File as an example. Use Copies as everything will be deleted.
+	float x, y, z;
+	void* data = nullptr; // Used for LUA_File
 };
 
 struct ILuaAction
@@ -173,7 +175,7 @@ struct IAsyncFile
 	ILuaThread* thread;
 	int callback;
 	int nBytesRead;
-	int Status;
+	int status;
 	bool finished = false;
 	const char* content;
 };
@@ -207,6 +209,9 @@ struct ILuaThread
 
 	// File library
 	std::vector<IAsyncFile*> async;
+
+	// Umsg Library
+	bf_write* umsg_buffer;
 };
 
 struct GMOD_Info
@@ -216,22 +221,73 @@ struct GMOD_Info
 	const char* branch = "Unknown";
 
 	bool threadready = false;
-	GarrysMod::Lua::ILuaGameCallback* gamecallback;
+	GarrysMod::Lua::ILuaGameCallback* gamecallback = nullptr;
 
 	// engine library
-	ILuaValue* addons;
-	ILuaValue* games;
-	ILuaValue* gamemodes;
-	ILuaValue* usercontent;
+	ILuaValue* addons = nullptr;
+	ILuaValue* games = nullptr;
+	ILuaValue* gamemodes = nullptr;
+	ILuaValue* usercontent = nullptr;
 
-	const char* active_gamemode;
+	const char* active_gamemode = "";
+
+	// Locking
+	bool request_lock = false;
+	bool is_locked = false;
 };
 
 inline float Lerp(float delta, float from, float to)
 {
     return from + (to - from) * delta;
 }
-#endif
+
+inline bool EqualValue(ILuaValue* val1, ILuaValue* val2)
+{
+	if (val1->type != val2->type)
+		return false;
+
+	switch(val1->type)
+	{
+		case GarrysMod::Lua::Type::NUMBER:
+			return val1->number == val2->number;
+		case GarrysMod::Lua::Type::BOOL:
+			return val1->number == val2->number;
+		case GarrysMod::Lua::Type::STRING:
+			return strcmp(val1->string, val2->string) == 0;
+		case GarrysMod::Lua::Type::ENTITY: // ToDo
+			return false;
+		case GarrysMod::Lua::Type::VECTOR:
+			return val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
+		case GarrysMod::Lua::Type::ANGLE:
+			return val1->x == val2->x && val1->y == val2->y && val1->z == val2->z;
+		case GarrysMod::Lua::Type::File: // ToDo
+			return false;
+		case GarrysMod::Lua::Type::Table: // ToDo
+			return false;
+		default:
+			break;
+	}
+
+	return false;
+}
+
+inline ILuaValue* CreateValue(int value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = GarrysMod::Lua::Type::Number;
+	val->number = value;
+
+	return val;
+}
+
+inline ILuaValue* CreateValue(const char* value)
+{
+	ILuaValue* val = new ILuaValue;
+	val->type = GarrysMod::Lua::Type::String;
+	val->string = value;
+
+	return val;
+}
 
 extern GMOD_Info* GMOD;
 extern int interfaces_count;
@@ -239,15 +295,11 @@ extern std::unordered_map<double, ILuaThread*> interfaces;
 
 extern int shared_table_reference;
 extern CThreadFastMutex shared_table_mutex;
-extern std::unordered_map<std::string, ILuaValue*> shared_table;
+extern std::unordered_map<ILuaValue*, ILuaValue*> shared_table;
 
 extern void PushValue(GarrysMod::Lua::ILuaBase*, ILuaValue*);
 extern void SafeDelete(ILuaValue*);
-extern ILuaValue* GetOrCreate(std::string);
 extern void FillValue(GarrysMod::Lua::ILuaBase*, ILuaValue*, int, int);
-
-extern ILuaValue* CreateValue(int);
-extern ILuaValue* CreateValue(const char*);
 
 extern void Add_Func(GarrysMod::Lua::ILuaBase*, GarrysMod::Lua::CFunc, const char*);
 extern ILuaThread* FindThread(int);
@@ -256,7 +308,11 @@ extern GarrysMod::Lua::ILuaInterface* CreateInterface();
 extern void ShutdownInterface(ILuaThread*);
 
 extern std::string ToPath(std::string);
+
+extern void InitInterfaces();
 extern IFileSystem* filesystem;
-extern CGlobalVars* gpGlobal;
+extern CGlobalVars* gpGlobals;
 extern IVEngineServer* engine;
 extern CBaseEntityList* g_pEntityList;
+extern INetworkStringTableContainer* networkstringtables;
+#endif

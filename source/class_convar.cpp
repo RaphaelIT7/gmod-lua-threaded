@@ -7,7 +7,7 @@ static const char table_name[] = "ConVar_object";
 
 void Push_ConVar(GarrysMod::Lua::ILuaBase* LUA, ConVar* convar)
 {
-	LUA_ConVar* udata = (LUA_ConVar*)LUA->NewUserdata(sizeof(LUA_ConVar));
+	LUA_ConVar* udata = LUA->NewUserType<LUA_ConVar>(metatype);
 	udata->cvar = convar;
 
 	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;
@@ -17,38 +17,15 @@ void Push_ConVar(GarrysMod::Lua::ILuaBase* LUA, ConVar* convar)
 	LUA->SetMetaTable(-2);
 }
 
-bool IsConVar(GarrysMod::Lua::ILuaBase* LUA, int index)
-{
-	if (LUA->IsType(index, GarrysMod::Lua::Type::UserData))
-	{
-		LUA->GetMetaTable(index);
-		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
-		{
-			if (strcmp(LUA->GetString(-1), metaname))
-			{
-				LUA->Pop(2);
-				return true;
-			} else {
-				LUA->Pop(2);
-			}
-		} else {
-			LUA->Pop(2);
-		}
-	}
-
-	return false;
-}
-
 void ConVar_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, GarrysMod::Lua::Type::UserData)) // ToDo: Make a better check.
+	if(!LUA->IsType(index, GarrysMod::Lua::Type::ConVar)) // ToDo: Make a better check.
 		LUA->TypeError(index, metaname);
 }
 
 LUA_ConVar* ConVar_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
 {
-	return (LUA_ConVar*)LUA->GetUserdata(index);
+	return LUA->GetUserType<LUA_ConVar>(index, metatype);
 }
 
 LUA_ConVar* ConVar_Get(GarrysMod::Lua::ILuaBase* LUA, int index, bool error)
@@ -324,6 +301,7 @@ void InitConVarClass(GarrysMod::Lua::ILuaInterface* LUA)
 		Add_Func(LUA, ConVar_GetDefault, "GetDefault");
 		Add_Func(LUA, ConVar_GetFlags, "GetFlags");
 		Add_Func(LUA, ConVar_GetHelpText, "GetHelpText");
+		Add_Func(LUA, ConVar_GetFloat, "GetFloat");
 		Add_Func(LUA, ConVar_GetInt, "GetInt");
 		Add_Func(LUA, ConVar_GetMax, "GetMax");
 		Add_Func(LUA, ConVar_GetMin, "GetMin");

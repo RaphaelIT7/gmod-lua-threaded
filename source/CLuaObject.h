@@ -129,9 +129,12 @@ public:
 
 	virtual void SetMemberPhysObject( const char *, IPhysicsObject * );
 public:
-	void Init(GarrysMod::Lua::ILuaInterface*);
+	void Init(GarrysMod::Lua::ILuaBase*);
 protected:
-	GarrysMod::Lua::ILuaInterface* LUA;
-	int m_metatable = -1;
-	int m_reference = -1;
+	bool m_bUserData;
+	int m_iLUA_TYPE;
+	int m_reference;
+	GarrysMod::Lua::ILuaBase* m_pLua;
+protected:
+	int m_metatable;
 };

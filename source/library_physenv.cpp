@@ -7,12 +7,12 @@ IPhysicsEnvironment* physenv;
 
 SourceSDK::FactoryLoader physics_loader("vphysics");
 
-LUA_FUNCTION(physenv_AddSurfaceData) // ToDo
+LUA_FUNCTION_STATIC(physenv_AddSurfaceData) // ToDo
 {
 	return 0;
 }
 
-LUA_FUNCTION(physenv_GetAirDensity)
+LUA_FUNCTION_STATIC(physenv_GetAirDensity)
 {
 	if (!physenv)
 		return 0;
@@ -22,7 +22,7 @@ LUA_FUNCTION(physenv_GetAirDensity)
 	return 1;
 }
 
-LUA_FUNCTION(physenv_GetGravity)
+LUA_FUNCTION_STATIC(physenv_GetGravity)
 {
 	if (!physenv)
 		return 0;
@@ -35,12 +35,12 @@ LUA_FUNCTION(physenv_GetGravity)
 	return 1;
 }
 
-LUA_FUNCTION(physenv_GetLastSimulationTime) // ToDo
+LUA_FUNCTION_STATIC(physenv_GetLastSimulationTime) // ToDo
 {
 	return 0;
 }
 
-LUA_FUNCTION(physenv_GetPerformanceSettings)
+LUA_FUNCTION_STATIC(physenv_GetPerformanceSettings)
 {
 	if (!physenv)
 		return 0;
@@ -76,7 +76,7 @@ LUA_FUNCTION(physenv_GetPerformanceSettings)
 	return 1;
 }
 
-LUA_FUNCTION(physenv_SetAirDensity)
+LUA_FUNCTION_STATIC(physenv_SetAirDensity)
 {
 	if (!physenv)
 		return 0;
@@ -87,7 +87,7 @@ LUA_FUNCTION(physenv_SetAirDensity)
 	return 0;
 }
 
-LUA_FUNCTION(physenv_SetGravity)
+LUA_FUNCTION_STATIC(physenv_SetGravity)
 {
 	if (!physenv)
 		return 0;
@@ -98,7 +98,7 @@ LUA_FUNCTION(physenv_SetGravity)
 	return 0;
 }
 
-LUA_FUNCTION(physenv_SetPerformanceSettings)
+LUA_FUNCTION_STATIC(physenv_SetPerformanceSettings)
 {
 	if (!physenv)
 		return 0;

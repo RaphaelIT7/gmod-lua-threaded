@@ -35,7 +35,7 @@ void RemoveTimers(ILuaThread* thread)
 	thread->timers = timers;
 }
 
-LUA_FUNCTION(timer_Adjust)
+LUA_FUNCTION_STATIC(timer_Adjust)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -63,12 +63,12 @@ LUA_FUNCTION(timer_Adjust)
 	return 1;
 }
 
-LUA_FUNCTION(timer_Check)
+LUA_FUNCTION_STATIC(timer_Check)
 {
 	return 0;
 }
 
-LUA_FUNCTION(timer_Create)
+LUA_FUNCTION_STATIC(timer_Create)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -96,7 +96,7 @@ LUA_FUNCTION(timer_Create)
 	return 0;
 }
 
-LUA_FUNCTION(timer_Exists)
+LUA_FUNCTION_STATIC(timer_Exists)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -106,7 +106,7 @@ LUA_FUNCTION(timer_Exists)
 	return 1;
 }
 
-LUA_FUNCTION(timer_Pause)
+LUA_FUNCTION_STATIC(timer_Pause)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -126,7 +126,7 @@ LUA_FUNCTION(timer_Pause)
 	return 1;
 }
 
-LUA_FUNCTION(timer_Remove)
+LUA_FUNCTION_STATIC(timer_Remove)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -140,7 +140,7 @@ LUA_FUNCTION(timer_Remove)
 	return 0;
 }
 
-LUA_FUNCTION(timer_RepsLeft)
+LUA_FUNCTION_STATIC(timer_RepsLeft)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -159,7 +159,7 @@ LUA_FUNCTION(timer_RepsLeft)
 	return 1;
 }
 
-LUA_FUNCTION(timer_Simple)
+LUA_FUNCTION_STATIC(timer_Simple)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	double delay = LUA->CheckNumber(1);
@@ -180,7 +180,7 @@ LUA_FUNCTION(timer_Simple)
 	return 0;
 }
 
-LUA_FUNCTION(timer_Start)
+LUA_FUNCTION_STATIC(timer_Start)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -201,7 +201,7 @@ LUA_FUNCTION(timer_Start)
 	return 1;
 }
 
-LUA_FUNCTION(timer_Stop)
+LUA_FUNCTION_STATIC(timer_Stop)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -222,7 +222,7 @@ LUA_FUNCTION(timer_Stop)
 	return 1;
 }
 
-LUA_FUNCTION(timer_TimeLeft)
+LUA_FUNCTION_STATIC(timer_TimeLeft)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -237,7 +237,7 @@ LUA_FUNCTION(timer_TimeLeft)
 	return 1;
 }
 
-LUA_FUNCTION(timer_Toggle)
+LUA_FUNCTION_STATIC(timer_Toggle)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);
@@ -254,7 +254,7 @@ LUA_FUNCTION(timer_Toggle)
 	return 1;
 }
 
-LUA_FUNCTION(timer_UnPause)
+LUA_FUNCTION_STATIC(timer_UnPause)
 {
 	ILuaThread* thread = GetValidThread(LUA, 1);
 	const char* name = LUA->CheckString(1);

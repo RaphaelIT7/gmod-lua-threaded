@@ -13,6 +13,5 @@ extern int Global_LerpVector(lua_State*);
 extern int Global_OrderVectors(lua_State*);
 
 extern void Push_Vector(GarrysMod::Lua::ILuaBase* LUA, Vector vec);
-extern bool IsVector(GarrysMod::Lua::ILuaBase* LUA, int index);
 extern LUA_Vector* Vector_Get(GarrysMod::Lua::ILuaBase* LUA, int index);
 extern void Vector_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index);

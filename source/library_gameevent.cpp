@@ -29,7 +29,7 @@ ILuaValue* GetString(IGameEvent* event, const char* pKey)
 {
 	ILuaValue* val = new ILuaValue;
 	val->type = GarrysMod::Lua::Type::String;
-	val->string = event->GetString(pKey);
+	val->data = (void*)event->GetString(pKey);
 
 	return val;
 }
@@ -114,7 +114,7 @@ private:
 	ILuaThread* thread;
 };
 
-LUA_FUNCTION(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFunction and see how Gmod does it.
+LUA_FUNCTION_STATIC(gameevent_Listen) // ToDo: Look into CLuaLibrary and CLuaLibraryFunction and see how Gmod does it.
 {
 	const char* name = LUA->CheckString(1);
 	ILuaThread* thread = GetValidThread(LUA, 1);

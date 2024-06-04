@@ -25,7 +25,7 @@ local code = [[local ret, err = pcall(function()
 	print("file.Size (garrysmod.ver) ", file.Size("garrysmod.ver", "MOD"))
 	print("file.Time (garrysmod.ver) ", file.Time("garrysmod.ver", "MOD"))
 	file.AsyncRead("garrysmod.ver", "MOD", function(fileName, gamePath, status, data)
-		print("file.AsyncRead callback called", data, data:len(), status)
+		print("file.AsyncRead callback called length:" .. data:len() .. " status: " .. status .. " data:" .. data)
 	end)
 
 
@@ -103,6 +103,27 @@ local code = [[local ret, err = pcall(function()
 
 	print("GetConVar: ", GetConVar("hostname"))
 
+	print("==== Shared Table ====")
+	PrintTable(LuaThreaded.GetValue("example"))
+
+	print("==== Debug Library ====")
+	PrintTable(debug)
+
+	print("==== RecipientFilter ====")
+	local filter = RecipientFilter()
+	print("1. RecipientFilter:__tostring", filter)
+	filter:AddAllPlayers() -- The bot should be added.
+	print("2. RecipientFilter:__tostring", filter)
+	filter:RemoveAllPlayers()
+	print("3. RecipientFilter:__tostring", filter)
+
+	print("==== umsg Library ====")
+	LuaThreaded.LockMain()
+	umsg.Start("Test")
+		umsg.String("Hello World")
+	umsg.End()
+	LuaThreaded.UnlockMain()
+
 	error("Error handling test")
 end)
 
@@ -116,6 +137,38 @@ print("Testing Started")
 local ret, err = pcall(function()
 	require("lua_threaded")
 	LuaThreaded.ReadyThreads()
+	LuaThreaded.SetValue("example", {
+		["boolean"] = true,
+		["number"] = 10,
+		["string"] = "Hello World",
+		["Angle"] = Angle(10, 9, 8),
+		["Vector"] = Vector(1, 2, 3),
+	})
+
+	local startTime = SysTime()
+	for k=1, 100000 do 
+		LuaThreaded.SetValue(k, "Some Random String")
+	end
+	local endTime = SysTime()
+	print("Added 100.000 keys in " .. endTime - startTime .. "s")
+
+	local startTime = SysTime()
+	for k=1, 100000 do 
+		LuaThreaded.SetValue(k, "A new String")
+	end
+	local endTime = SysTime()
+	print("Updating 100.000 keys in " .. endTime - startTime .. "s")
+
+	local startTime = SysTime()
+	for k=1, 100000 do 
+		LuaThreaded.SetValue(k, nil)
+	end
+	local endTime = SysTime()
+	print("Removed 100.000 keys in " .. endTime - startTime .. "s")
+
+	if LuaThreaded.GetValue(1000) != nil then
+		error("LuaThreaded.SetValue failed! Investigate!")
+	end
 	
 	iFace = LuaThreaded.CreateInterface()
 	iFace:InitGmod()
