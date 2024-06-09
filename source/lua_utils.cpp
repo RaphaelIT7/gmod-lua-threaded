@@ -129,6 +129,7 @@ void PushValue(GarrysMod::Lua::ILuaBase* LUA, ILuaValue* value)
 					ILuaObject* entity = ILUA->GetObject(-1);
 			LUA->Pop(2);
 			*/
+			// TODO - Push_Entity(LUA, value->ent);
 			break;
 		case GarrysMod::Lua::Type::VECTOR:
 			Push_Vector(LUA, Vector(value->x, value->y, value->z));

@@ -2,6 +2,22 @@ local code = [[local ret, err = pcall(function()
 	print(Vector(1, 1, 1), type(Vector(1, 1, 1)), isvector(Vector(1, 1, 1)))
 	print(Angle(1, 1, 1), type(Angle(1, 1, 1)), isangle(Vector(1, 1, 1)))
 
+	print("=== Entity ===")
+
+	print("Entity(39): ", Entity(39))
+
+	PrintTable(ents)
+
+	print("=== Get info_player_start ===")
+
+	PrintTable(ents.FindByClass("info_player_start"))
+
+	print("ENTITY META")
+	
+	local meta = FindMetaTable( "Entity" )
+	PrintTable(meta)
+
+
 	print("=== File Library ===")
 
 	print("file.Exists (garrysmod.ver) ", file.Exists("garrysmod.ver", "MOD"))

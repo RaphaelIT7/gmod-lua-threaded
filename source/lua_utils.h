@@ -111,6 +111,8 @@ struct lua_State
 #include <gamerules.h>
 #include <setjmp.h>
 #include <eiface.h>
+#include <entitylist_base.h>
+#include <player.h>
 #include <vector>
 #include <lua.h>
 
@@ -311,5 +313,6 @@ extern void InitInterfaces();
 extern IFileSystem* filesystem;
 extern CGlobalVars* gpGlobals;
 extern IVEngineServer* engine;
+extern CBaseEntityList* g_pEntityList;
 extern INetworkStringTableContainer* networkstringtables;
 #endif

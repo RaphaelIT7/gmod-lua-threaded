@@ -18,6 +18,7 @@
 #include "library_gmod.h"
 #include "library_game.h"
 #include "library_file.h"
+#include "library_ents.h"
 #include "library_net.h"
 #include "library_sql.h"
 
@@ -25,4 +26,5 @@
 #include "class_convar.h"
 #include "class_vector.h"
 #include "class_angle.h"
+#include "class_entity.h"
 #include "class_file.h"

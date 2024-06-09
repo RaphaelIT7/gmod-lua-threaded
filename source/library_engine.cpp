@@ -2,7 +2,35 @@
 #include <icommandline.h>
 #include <eiface.h>
 
-LUA_FUNCTION_STATIC(engine_GetAddons)
+/* class IPlayerInfo;
+class edict_t; */
+static const char playerinfomanager_name[] = "PlayerInfoManager002";
+
+// include <player.h> defined it already
+/* class IPlayerInfoManager
+{
+public:
+	virtual IPlayerInfo *GetPlayerInfo( edict_t *pEdict ) = 0;
+	virtual CGlobalVars *GetGlobalVars( ) = 0;
+}; */
+
+CGlobalVars* GlobalVars()
+{
+	static CGlobalVars *iface_pointer = nullptr;
+	if (iface_pointer == nullptr)
+	{
+		SourceSDK::FactoryLoader server_loader("server");
+		auto player_info_manager = server_loader.GetInterface<IPlayerInfoManager>(
+			playerinfomanager_name
+		);
+		if (player_info_manager != nullptr)
+			iface_pointer = player_info_manager->GetGlobalVars();
+	}
+
+	return iface_pointer;
+}
+
+LUA_FUNCTION(engine_GetAddons)
 {
 	PushValue(LUA, GMOD->addons);
 

@@ -250,6 +250,7 @@ void InitClasses(GarrysMod::Lua::ILuaInterface* LUA)
 	InitAngleClass(LUA);
 	InitFileClass(LUA);
 	InitConVarClass(LUA);
+	InitEntityClass(LUA);
 
 	//func_InitLuaClasses(LUA);
 }
@@ -293,6 +294,7 @@ void InitLuaLibraries(ILuaThread* thread)
 	InitGmodLib(LUA);
 	InitFileLib(LUA);
 	InitGame(LUA);
+	InitEntsLib(LUA);
 	InitUmsg(LUA);
 }
 
