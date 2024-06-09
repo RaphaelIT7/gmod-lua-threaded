@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    uses: Equoo/lua_thread/.github/workflows/common_compile.yml@main
+    uses: RaphaelIT7/gmod-common-module-base/.github/workflows/compile.yml@workflow
     with:
       PROJECT_NAME: "lua_threaded"
       BUILD_WINDOWS: "false"
@@ -19,5 +19,5 @@ jobs:
 
   test:
     needs: build
-    uses: Equoo/lua_thread/.github/workflows/testing.yml@main
+    uses: RaphaelIT7/gmod-lua-threaded/.github/workflows/testing.yml@main
     secrets: inherit
