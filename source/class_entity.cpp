@@ -8,7 +8,7 @@ static const char table_name[] = "Entity_object";
 
 void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, CBaseEntity* ent)
 {
-	LUA_Entity* udata = (LUA_Entity*)LUA->NewUserdata(sizeof(LUA_Entity));
+	LUA_Entity* udata = LUA->NewUserType<LUA_Entity>(metatype);
 	udata->entity = ent;
 
 	GarrysMod::Lua::ILuaInterface* ILUA = (GarrysMod::Lua::ILuaInterface*)LUA;
@@ -25,31 +25,13 @@ void Push_Entity(GarrysMod::Lua::ILuaBase* LUA, LUA_Entity* ent)
 
 void Entity_CheckType(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if(!LUA->IsType(index, GarrysMod::Lua::Type::Entity))
+	if(!LUA->IsType(index, metatype))
 		LUA->TypeError(index, metaname);
 }
 
 bool IsEntity(GarrysMod::Lua::ILuaBase* LUA, int index)
 {
-	if (LUA->IsType(index, GarrysMod::Lua::Type::Entity))
-	{
-		LUA->GetMetaTable(index);
-		LUA->GetField(-1, "MetaName");
-		if (LUA->IsType(-1, GarrysMod::Lua::Type::String))
-		{
-			if (strcmp(LUA->GetString(-1), metaname))
-			{
-				LUA->Pop(2);
-				return true;
-			} else {
-				LUA->Pop(2);
-			}
-		} else {
-			LUA->Pop(2);
-		}
-	}
-
-	return false;
+	return LUA->IsType(index, metatype);
 }
 
 LUA_Entity* Entity_GetUserdata(GarrysMod::Lua::ILuaBase *LUA, int index)
