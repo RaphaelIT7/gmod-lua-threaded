@@ -14,6 +14,10 @@ If you have any Issue, Request or Question you can always open an Issue for it o
 NOTE:  
 This only works on Linux because on Windows creating a ILuaInterface on another thread currently crashes the game.  
 
+# Current Status
+Currently my focus lies on HolyLib.  
+When I get to a version like 1.0 I'll get back to this and I'll probably redo most of it.  
+
 ## What is implemented
 - [x] Shared Table  
 - [x] Better Error handling(It loved to crash on any Lua error.)  
